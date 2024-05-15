@@ -1,0 +1,7 @@
+{
+  "name": "Mkhonto",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
