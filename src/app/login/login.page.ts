@@ -97,7 +97,7 @@ export class LoginPage implements OnInit {
           .then((userCredential) => {
             loader.dismiss();
             const user = userCredential.user;
-            this.router.navigate(['/home']);
+            this.router.navigate(['/counter']);
           })
           .catch((error) => {
             loader.dismiss();
