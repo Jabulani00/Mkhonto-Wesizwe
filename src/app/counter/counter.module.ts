@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
@@ -13,7 +13,7 @@ import { CounterPage } from './counter.page';
     CommonModule,
     FormsModule,
     IonicModule,
-    CounterPageRoutingModule
+    CounterPageRoutingModule,ReactiveFormsModule, // Add ReactiveFormsModule here
   ],
   declarations: [CounterPage]
 })
