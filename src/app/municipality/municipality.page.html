@@ -1,0 +1,49 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      Manage Municipality
+    </ion-title>
+    <ion-icon routerLink="/super-admin" slot="end" name="arrow-back-outline"></ion-icon>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card>
+    <ion-card-header>
+      <ion-icon name="add-circle-outline"></ion-icon>
+      <ion-card-title>Add Municipality</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="floating">Municipality Name</ion-label>
+        <ion-input [(ngModel)]="municipalityName"></ion-input>
+      </ion-item>
+      <ion-button expand="full" (click)="addMunicipality()">
+        <ion-icon name="add"></ion-icon>
+        Add Municipality
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngIf="selectedMunicipalityIndex !== null">
+    <ion-card-header>
+      <ion-icon name="add-circle-outline"></ion-icon>
+      <ion-card-title>Add Ward</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="floating">Ward Name</ion-label>
+        <ion-input [(ngModel)]="wardName"></ion-input>
+      </ion-item>
+      <ion-button expand="full" (click)="addWard()">
+        <ion-icon name="add"></ion-icon>
+        Add Ward
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-button expand="full" (click)="submitAll()">
+    <ion-icon name="send"></ion-icon>
+    Submit All
+  </ion-button>
+</ion-content>

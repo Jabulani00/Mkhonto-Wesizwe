@@ -17,8 +17,8 @@ export class LoginPage implements OnInit {
   password: string = '';
 
   // Default admin credentials
-  defaultAdminEmail: string = 'admin@best.com';
-  defaultAdminPassword: string = '@bestB1234';
+  defaultAdminEmail: string = 'admin@mk.com';
+  defaultAdminPassword: string = '@MK1234';
 
   constructor(
     private router: Router,
@@ -70,7 +70,7 @@ export class LoginPage implements OnInit {
     // Check if the user is trying to log in with the default admin credentials
     if (this.email === this.defaultAdminEmail && this.password === this.defaultAdminPassword) {
       loader.dismiss();
-      this.router.navigate(['/user-profiles']);
+      this.router.navigate(['/super-admin']);
       return;
     }
 
