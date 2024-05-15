@@ -1,12 +1,13 @@
+// municipality.page.ts
 import { Component } from '@angular/core';
 import { FirestoreService } from '../services/firestore.service';
 
 interface Ward {
-  name: string;
+  ward: string;
 }
 
 interface Municipality {
-  name: string;
+  municipality: string;
   wards: Ward[];
 }
 
@@ -25,15 +26,15 @@ export class MunicipalityPage {
   constructor(private firestoreService: FirestoreService) {}
 
   addMunicipality() {
-    const municipality: Municipality = { name: this.municipalityName, wards: [] };
+    const municipality: Municipality = { municipality: this.municipalityName, wards: [] };
     this.municipalities.push(municipality);
     this.selectedMunicipalityIndex = this.municipalities.length - 1;
-    this.municipalityName = ''; // Clear input field after adding
+    //this.municipalityName = ''; // Clear input field after adding
   }
 
   addWard() {
     if (this.selectedMunicipalityIndex !== null) {
-      const ward: Ward = { name: this.wardName };
+      const ward: Ward = { ward: this.wardName };
       this.municipalities[this.selectedMunicipalityIndex].wards.push(ward);
       this.wardName = ''; // Clear input field after adding
     } else {
@@ -43,10 +44,11 @@ export class MunicipalityPage {
 
   submitAll() {
     this.municipalities.forEach((municipality) => {
-      this.firestoreService.addMunicipality({ name: municipality.name }).then(docRef => {
+      this.firestoreService.addMunicipality({ municipality: municipality.municipality }).then(docRef => {
+        const municipalityId = docRef.id;
         municipality.wards.forEach((ward: Ward) => {
-          this.firestoreService.addWard(docRef.id, ward).then(wardDocRef => {
-            console.log('Ward added with ID: ', wardDocRef.id);
+          this.firestoreService.addWard(municipalityId, ward).then(() => {
+            console.log('Ward added to municipality with ID: ', municipalityId);
           }).catch(error => {
             console.error('Error adding ward: ', error);
           });
@@ -58,6 +60,7 @@ export class MunicipalityPage {
 
     // Clear the arrays after submission
     this.municipalities = [];
+    this.municipalityName = '';
     this.selectedMunicipalityIndex = null;
   }
 }
