@@ -1,0 +1,2 @@
+npm install @angular/fire firebase
+npm install chart.js
