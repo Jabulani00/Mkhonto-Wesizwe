@@ -1,0 +1,35 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      Manage Municipality
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Add Municipality</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="floating">Municipality Name</ion-label>
+        <ion-input [(ngModel)]="municipalityName"></ion-input>
+      </ion-item>
+      <ion-button expand="full" (click)="addMunicipality()">Add Municipality</ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card *ngIf="selectedMunicipalityId">
+    <ion-card-header>
+      <ion-card-title>Add Ward</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-label position="floating">Ward Name</ion-label>
+        <ion-input [(ngModel)]="wardName"></ion-input>
+      </ion-item>
+      <ion-button expand="full" (click)="addWard()">Add Ward</ion-button>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

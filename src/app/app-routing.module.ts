@@ -43,6 +43,10 @@ const routes: Routes = [
     path: 'validation',
     loadChildren: () => import('./validation/validation.module').then( m => m.ValidationPageModule)
   },
+  {
+    path: 'municipality',
+    loadChildren: () => import('./municipality/municipality.module').then( m => m.MunicipalityPageModule)
+  },
 ];
 
 @NgModule({
