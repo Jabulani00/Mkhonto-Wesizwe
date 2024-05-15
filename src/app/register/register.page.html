@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar >
+  <ion-toolbar>
     <ion-title>Sign Up</ion-title>
   </ion-toolbar>
 </ion-header>
@@ -18,18 +18,38 @@
 
     <ion-item>
       <ion-label>Select Role</ion-label>
-      <ion-select [(ngModel)]="selectedRole">
+      <ion-select [(ngModel)]="selectedRole" (ionChange)="onRoleChange()">
         <ion-select-option value="SuperAdmin">Super Admin</ion-select-option>
         <ion-select-option value="GroundAdmin">Ground Admin</ion-select-option> 
       </ion-select>
     </ion-item>
-    
+
+    <ion-item *ngIf="selectedRole === 'GroundAdmin'">
+      <ion-label position="floating">Municipality</ion-label>
+      <ion-select [(ngModel)]="selectedMunicipality" (ionChange)="onMunicipalityChange($event)">
+        <ion-select-option *ngFor="let municipality of municipalities" [value]="municipality">{{ municipality.municipality }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <!-- <ion-item class="input-item">
+      <ion-label position="stacked">Ward</ion-label>
+      <ion-select formControlName="ward" interface="action-sheet" required>
+        <ion-select-option *ngFor="let ward of selectedMunicipalityWards" [value]="ward.ward">{{ ward.ward }}</ion-select-option>
+      </ion-select>
+    </ion-item> -->
+
+
+    <ion-item *ngIf="selectedRole === 'GroundAdmin'">
+      <ion-label position="floating">Ward</ion-label>
+      <ion-select [(ngModel)]="selectedWard">
+        <ion-select-option *ngFor="let ward of selectedMunicipalityWards" [value]="ward">{{ ward.ward }}</ion-select-option>
+      </ion-select>
+    </ion-item>
 
     <ion-item>
       <ion-label position="floating">Password</ion-label>
       <ion-input type="password" [(ngModel)]="password"></ion-input>
     </ion-item>
-
 
     <ion-item>
       <ion-label position="floating">Confirm Password</ion-label>
@@ -42,5 +62,5 @@
   </div>
 
   <p>Already have an account? <a routerLink="/login">Login</a></p>
-      <p>........................<a routerLink="/reset">reset</a></p>
+  <p>........................<a routerLink="/reset">reset</a></p>
 </ion-content>
