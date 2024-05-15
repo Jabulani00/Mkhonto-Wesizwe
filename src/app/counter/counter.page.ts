@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FirestoreService } from '../services/firestore.service';
+
 
 @Component({
   selector: 'app-counter',
@@ -9,11 +11,16 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 })
 export class CounterPage implements OnInit {
   electionForm!: FormGroup;
+  municipalities: any[] = [];
+  selectedMunicipalityWards: any;
 
-  constructor(private fb: FormBuilder,private afs: AngularFirestore) {}
+  constructor(private fb: FormBuilder,private firestoreService:FirestoreService) {
+    this.loadMunicipalities();
+  }
 
   ngOnInit() {
     this.createForm();
+  
   }
 
   createForm() {
@@ -28,6 +35,7 @@ export class CounterPage implements OnInit {
       totalVotes: ['', Validators.required],
       mkVotes: ['', Validators.required],
       mkPercentage: ['', Validators.required],
+      municipality: ['', Validators.required],
     });
   }
 
@@ -43,17 +51,19 @@ export class CounterPage implements OnInit {
     return; // Prevent form submission
   }
     // Add your collection name where you want to store the data
-    this.afs.collection('electionData').add(formData)
-      .then(() => {
-        alert("Form data submitted successfully to Firestore");
-        console.log('Form data submitted successfully to Firestore');
-        // Optionally, display a success message to the user
-      })
-      .catch((error) => {
-        alert("Error submitting form try again");
-        console.error('Error submitting form:', error);
-        // Optionally, display an error message to the user
-      });
+    this.firestoreService.submitElectionFormData(formData)
+    .then(() => {
+      alert("Form data submitted successfully to Firestore");
+      console.log('Form data submitted successfully to Firestore');
+      // Optionally, display a success message to the user
+      // Reset form after successful submission
+      this.electionForm.reset();
+    })
+    .catch((error) => {
+      alert("Error submitting form try again");
+      console.error('Error submitting form:', error);
+      // Optionally, display an error message to the user
+    });
   }
 
   private submitElectionData() {
@@ -63,4 +73,18 @@ export class CounterPage implements OnInit {
     // Reset form after successful submission
     this.electionForm.reset();
   }
+
+
+  loadMunicipalities() {
+    this.firestoreService.getMunicipalities().subscribe((municipalities: any[]) => {
+      this.municipalities = municipalities;
+    });
+  }
+
+  onMunicipalityChange(event: any) {
+    const selectedMunicipality = event.detail.value;
+    this.selectedMunicipalityWards = this.municipalities.find(municipality => municipality.municipality === selectedMunicipality)?.wards || [];
+  }
+  
+  
 }

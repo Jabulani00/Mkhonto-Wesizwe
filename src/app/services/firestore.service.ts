@@ -14,4 +14,15 @@ export class FirestoreService {
   addWard(municipalityId: string, ward: any) {
     return this.firestore.collection(`municipalities/${municipalityId}/wards`).add(ward);
   }
+
+
+////
+  getMunicipalities() {
+    // Assuming you have a 'municipalities' collection in Firestore
+    return this.firestore.collection('municipalities').valueChanges();
+  }
+
+  submitElectionFormData(formData: any) {
+    return this.firestore.collection('electionData').add(formData);
+  }
 }
