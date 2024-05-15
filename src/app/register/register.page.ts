@@ -41,17 +41,24 @@ export class RegisterPage implements OnInit {
 
 
 
-
   loadMunicipalities() {
     this.firestoreService.getMunicipalities().subscribe((municipalities: any[]) => {
       this.municipalities = municipalities;
     });
   }
+  
   onMunicipalityChange(event: any) {
     const selectedMunicipality = event.detail.value;
-    this.selectedMunicipalityWards = this.municipalities.find(municipality => municipality.municipality === selectedMunicipality)?.wards || [];
+    const selectedMunicipalityObject = this.municipalities.find(municipality => municipality.municipality === selectedMunicipality);
+  
+    // Check if the selected municipality is found
+    if (selectedMunicipalityObject) {
+      this.selectedMunicipalityWards = selectedMunicipalityObject.wards || [];
+    } else {
+      this.selectedMunicipalityWards = []; // Clear the wards if the municipality is not found
+    }
   }
-
+  
 
 
 
