@@ -47,6 +47,14 @@ const routes: Routes = [
     path: 'municipality',
     loadChildren: () => import('./municipality/municipality.module').then( m => m.MunicipalityPageModule)
   },
+  {
+    path: 'region',
+    loadChildren: () => import('./region/region.module').then( m => m.RegionPageModule)
+  },
+  {
+    path: 'approve',
+    loadChildren: () => import('./approve/approve.module').then( m => m.ApprovePageModule)
+  },
 ];
 
 @NgModule({
