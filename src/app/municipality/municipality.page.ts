@@ -76,6 +76,6 @@ export class MunicipalityPage implements OnInit {
     this.municipalities = [];
     this.municipalityName = '';
     this.selectedMunicipality = null;
-    this.municipalityName = '';
+    
   }
 }
