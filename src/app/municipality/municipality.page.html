@@ -1,8 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>
-      Manage Municipality
-    </ion-title>
+    <ion-title> Manage Municipality </ion-title>
     <ion-icon routerLink="/super-admin" slot="end" name="arrow-back-outline"></ion-icon>
   </ion-toolbar>
 </ion-header>
@@ -25,7 +23,13 @@
     </ion-card-content>
   </ion-card>
 
-  <ion-card *ngIf="selectedMunicipalityIndex !== null">
+  <!-- <ion-list>
+    <ion-item *ngFor="let municipality of municipalities" (click)="selectMunicipality(municipality)">
+      {{ municipality.municipality }}
+    </ion-item>
+  </ion-list> -->
+
+  <ion-card *ngIf="selectedMunicipality !== null">
     <ion-card-header>
       <ion-icon name="add-circle-outline"></ion-icon>
       <ion-card-title>Add Ward</ion-card-title>

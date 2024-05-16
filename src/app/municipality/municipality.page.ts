@@ -1,6 +1,6 @@
-// municipality.page.ts
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FirestoreService } from '../services/firestore.service';
+import { Observable } from 'rxjs';
 
 interface Ward {
   ward: string;
@@ -16,40 +16,54 @@ interface Municipality {
   templateUrl: './municipality.page.html',
   styleUrls: ['./municipality.page.scss'],
 })
-export class MunicipalityPage {
+export class MunicipalityPage implements OnInit {
   municipalityName: string = '';
   wardName: string = '';
-  selectedMunicipalityIndex: number | null = null;
-
   municipalities: Municipality[] = [];
+  selectedMunicipality: Municipality | null = null;
 
   constructor(private firestoreService: FirestoreService) {}
+
+  ngOnInit() {
+    this.getMunicipalities();
+  }
+
+  getMunicipalities() {
+    this.firestoreService.getMunicipalities().subscribe((municipalities: any[]) => {
+      this.municipalities = municipalities.map(municipality => ({
+        municipality: municipality.municipality,
+        wards: municipality.wards || []
+      }));
+    });
+  }
 
   addMunicipality() {
     const municipality: Municipality = { municipality: this.municipalityName, wards: [] };
     this.municipalities.push(municipality);
-    this.selectedMunicipalityIndex = this.municipalities.length - 1;
-    //this.municipalityName = ''; // Clear input field after adding
+   
+    this.selectMunicipality(municipality);
   }
 
   addWard() {
-    if (this.selectedMunicipalityIndex !== null) {
+    if (this.selectedMunicipality) {
       const ward: Ward = { ward: this.wardName };
-      this.municipalities[this.selectedMunicipalityIndex].wards.push(ward);
-      this.wardName = ''; // Clear input field after adding
+      this.selectedMunicipality.wards.push(ward);
+      this.wardName = '';
     } else {
       console.error('No municipality selected');
     }
   }
 
+  selectMunicipality(municipality: Municipality) {
+    this.selectedMunicipality = municipality;
+  }
+
   submitAll() {
     this.municipalities.forEach((municipality) => {
-      this.firestoreService.addMunicipality({ municipality: municipality.municipality }).then(docRef => {
+      this.firestoreService.addMunicipality(municipality).then(docRef => {
         const municipalityId = docRef.id;
         municipality.wards.forEach((ward: Ward) => {
-          this.firestoreService.addWard(municipalityId, ward).then(() => {
-            console.log('Ward added to municipality with ID: ', municipalityId);
-          }).catch(error => {
+          this.firestoreService.addWard(municipalityId, ward).catch(error => {
             console.error('Error adding ward: ', error);
           });
         });
@@ -61,6 +75,7 @@ export class MunicipalityPage {
     // Clear the arrays after submission
     this.municipalities = [];
     this.municipalityName = '';
-    this.selectedMunicipalityIndex = null;
+    this.selectedMunicipality = null;
+    
   }
 }
