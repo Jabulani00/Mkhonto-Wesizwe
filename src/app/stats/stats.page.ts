@@ -53,6 +53,20 @@ export class StatsPage implements OnInit, AfterViewInit {
     this.createVotesAndTurnoutChart();
   }
 
+  segmentChanged(event: CustomEvent) {
+    const selectedSegment = event.detail.value;
+    const chartContainers = document.querySelectorAll('.chart-container');
+  
+    chartContainers.forEach(container => {
+      const chartContainer = container as HTMLElement;
+      if (chartContainer.id === `${selectedSegment}-chart`) {
+        chartContainer.style.display = 'block';
+      } else {
+        chartContainer.style.display = 'none';
+      }
+    });
+  }
+
   loadVotesAndTurnoutData() {
     this.afs.collection<ElectionData>('electionData').get().subscribe((querySnapshot) => {
       const data = querySnapshot.docs.map((doc) => doc.data());
