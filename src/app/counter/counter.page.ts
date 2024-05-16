@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FirestoreService } from '../services/firestore.service';
-
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+import * as firebase from 'firebase/compat';
 
 @Component({
   selector: 'app-counter',
@@ -14,7 +15,7 @@ export class CounterPage implements OnInit {
   municipalities: any[] = [];
   selectedMunicipalityWards: any;
 
-  constructor(private fb: FormBuilder,private firestoreService:FirestoreService) {
+  constructor(private fb: FormBuilder,private firestoreService:FirestoreService,private auth:AngularFireAuth) {
     this.loadMunicipalities();
   }
 
@@ -48,12 +49,16 @@ export class CounterPage implements OnInit {
       daPercentage: ['', Validators.required],
       udmVotes: ['', Validators.required],
       udmPercentage: ['', Validators.required],
+      timestamp: [new Date()]
     });
   }
 
 
-  onSubmit() {
-    const formData = this.electionForm.value;
+  async onSubmit() {
+    const user = await this.auth.currentUser;
+    const formData = { ...this.electionForm.value, userEmail:user?.email };
+
+    //const formData = this.electionForm.value;
 
 
      // Check if any form field is empty

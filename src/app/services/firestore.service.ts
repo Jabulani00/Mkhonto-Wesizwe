@@ -36,6 +36,9 @@ export class FirestoreService {
     return this.firestore.collection('electionData').valueChanges();
   }
 
+  getCollectionRef(collectionName: string) {
+    return this.firestore.collection(collectionName);
+  }
   // updateResults() {
   //   return this.firestore.collection('electionData').doc;
   // }

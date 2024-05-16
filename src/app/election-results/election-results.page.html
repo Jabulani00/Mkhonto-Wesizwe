@@ -1,31 +1,209 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>ElectionResults</ion-title>
+  <ion-toolbar color="success">
+    <ion-title>UPDATE Election Form</ion-title>
+    <ion-icon slot="end" style="zoom: 1.5; margin-right: 5px;"  routerLink="/election-results" name="document-attach-outline"></ion-icon>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-card>
+
+  <ion-card class="form-card" >
     <ion-card-content>
-      <form [formGroup]="electionForm" (ngSubmit)="onSubmit()">
-        <!-- Display election results in a table or other layout -->
-        <ion-list *ngIf="results">
-          <!-- Example: Display ANC votes and percentage -->
-          <ion-item>
-            <ion-label position="stacked">ANC Votes</ion-label>
-            <ion-input formControlName="ancVotes" type="text" [(ngModel)]="results.ancVotes"></ion-input>
+
+      <form [formGroup]="electionForm" (ngSubmit)="onSubmit()" #formDir="ngForm">
+        <ion-list>
+<!-- 
+          <ion-item class="input-item">
+            <ion-label position="stacked">Municipality</ion-label>
+            <ion-select formControlName="municipality" interface="action-sheet" (ionChange)="onMunicipalityChange($event)" required>
+              <ion-select-option *ngFor="let municipality of municipalities" [value]="municipality.municipality">{{ municipality.municipality }}</ion-select-option>
+            </ion-select>
           </ion-item>
-          <ion-item>
-            <ion-label position="stacked">ANC Percentage</ion-label>
-            <ion-input formControlName="ancPercentage" type="text" [(ngModel)]="results.ancPercentage"></ion-input>
+          <div *ngIf="formDir.submitted && (electionForm.get('municipality')?.invalid && electionForm.get('municipality')?.touched)" class="error-message">Municipality is required.</div>
+          
+
+          <ion-item class="input-item">
+            <ion-label position="stacked">VD Number</ion-label>
+            <ion-input formControlName="vdNumber" type="number" required></ion-input>
           </ion-item>
-          <!-- Repeat for other parties -->
+          <div *ngIf="formDir.submitted && (electionForm.get('vdNumber')?.invalid && electionForm.get('vdNumber')?.touched && electionForm.get('vdNumber')?.value === '')" class="error-message">VD Number is required.</div>
+
+          <ion-item class="input-item">
+            <ion-label position="stacked">Ward</ion-label>
+            <ion-select formControlName="ward" interface="action-sheet" required>
+              <ion-select-option *ngFor="let ward of selectedMunicipalityWards" [value]="ward.ward">{{ ward.ward }}</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <div *ngIf="formDir.submitted && (electionForm.get('ward')?.invalid && electionForm.get('ward')?.touched && electionForm.get('ward')?.value === '')" class="error-message">Ward is required.</div>
+
+        
+        
+
+          <ion-item>
+            <ion-label position="stacked">Leader</ion-label>
+            <ion-input formControlName="leader" type="text" required></ion-input>
+          </ion-item>
+          <div *ngIf="formDir.submitted && (electionForm.get('leader')?.invalid && electionForm.get('leader')?.touched && electionForm.get('leader')?.value === '')" class="error-message">Leader is required.</div>
+
+          <ion-item>
+            <ion-label position="stacked">Cell Number</ion-label>
+            <ion-input formControlName="cellNumber" type="text" required></ion-input>
+          </ion-item>
+          <div *ngIf="formDir.submitted && (electionForm.get('cellNumber')?.invalid && electionForm.get('cellNumber')?.touched && electionForm.get('cellNumber')?.value === '')" class="error-message">Cell Number is required.</div>
+
+          <ion-item>
+            <ion-label position="stacked">Voter Roll</ion-label>
+            <ion-input formControlName="voterRoll" type="text" required></ion-input>
+          </ion-item>
+          <div *ngIf="formDir.submitted && (electionForm.get('voterRoll')?.invalid && electionForm.get('voterRoll')?.touched && electionForm.get('voterRoll')?.value === '')" class="error-message">Voter Roll is required.</div>
+
+          <ion-item>
+            <ion-label position="stacked">Voter Turnout</ion-label>
+            <ion-input formControlName="voterTurnout" type="text" required></ion-input>
+          </ion-item>
+          <div *ngIf="formDir.submitted && (electionForm.get('voterTurnout')?.invalid && electionForm.get('voterTurnout')?.touched && electionForm.get('voterTurnout')?.value === '')" class="error-message">Voter Turnout is required.</div>
+
+          <ion-item>
+            <ion-label position="stacked">Spoilt Ballots</ion-label>
+            <ion-input formControlName="spoiltBallots" type="text" required></ion-input>
+          </ion-item>
+          <div *ngIf="formDir.submitted && (electionForm.get('spoiltBallots')?.invalid && electionForm.get('spoiltBallots')?.touched && electionForm.get('spoiltBallots')?.value === '')" class="error-message">Spoilt Ballots is required.</div>
+
+          <ion-item>
+            <ion-label position="stacked">Total Votes</ion-label>
+            <ion-input formControlName="totalVotes" type="text" required></ion-input>
+          </ion-item>
+          <div *ngIf="formDir.submitted && (electionForm.get('totalVotes')?.invalid && electionForm.get('totalVotes')?.touched && electionForm.get('totalVotes')?.value === '')" class="error-message">Total Votes is required.</div>
+
+          <ion-item>
+            <ion-label position="stacked">MK Votes</ion-label>
+            <ion-input formControlName="mkVotes" type="text" required></ion-input>
+          </ion-item>
+          <div *ngIf="formDir.submitted && (electionForm.get('mkVotes')?.invalid && electionForm.get('mkVotes')?.touched && electionForm.get('mkVotes')?.value === '')" class="error-message">MK Votes is required.</div>
+
+          <ion-item>
+            <ion-label position="stacked">MK Percentage</ion-label>
+            <ion-input formControlName="mkPercentage" type="text" required></ion-input>
+          </ion-item>
+          <div *ngIf="formDir.submitted && (electionForm.get('mkPercentage')?.invalid && electionForm.get('mkPercentage')?.touched && electionForm.get('mkPercentage')?.value === '')" class="error-message">MK Percentage is required.</div> -->
+
+  <div class="parties"> 
+<!-- MK Votes -->
+    <ion-item>
+      <ion-label position="stacked"><strong>MK Votes</strong></ion-label>
+      <ion-input formControlName="mkVotes" type="text" required></ion-input>
+    </ion-item>
+    <div *ngIf="formDir.submitted && (electionForm.get('mkVotes')?.invalid && electionForm.get('mkVotes')?.touched && electionForm.get('mkVotes')?.value === '')" class="error-message">MK Votes is required.</div>
+
+    <ion-item>
+      <ion-label position="stacked">MK Percentage</ion-label>
+      <ion-input formControlName="mkPercentage" type="text" required></ion-input>
+    </ion-item>
+    <div *ngIf="formDir.submitted && (electionForm.get('mkPercentage')?.invalid && electionForm.get('mkPercentage')?.touched && electionForm.get('mkPercentage')?.value === '')" class="error-message">MK Percentage is required.</div>
+]
+ <!-- ANC Votes -->
+ <ion-item class="input-item">
+  <ion-label position="stacked">ANC Votes</ion-label>
+  <ion-input formControlName="ancVotes" type="text" required></ion-input>
+</ion-item>
+<div *ngIf="formDir.submitted && (electionForm.get('ancVotes')?.invalid && electionForm.get('ancVotes')?.touched && electionForm.get('ancVotes')?.value === '')" class="error-message">ANC Votes is required.</div>
+
+<!-- ANC Percentage -->
+<ion-item class="input-item">
+  <ion-label position="stacked">ANC Percentage</ion-label>
+  <ion-input formControlName="ancPercentage" type="text" required></ion-input>
+</ion-item>
+<div *ngIf="formDir.submitted && (electionForm.get('ancPercentage')?.invalid && electionForm.get('ancPercentage')?.touched && electionForm.get('ancPercentage')?.value === '')" class="error-message">ANC Percentage is required.</div>
+
+<!-- EFF Votes -->
+<ion-item class="input-item">
+  <ion-label position="stacked">EFF Votes</ion-label>
+  <ion-input formControlName="effVotes" type="text" required></ion-input>
+</ion-item>
+<div *ngIf="formDir.submitted && (electionForm.get('effVotes')?.invalid && electionForm.get('effVotes')?.touched && electionForm.get('effVotes')?.value === '')" class="error-message">EFF Votes is required.</div>
+
+<!-- EFF Percentage -->
+<ion-item class="input-item">
+  <ion-label position="stacked">EFF Percentage</ion-label>
+  <ion-input formControlName="effPercentage" type="text" required></ion-input>
+</ion-item>
+<div *ngIf="formDir.submitted && (electionForm.get('effPercentage')?.invalid && electionForm.get('effPercentage')?.touched && electionForm.get('effPercentage')?.value === '')" class="error-message">EFF Percentage is required.</div>
+
+
+
+<!-- Repeat this pattern for other parties -->
+
+<!-- IFP Votes -->
+<ion-item class="input-item">
+  <ion-label position="stacked">IFP Votes</ion-label>
+  <ion-input formControlName="ifpVotes" type="text" required></ion-input>
+</ion-item>
+<div *ngIf="formDir.submitted && (electionForm.get('ifpVotes')?.invalid && electionForm.get('ifpVotes')?.touched && electionForm.get('ifpVotes')?.value === '')" class="error-message">IFP Votes is required.</div>
+
+<!-- IFP Percentage -->
+<ion-item class="input-item">
+  <ion-label position="stacked">IFP Percentage</ion-label>
+  <ion-input formControlName="ifpPercentage" type="text" required></ion-input>
+</ion-item>
+<div *ngIf="formDir.submitted && (electionForm.get('ifpPercentage')?.invalid && electionForm.get('ifpPercentage')?.touched && electionForm.get('ifpPercentage')?.value === '')" class="error-message">IFP Percentage is required.</div>
+
+<!-- NFP Votes -->
+<ion-item class="input-item">
+  <ion-label position="stacked">NFP Votes</ion-label>
+  <ion-input formControlName="nfpVotes" type="text" required></ion-input>
+</ion-item>
+<div *ngIf="formDir.submitted && (electionForm.get('nfpVotes')?.invalid && electionForm.get('nfpVotes')?.touched && electionForm.get('nfpVotes')?.value === '')" class="error-message">NFP Votes is required.</div>
+
+<!-- NFP Percentage -->
+<ion-item class="input-item">
+  <ion-label position="stacked">NFP Percentage</ion-label>
+  <ion-input formControlName="nfpPercentage" type="text" required></ion-input>
+</ion-item>
+<div *ngIf="formDir.submitted && (electionForm.get('nfpPercentage')?.invalid && electionForm.get('nfpPercentage')?.touched && electionForm.get('nfpPercentage')?.value === '')" class="error-message">NFP Percentage is required.</div>
+
+<!-- DA Votes -->
+<ion-item class="input-item">
+  <ion-label position="stacked">DA Votes</ion-label>
+  <ion-input formControlName="daVotes" type="text" required></ion-input>
+</ion-item>
+<div *ngIf="formDir.submitted && (electionForm.get('daVotes')?.invalid && electionForm.get('daVotes')?.touched && electionForm.get('daVotes')?.value === '')" class="error-message">DA Votes is required.</div>
+
+<!-- DA Percentage -->
+<ion-item class="input-item">
+  <ion-label position="stacked">DA Percentage</ion-label>
+  <ion-input formControlName="daPercentage" type="text" required></ion-input>
+</ion-item>
+<div *ngIf="formDir.submitted && (electionForm.get('daPercentage')?.invalid && electionForm.get('daPercentage')?.touched && electionForm.get('daPercentage')?.value === '')" class="error-message">DA Percentage is required.</div>
+
+<!-- UDM Votes -->
+<ion-item class="input-item">
+  <ion-label position="stacked">UDM Votes</ion-label>
+  <ion-input formControlName="udmVotes" type="text" required></ion-input>
+</ion-item>
+<div *ngIf="formDir.submitted && (electionForm.get('udmVotes')?.invalid && electionForm.get('udmVotes')?.touched && electionForm.get('udmVotes')?.value === '')" class="error-message">UDM Votes is required.</div>
+
+<!-- UDM Percentage -->
+<ion-item class="input-item">
+  <ion-label position="stacked">UDM Percentage</ion-label>
+  <ion-input formControlName="udmPercentage" type="text" required></ion-input>
+</ion-item>
+<div *ngIf="formDir.submitted && (electionForm.get('udmPercentage')?.invalid && electionForm.get('udmPercentage')?.touched && electionForm.get('udmPercentage')?.value === '')" class="error-message">UDM Percentage is required.</div>
+
+<!-- Repeat this pattern for other parties -->
+</div>
+
+
+
+
         </ion-list>
 
         <div class="ion-text-center">
-          <ion-button type="submit" expand="block" color="success">Update</ion-button>
+          <ion-button type="submit" expand="block" color="success">Submit</ion-button>
         </div>
+
       </form>
+
     </ion-card-content>
   </ion-card>
-</ion-content>
+
+</ion-content >
