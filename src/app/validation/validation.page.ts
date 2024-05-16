@@ -21,9 +21,16 @@ export class ValidationPage implements OnInit {
 
   constructor(private firestore: AngularFirestore) { }
 
+ 
   ngOnInit() {
-    this.users = this.firestore.collection<User>('Users').valueChanges();
-  }
+    this.users = this.firestore
+      .collection<User>('Users', (ref) =>
+        ref.where('role', 'in', ['RegionAdmin', 'SuperAdmin'])
+      )
+      .valueChanges();
+}
+
+
 
   approveUser(user: User) {
     const usersRef = this.firestore.collection('Users', ref =>

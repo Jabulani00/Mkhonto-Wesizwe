@@ -57,7 +57,11 @@ const routes: Routes = [
   },{
     path: 'election-results',
     loadChildren: () => import('./election-results/election-results.module').then( m => m.ElectionResultsPageModule)
+  },  {
+    path: 'region-stats',
+    loadChildren: () => import('./region-stats/region-stats.module').then( m => m.RegionStatsPageModule)
   },
+
   
     
 
