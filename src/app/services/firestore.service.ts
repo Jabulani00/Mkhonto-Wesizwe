@@ -1,10 +1,13 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import firebase from 'firebase/compat/app'; // Import firebase
+import 'firebase/compat/firestore'; // Import firestore to access FieldValue
 
 @Injectable({
   providedIn: 'root',
 })
 export class FirestoreService {
+
   constructor(private firestore: AngularFirestore) {}
 
   addMunicipality(municipality: any) {
@@ -12,7 +15,10 @@ export class FirestoreService {
   }
 
   addWard(municipalityId: string, ward: any) {
-    return this.firestore.collection(`municipalities/${municipalityId}/wards`).add(ward);
+    return this.firestore.collection('municipalities').doc(municipalityId)
+      .update({
+        wards: firebase.firestore.FieldValue.arrayUnion(ward) // Use firebase.firestore.FieldValue.arrayUnion to add the ward
+      });
   }
 
 
