@@ -15,8 +15,9 @@ export class CounterPage implements OnInit {
   municipalities: any[] = [];
   selectedMunicipalityWards: any;
 
-  constructor(private fb: FormBuilder,private firestoreService:FirestoreService,private auth:AngularFireAuth) {
+  constructor(private firestore: AngularFirestore,private fb: FormBuilder,private firestoreService:FirestoreService,private auth:AngularFireAuth) {
     this.loadMunicipalities();
+    this.initializeForm()
   }
 
   ngOnInit() {
@@ -53,6 +54,28 @@ export class CounterPage implements OnInit {
     });
   }
 
+  async initializeForm() {
+    const user = await this.auth.currentUser;
+
+    // Query Firestore to retrieve document where email is 'mike'
+this.firestore.collection('Users').ref
+      .where('email', '==', user?.email)
+      .get()
+      .then((querySnapshot:any) => {
+        querySnapshot.forEach((doc:any) => {
+          const data = doc.data();
+          // Populate form fields with retrieved data
+          this.electionForm.patchValue({
+            municipality: data.municipality || '', // Assuming these fields exist in the document
+            ward: data.ward || '',
+            // Populate other form fields as needed
+          });
+        });
+      })
+      .catch((error:any) => {
+        console.error('Error getting documents:', error);
+      });
+  }
 
   async onSubmit() {
     const user = await this.auth.currentUser;
@@ -83,6 +106,11 @@ export class CounterPage implements OnInit {
       // Optionally, display an error message to the user
     });
   }
+
+
+
+
+
 
   private submitElectionData() {
     // Simulate sending data to backend (replace with actual HTTP request)

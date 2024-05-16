@@ -67,20 +67,47 @@ export class ElectionResultsPage implements OnInit {
     // Construct the data to be updated
     const dataToUpdate = { ...formData };
     
-    // Assuming you have a reference to your Firestore collection
     const collectionRef = this.firestoreService.getCollectionRef('electionData');
+alert(user?.email);
+  // Query documents where userEmail is equal to the current user's email
+  const querySnapshot = await collectionRef.ref.where('userEmail', '==', user?.email).get();
 
-    const querySnapshot = await collectionRef.ref.where('userEmail', '==', user?.email).get(); // Use ref here
-    
-    // Iterate over the documents matching the query
+  // If there's no document matching the user's email, create a new one
+  if (querySnapshot.empty) {
+    // Create a new document with the form data
+    collectionRef.add({ ...formData, userEmail: user?.email })
+      .then(() => {
+        alert("New document created successfully in Firestore");
+        console.log('New document created successfully in Firestore');
+        // Optionally, display a success message to the user
+        // Reset form after successful submission
+        alert('New document created successfully in Firestore');
+        this.electionForm.reset();
+      })
+      .catch((error:any) => {
+        alert("Error creating new document. Please try again.");
+        console.error('Error creating new document:', error);
+        // Optionally, display an error message to the user
+      });
+  } else {
+    // There's an existing document, update it
     querySnapshot.forEach((doc:any) => {
-      // Merge existing data with new data
-      const updatedData = { ...doc.data(), ...dataToUpdate };
-      // Update the document with the merged data
-      collectionRef.doc(doc.id).update(updatedData)
+      const existingData = doc.data();
+      // Update the existing document with the form data
+      Object.keys(formData).forEach(key => {
+        // Check if the key exists in both form data and existing data
+        if (formData.hasOwnProperty(key) && existingData.hasOwnProperty(key)) {
+          // Add the value from the form data to the existing value in the database
+          existingData[key] += formData[key];
+        }
+      });
+      
+      // Update the document with the updated data
+      collectionRef.doc(doc.id).update(existingData)
         .then(() => {
           alert("Document updated successfully in Firestore");
           console.log('Document updated successfully in Firestore');
+          alert('Document updated successfully in Firestore');
           // Optionally, display a success message to the user
           // Reset form after successful submission
           this.electionForm.reset();
@@ -91,9 +118,7 @@ export class ElectionResultsPage implements OnInit {
           // Optionally, display an error message to the user
         });
     });
-    
-
-
-  
   }
+
+}
 }
