@@ -54,7 +54,13 @@ const routes: Routes = [
   {
     path: 'approve',
     loadChildren: () => import('./approve/approve.module').then( m => m.ApprovePageModule)
+  },{
+    path: 'election-results',
+    loadChildren: () => import('./election-results/election-results.module').then( m => m.ElectionResultsPageModule)
   },
+  
+    
+
 ];
 
 @NgModule({

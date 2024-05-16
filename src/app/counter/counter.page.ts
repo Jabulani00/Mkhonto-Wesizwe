@@ -25,6 +25,7 @@ export class CounterPage implements OnInit {
 
   createForm() {
     this.electionForm = this.fb.group({
+      municipality: ['', Validators.required],
       ward: ['', Validators.required],
       vdNumber: ['', Validators.required],
       leader: ['', Validators.required],
@@ -35,9 +36,21 @@ export class CounterPage implements OnInit {
       totalVotes: ['', Validators.required],
       mkVotes: ['', Validators.required],
       mkPercentage: ['', Validators.required],
-      municipality: ['', Validators.required],
+      ancVotes: ['', Validators.required],
+      ancPercentage: ['', Validators.required],
+      effVotes: ['', Validators.required],
+      effPercentage: ['', Validators.required],
+      ifpVotes: ['', Validators.required],
+      ifpPercentage: ['', Validators.required],
+      nfpVotes: ['', Validators.required],
+      nfpPercentage: ['', Validators.required],
+      daVotes: ['', Validators.required],
+      daPercentage: ['', Validators.required],
+      udmVotes: ['', Validators.required],
+      udmPercentage: ['', Validators.required],
     });
   }
+
 
   onSubmit() {
     const formData = this.electionForm.value;
