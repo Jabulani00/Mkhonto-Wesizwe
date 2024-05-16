@@ -30,6 +30,10 @@ interface ElectionData {
   ward: string;
 }
 
+interface MkVotesByMunicipality {
+  [municipality: string]: number;
+}
+
 @Component({
   selector: 'app-stats',
   templateUrl: './stats.page.html',
@@ -40,15 +44,71 @@ export class StatsPage implements OnInit, AfterViewInit {
   @ViewChild('votesVsVoterRollChart', { static: true }) votesVsVoterRollChartCanvas!: ElementRef;
   votesVsVoterRollChart!: Chart;
 
+  @ViewChild('mkVotesChartCanvas', { static: true }) mkVotesChartCanvas!: ElementRef;
+  mkVotesChart!: Chart<'pie', number[], string>; // Specify type for Chart instance
+  mkVotesByMunicipality: MkVotesByMunicipality = {}; // Use the defined interface
+
+
   votesAndTurnoutData: any[] = [];
   votesAndTurnoutChart!: Chart;
+
+  // Properties to hold stats
+  totalVoterRoll: number = 0;
+  totalVoterTurnout: number = 0;
+  totalSpoiltBallots: number = 0;
+  totalVotes: number = 0;
 
   constructor(private afs: AngularFirestore) { }
 
   ngOnInit() {
     this.loadVotesAndTurnoutData();
+    this.fetchMkVotesData();
   }
 
+  fetchMkVotesData() {
+    this.afs.collection<ElectionData>('electionData').get().subscribe((querySnapshot) => {
+      const data = querySnapshot.docs.map((doc) => doc.data());
+      console.log('Fetched data:', data); // Log fetched data
+
+      // Aggregate MK votes by municipality
+      this.mkVotesByMunicipality = data.reduce((acc: MkVotesByMunicipality, item: ElectionData) => {
+        acc[item.municipality] = (acc[item.municipality] || 0) + item.mkVotes;
+        return acc;
+      }, {});
+
+      console.log('MK Votes by Municipality:', this.mkVotesByMunicipality); // Log aggregated data
+
+      // Create pie chart
+      this.createMkVotesChart();
+    }, (error) => {
+      console.error('Error fetching data from Firestore:', error);
+    });
+  }
+
+  createMkVotesChart() {
+    const labels = Object.keys(this.mkVotesByMunicipality);
+    const values = Object.values(this.mkVotesByMunicipality);
+
+    if (this.mkVotesChart) {
+      this.mkVotesChart.destroy(); // Destroy existing chart before creating a new one
+    }
+
+    this.mkVotesChart = new Chart<'pie', number[], string>(this.mkVotesChartCanvas.nativeElement, {
+      type: 'pie',
+      data: {
+        labels: labels,
+        datasets: [{
+          data: values,
+          backgroundColor: [
+            '#FF6384',
+            '#36A2EB',
+            '#FFCE56',
+            // Add more colors as needed
+          ],
+        }],
+      },
+    });
+  }
   ngAfterViewInit() {
     this.createVotesAndTurnoutChart();
   }
@@ -88,6 +148,12 @@ export class StatsPage implements OnInit, AfterViewInit {
       ], []);
 
       console.log('Transformed data for votes and turnout:', this.votesAndTurnoutData); // Log transformed data
+
+      // Aggregate stats
+      this.totalVoterRoll = data.reduce((acc, item) => acc + item.voterRoll, 0);
+      this.totalVoterTurnout = data.reduce((acc, item) => acc + item.voterTurnout, 0);
+      this.totalSpoiltBallots = data.reduce((acc, item) => acc + item.spoiltBallots, 0);
+      this.totalVotes = data.reduce((acc, item) => acc + item.totalVotes, 0);
 
       const votesVsVoterRollData = data.map((item) => ({
         total: item.totalVotes,

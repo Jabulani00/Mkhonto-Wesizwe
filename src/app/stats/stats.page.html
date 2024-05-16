@@ -5,21 +5,47 @@
 </ion-header>
 
 <ion-content>
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Votes and Turnout</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
+  <div class="container">
+    <!-- Stats Section -->
+    <div class="stats">
+      <h2>Election Statistics</h2>
+      <div class="stats-grid">
+        <div class="stat-block">
+          <strong>Total Voter Roll:</strong>
+          <span>{{ totalVoterRoll }}</span>
+        </div>
+        <div class="stat-block">
+          <strong>Total Voter Turnout:</strong>
+          <span>{{ totalVoterTurnout }}</span>
+        </div>
+        <div class="stat-block">
+          <strong>Total Spoilt Ballots:</strong>
+          <span>{{ totalSpoiltBallots }}</span>
+        </div>
+        <div class="stat-block">
+          <strong>Total Votes:</strong>
+          <span>{{ totalVotes }}</span>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Segment Control -->
+    <ion-segment (ionChange)="segmentChanged($event)" [scrollable]="true">
+      <ion-segment-button value="votesAndTurnout" checked>Votes and Turnout</ion-segment-button>
+      <ion-segment-button value="votesVsVoterRoll">Votes vs Voter Roll</ion-segment-button>
+      <ion-segment-button value="mkVotes">MK Votes</ion-segment-button>
+    </ion-segment>
+  
+    <!-- Charts -->
+    <div id="votesAndTurnout-chart" class="chart-container">
       <canvas #votesAndTurnoutChart></canvas>
-    </ion-card-content>
-  </ion-card>
-
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Votes vs Voter Roll</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
+    </div>
+    <div id="votesVsVoterRoll-chart" class="chart-container" style="display: none;">
       <canvas #votesVsVoterRollChart></canvas>
-    </ion-card-content>
-  </ion-card>
+    </div>
+
+    <div id="mkVotes-chart" class="chart-container" style="display: none;">
+      <canvas #mkVotesChartCanvas></canvas>
+    </div>
+  </div>
 </ion-content>
