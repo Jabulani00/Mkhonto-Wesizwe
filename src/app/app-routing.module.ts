@@ -47,6 +47,11 @@ const routes: Routes = [
     path: 'municipality',
     loadChildren: () => import('./municipality/municipality.module').then( m => m.MunicipalityPageModule)
   },
+  {
+    path: 'election-results',
+    loadChildren: () => import('./election-results/election-results.module').then( m => m.ElectionResultsPageModule)
+  },
+
 ];
 
 @NgModule({

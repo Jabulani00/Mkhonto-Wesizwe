@@ -1,0 +1,31 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>ElectionResults</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-card>
+    <ion-card-content>
+      <form [formGroup]="electionForm" (ngSubmit)="onSubmit()">
+        <!-- Display election results in a table or other layout -->
+        <ion-list *ngIf="results">
+          <!-- Example: Display ANC votes and percentage -->
+          <ion-item>
+            <ion-label position="stacked">ANC Votes</ion-label>
+            <ion-input formControlName="ancVotes" type="text" [(ngModel)]="results.ancVotes"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label position="stacked">ANC Percentage</ion-label>
+            <ion-input formControlName="ancPercentage" type="text" [(ngModel)]="results.ancPercentage"></ion-input>
+          </ion-item>
+          <!-- Repeat for other parties -->
+        </ion-list>
+
+        <div class="ion-text-center">
+          <ion-button type="submit" expand="block" color="success">Update</ion-button>
+        </div>
+      </form>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

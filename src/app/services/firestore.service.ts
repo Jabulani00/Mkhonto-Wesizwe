@@ -25,4 +25,16 @@ export class FirestoreService {
   submitElectionFormData(formData: any) {
     return this.firestore.collection('electionData').add(formData);
   }
+
+  getResults() {
+    return this.firestore.collection('electionData').valueChanges();
+  }
+
+  // updateResults() {
+  //   return this.firestore.collection('electionData').doc;
+  // }
+
+
+
+
 }
