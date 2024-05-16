@@ -1,14 +1,25 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>stats</ion-title>
-    <ion-icon routerLink="/super-admin" slot="end" name="arrow-back-outline"></ion-icon>
+    <ion-title>Stats</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">stats</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content>
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Votes and Turnout</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <canvas #votesAndTurnoutChart></canvas>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Votes vs Voter Roll</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <canvas #votesVsVoterRollChart></canvas>
+    </ion-card-content>
+  </ion-card>
 </ion-content>
