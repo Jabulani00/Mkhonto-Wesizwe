@@ -29,12 +29,12 @@ export class MunicipalityPage implements OnInit {
   }
 
   getMunicipalities() {
-    this.firestoreService.getMunicipalities().subscribe((municipalities: any[]) => {
-      this.municipalities = municipalities.map(municipality => ({
-        municipality: municipality.municipality,
-        wards: municipality.wards || []
-      }));
-    });
+    // this.firestoreService.getMunicipalities().subscribe((municipalities: any[]) => {
+    //   this.municipalities = municipalities.map(municipality => ({
+    //     municipality: municipality.municipality,
+    //     wards: municipality.wards || []
+    //   }));
+    // });
   }
 
   addMunicipality() {
@@ -74,6 +74,7 @@ export class MunicipalityPage implements OnInit {
 
     // Clear the arrays after submission
     this.municipalities = [];
+
     this.municipalityName = '';
     this.selectedMunicipality = null;
     

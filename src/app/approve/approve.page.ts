@@ -11,26 +11,23 @@ interface User {
 
 
 @Component({
-  selector: 'app-validation',
-  templateUrl: './validation.page.html',
-  styleUrls: ['./validation.page.scss'],
+  selector: 'app-approve',
+  templateUrl: './approve.page.html',
+  styleUrls: ['./approve.page.scss'],
 })
-export class ValidationPage implements OnInit {
+export class ApprovePage implements OnInit {
 
   users!: Observable<User[]>;
 
   constructor(private firestore: AngularFirestore) { }
 
- 
   ngOnInit() {
     this.users = this.firestore
       .collection<User>('Users', (ref) =>
-        ref.where('role', 'in', ['RegionAdmin', 'SuperAdmin'])
+        ref.where('role', '==', 'GroundWorker')
       )
       .valueChanges();
-}
-
-
+  }
 
   approveUser(user: User) {
     const usersRef = this.firestore.collection('Users', ref =>
@@ -78,6 +75,4 @@ export class ValidationPage implements OnInit {
     });
   }
   
-
-
 }

@@ -48,9 +48,22 @@ const routes: Routes = [
     loadChildren: () => import('./municipality/municipality.module').then( m => m.MunicipalityPageModule)
   },
   {
+    path: 'region',
+    loadChildren: () => import('./region/region.module').then( m => m.RegionPageModule)
+  },
+  {
+    path: 'approve',
+    loadChildren: () => import('./approve/approve.module').then( m => m.ApprovePageModule)
+  },{
     path: 'election-results',
     loadChildren: () => import('./election-results/election-results.module').then( m => m.ElectionResultsPageModule)
+  },  {
+    path: 'region-stats',
+    loadChildren: () => import('./region-stats/region-stats.module').then( m => m.RegionStatsPageModule)
   },
+
+  
+    
 
 ];
 
