@@ -26,12 +26,85 @@ ion-content {
     font-size: 16px;
     font-weight: 500;
   }
-  
-  ion-input,
-  ion-select {
-    font-size: 16px;
-    color: var(--ion-color-dark);
+ /* General Styles */
+ion-item {
+  --background: #f7f7f7;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --border-radius: 8px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+ion-item:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+ion-label {
+  color: #555;
+  font-weight: 500;
+}
+
+ion-searchbar {
+  --background: #fff;
+  --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --border-radius: 4px;
+  --placeholder-color: #999;
+  --icon-color: #666;
+}
+
+ion-select {
+  --placeholder-color: #999;
+  --placeholder-opacity: 1;
+  --icon-color: #666;
+}
+
+/* Municipality Styles */
+ion-item[municipality] ion-searchbar {
+  --background: #f0f7ff;
+  --icon-color: #2196f3;
+}
+
+ion-item[municipality] ion-select {
+  --icon-color: #2196f3;
+}
+
+ion-item[municipality] ion-select-option:hover {
+  --background: #e3f2fd;
+  --color: #2196f3;
+}
+
+/* Ward Styles */
+ion-item[ward] ion-searchbar {
+  --background: #fff0f0;
+  --icon-color: #e53935;
+}
+
+ion-item[ward] ion-select {
+  --icon-color: #e53935;
+}
+
+ion-item[ward] ion-select-option:hover {
+  --background: #ffebee;
+  --color: #e53935;
+}
+
+/* Animation */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
   }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+ion-item {
+  animation: fadeInUp 0.5s ease-out;
+}
   
   /* Dark mode styles */
   @media (prefers-color-scheme: dark) {

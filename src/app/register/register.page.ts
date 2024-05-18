@@ -84,13 +84,13 @@ export class RegisterPage implements OnInit {
       municipality.municipality.toLowerCase().includes(searchText)
     );
   }
-
- filterWards(event: any) {
-  const searchText = event.detail.value.toLowerCase();
-  this.filteredWards = this.selectedMunicipalityWards.filter((ward: { ward: string }) =>
-    ward.ward.toLowerCase().includes(searchText)
-  );
-}
+  
+  filterWards(event: any) {
+    const searchText = event.detail.value.toLowerCase();
+    this.filteredWards = this.selectedMunicipalityWards.filter((ward: { ward: string }) =>
+      ward.ward.toLowerCase().includes(searchText)
+    );
+  }
 
   async Register() {
     if (this.name === '') {
