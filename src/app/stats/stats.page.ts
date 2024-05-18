@@ -48,7 +48,6 @@ export class StatsPage implements OnInit, AfterViewInit {
   mkVotesChart!: Chart<'pie', number[], string>; // Specify type for Chart instance
   mkVotesByMunicipality: MkVotesByMunicipality = {}; // Use the defined interface
 
-
   votesAndTurnoutData: any[] = [];
   votesAndTurnoutChart!: Chart;
 
@@ -66,8 +65,8 @@ export class StatsPage implements OnInit, AfterViewInit {
   }
 
   fetchMkVotesData() {
-    this.afs.collection<ElectionData>('electionData').get().subscribe((querySnapshot) => {
-      const data = querySnapshot.docs.map((doc) => doc.data());
+    this.afs.collection<ElectionData>('electionData').snapshotChanges().subscribe((snapshot) => {
+      const data = snapshot.map((doc) => doc.payload.doc.data() as ElectionData);
       console.log('Fetched data:', data); // Log fetched data
 
       // Aggregate MK votes by municipality
@@ -109,6 +108,7 @@ export class StatsPage implements OnInit, AfterViewInit {
       },
     });
   }
+
   ngAfterViewInit() {
     this.createVotesAndTurnoutChart();
   }
@@ -116,7 +116,7 @@ export class StatsPage implements OnInit, AfterViewInit {
   segmentChanged(event: CustomEvent) {
     const selectedSegment = event.detail.value;
     const chartContainers = document.querySelectorAll('.chart-container');
-  
+
     chartContainers.forEach(container => {
       const chartContainer = container as HTMLElement;
       if (chartContainer.id === `${selectedSegment}-chart`) {
@@ -128,8 +128,8 @@ export class StatsPage implements OnInit, AfterViewInit {
   }
 
   loadVotesAndTurnoutData() {
-    this.afs.collection<ElectionData>('electionData').get().subscribe((querySnapshot) => {
-      const data = querySnapshot.docs.map((doc) => doc.data());
+    this.afs.collection<ElectionData>('electionData').snapshotChanges().subscribe((snapshot) => {
+      const data = snapshot.map((doc) => doc.payload.doc.data() as ElectionData);
       console.log('Fetched data:', data); // Log fetched data
 
       this.votesAndTurnoutData = data.reduce<any[]>((acc, item) => [
