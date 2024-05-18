@@ -57,6 +57,9 @@ export class StatsPage implements OnInit, AfterViewInit {
   totalSpoiltBallots: number = 0;
   totalVotes: number = 0;
 
+  // Property to hold fraud alerts
+  fraudAlerts: { municipality: string; ward: string; totalVotes: number; voterRoll: number }[] = [];
+
   constructor(private afs: AngularFirestore) { }
 
   ngOnInit() {
@@ -154,6 +157,14 @@ export class StatsPage implements OnInit, AfterViewInit {
       this.totalVoterTurnout = data.reduce((acc, item) => acc + item.voterTurnout, 0);
       this.totalSpoiltBallots = data.reduce((acc, item) => acc + item.spoiltBallots, 0);
       this.totalVotes = data.reduce((acc, item) => acc + item.totalVotes, 0);
+
+      // Check for fraud alerts
+      this.fraudAlerts = data.filter(item => item.totalVotes > item.voterRoll).map(item => ({
+        municipality: item.municipality,
+        ward: item.ward,
+        totalVotes: item.totalVotes,
+        voterRoll: item.voterRoll,
+      }));
 
       const votesVsVoterRollData = data.map((item) => ({
         total: item.totalVotes,

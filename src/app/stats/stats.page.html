@@ -29,14 +29,29 @@
         </div>
       </div>
     </div>
-  
+
+    <!-- Fraud Alerts Section -->
+    <div class="fraud-alerts" *ngIf="fraudAlerts.length > 0">
+      <h2>Fraud Alerts</h2>
+      <div class="alert-slider">
+        <div class="alert" *ngFor="let alert of fraudAlerts">
+          <ion-icon name="warning-outline" class="alert-icon"></ion-icon>
+          <div class="alert-content">
+            <strong>{{ alert.municipality }} - Ward {{ alert.ward }}:</strong>
+            <p>Total Votes: {{ alert.totalVotes }}</p>
+            <p>Voter Roll: {{ alert.voterRoll }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Segment Control -->
     <ion-segment (ionChange)="segmentChanged($event)" [scrollable]="true">
       <ion-segment-button value="votesAndTurnout" checked>Votes and Turnout</ion-segment-button>
       <ion-segment-button value="votesVsVoterRoll">Votes vs Voter Roll</ion-segment-button>
       <ion-segment-button value="mkVotes">MK Votes</ion-segment-button>
     </ion-segment>
-  
+
     <!-- Charts -->
     <div id="votesAndTurnout-chart" class="chart-container">
       <canvas #votesAndTurnoutChart></canvas>
@@ -44,7 +59,6 @@
     <div id="votesVsVoterRoll-chart" class="chart-container" style="display: none;">
       <canvas #votesVsVoterRollChart></canvas>
     </div>
-
     <div id="mkVotes-chart" class="chart-container" style="display: none;">
       <canvas #mkVotesChartCanvas></canvas>
     </div>

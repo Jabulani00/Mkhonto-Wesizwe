@@ -73,3 +73,112 @@
     --color-checked: #007bff;
   }
   
+
+  .container {
+    padding: 16px;
+  }
+  
+  .stats {
+    margin-bottom: 24px;
+  }
+  
+  .stats h2 {
+    font-size: 24px;
+    color: #333;
+  }
+  
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  
+  .stat-block {
+    background: #f9f9f9;
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .stat-block strong {
+    display: block;
+    font-size: 18px;
+    color: #555;
+  }
+  
+  .stat-block span {
+    font-size: 16px;
+    color: #000;
+  }
+  
+  .fraud-alerts {
+    margin-bottom: 24px;
+  }
+  
+  .fraud-alerts h2 {
+    font-size: 24px;
+    color: #e74c3c;
+  }
+  
+  .alert-slider {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+  }
+  
+  .alert {
+    background: #fee;
+    border-left: 4px solid #e74c3c;
+    padding: 16px;
+    border-radius: 8px;
+    margin-right: 16px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    min-width: 300px;
+    scroll-snap-align: start;
+    animation: slide-in 0.5s ease-in-out;
+  }
+  
+  .alert-icon {
+    font-size: 24px;
+    color: #e74c3c;
+    margin-right: 12px;
+  }
+  
+  .alert-content {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .alert strong {
+    font-size: 18px;
+    color: #e74c3c;
+  }
+  
+  .alert p {
+    margin: 4px 0;
+    font-size: 16px;
+    color: #000;
+  }
+  
+  .chart-container {
+    margin-bottom: 24px;
+  }
+  
+  .chart-container canvas {
+    width: 100%;
+    height: 400px;
+  }
+  
+  @keyframes slide-in {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
