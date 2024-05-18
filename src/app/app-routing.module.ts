@@ -61,6 +61,10 @@ const routes: Routes = [
     path: 'region-stats',
     loadChildren: () => import('./region-stats/region-stats.module').then( m => m.RegionStatsPageModule)
   },
+  {
+    path: 'vd',
+    loadChildren: () => import('./vd/vd.module').then( m => m.VdPageModule)
+  },
 
   
     

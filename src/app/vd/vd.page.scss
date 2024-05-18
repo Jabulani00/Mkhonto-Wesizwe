@@ -1,0 +1,99 @@
+/* Define primary and secondary colors */
+$primary-color: #4CAF50;
+$secondary-color: #FFC107;
+$background-color: #F5F5F5;
+$text-color: #333;
+$highlight-color: #FF5722;
+
+body {
+  background-color: $background-color;
+  color: $text-color;
+  font-family: 'Arial, sans-serif';
+  margin: 0;
+  padding: 0;
+}
+
+/* Container for municipalities */
+.municipality-container {
+  padding: 15px;
+  margin: 10px;
+  border: 1px solid $primary-color;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.municipality-container h2 {
+  color: $primary-color;
+  font-size: 1.5em;
+  margin: 0 0 10px 0;
+  cursor: pointer;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  margin: 5px 0;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: $secondary-color;
+  color: #fff;
+}
+
+li ul {
+  margin: 10px 0 0 20px;
+}
+
+li li {
+  background-color: $highlight-color;
+  margin: 3px 0;
+  padding: 8px;
+}
+
+input[type="text"] {
+  padding: 10px;
+  margin-right: 10px;
+  border: 1px solid $primary-color;
+  border-radius: 4px;
+  width: calc(100% - 120px);
+}
+
+button {
+  padding: 10px 20px;
+  background-color: $primary-color;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: darken($primary-color, 10%);
+}
+
+/* Responsive design for mobile devices */
+@media (max-width: 600px) {
+  .municipality-container {
+    margin: 5px;
+    padding: 10px;
+  }
+
+  h2 {
+    font-size: 1.2em;
+  }
+
+  li {
+    font-size: 0.9em;
+  }
+
+  input[type="text"] {
+    width: calc(100% - 100px);
+  }
+
+  button {
+    padding: 8px 16px;
+  }
+}

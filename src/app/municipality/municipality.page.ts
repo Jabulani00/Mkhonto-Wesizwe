@@ -25,17 +25,10 @@ export class MunicipalityPage implements OnInit {
   constructor(private firestoreService: FirestoreService) {}
 
   ngOnInit() {
-    this.getMunicipalities();
+  
   }
 
-  getMunicipalities() {
-    // this.firestoreService.getMunicipalities().subscribe((municipalities: any[]) => {
-    //   this.municipalities = municipalities.map(municipality => ({
-    //     municipality: municipality.municipality,
-    //     wards: municipality.wards || []
-    //   }));
-    // });
-  }
+
 
   addMunicipality() {
     const municipality: Municipality = { municipality: this.municipalityName, wards: [] };

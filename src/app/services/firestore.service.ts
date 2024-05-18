@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
-import firebase from 'firebase/compat/app'; // Import firebase
-import 'firebase/compat/firestore'; // Import firestore to access FieldValue
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/firestore';
+import { Ward } from '../interfaces/ward.interface';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FirestoreService {
-
   constructor(private firestore: AngularFirestore) {}
 
   addMunicipality(municipality: any) {
@@ -17,14 +18,23 @@ export class FirestoreService {
   addWard(municipalityId: string, ward: any) {
     return this.firestore.collection('municipalities').doc(municipalityId)
       .update({
-        wards: firebase.firestore.FieldValue.arrayUnion(ward) // Use firebase.firestore.FieldValue.arrayUnion to add the ward
+        wards: firebase.firestore.FieldValue.arrayUnion(ward)
       });
   }
 
+  getWardsForMunicipality(municipalityId: string): Observable<Ward[]> {
+    return this.firestore.collection('municipalities').doc(municipalityId)
+      .collection<Ward>('wards').valueChanges();
+  }
 
-////
+  updateWard(municipalityId: string, ward: Ward): Promise<void> {
+    return this.firestore.collection('municipalities').doc(municipalityId)
+      .update({
+        wards: firebase.firestore.FieldValue.arrayUnion(ward)
+      });
+  }
+
   getMunicipalities() {
-    // Assuming you have a 'municipalities' collection in Firestore
     return this.firestore.collection('municipalities').valueChanges();
   }
 
@@ -39,11 +49,4 @@ export class FirestoreService {
   getCollectionRef(collectionName: string) {
     return this.firestore.collection(collectionName);
   }
-  // updateResults() {
-  //   return this.firestore.collection('electionData').doc;
-  // }
-
-
-
-
 }

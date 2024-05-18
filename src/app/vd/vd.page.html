@@ -1,0 +1,39 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Voting Districts</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!-- <div *ngFor="let municipality of municipalities">
+    <h2>{{ municipality.municipality }}</h2>
+    <ul>
+      <li *ngFor="let ward of municipality.wards">
+        {{ ward.ward }} - Voting Station: {{ ward.votingStationNumber }}
+      </li>
+    </ul>
+  </div> -->
+  
+
+  <div class="municipality-container" *ngFor="let municipality of municipalities">
+    <h2 (click)="selectMunicipality(municipality)">{{ municipality.municipality }}</h2>
+    <ul *ngIf="selectedMunicipality === municipality">
+      <li *ngFor="let ward of municipality.wards" (click)="selectWard(ward)">
+        {{ ward.ward }}
+        <ul *ngIf="selectedWard === ward">
+          <li *ngFor="let votingStation of ward.votingStations">
+            Voting Station: {{ votingStation }}
+          </li>
+          <li>
+            <input type="text" [(ngModel)]="votingStationNumber" placeholder="Add voting station" />
+            <button (click)="addVotingStation()">Add Voting Station</button>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
+  
+  
+  
+  
+</ion-content>
