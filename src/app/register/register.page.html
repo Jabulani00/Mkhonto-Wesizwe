@@ -24,18 +24,20 @@
         <ion-select-option value="GroundWorker">Ground Worker</ion-select-option>
       </ion-select>
     </ion-item>
-    
+
     <ion-item *ngIf="selectedRole === 'RegionAdmin' || selectedRole === 'GroundWorker'">
       <ion-label position="floating">Municipality</ion-label>
+      <ion-searchbar [(ngModel)]="municipalitySearchText" (ionChange)="filterMunicipalities($event)"></ion-searchbar>
       <ion-select [(ngModel)]="selectedMunicipality" (ionChange)="onMunicipalityChange($event)">
-        <ion-select-option *ngFor="let municipality of municipalities" [value]="municipality.municipality">{{ municipality.municipality }}</ion-select-option>
+        <ion-select-option *ngFor="let municipality of filteredMunicipalities" [value]="municipality.municipality">{{ municipality.municipality }}</ion-select-option>
       </ion-select>
     </ion-item>
-    
+
     <ion-item *ngIf="selectedRole === 'GroundWorker'">
       <ion-label position="floating">Ward</ion-label>
+      <ion-searchbar [(ngModel)]="wardSearchText" (ionChange)="filterWards($event)"></ion-searchbar>
       <ion-select [(ngModel)]="selectedWard">
-        <ion-select-option *ngFor="let ward of selectedMunicipalityWards" [value]="ward.ward">{{ ward.ward }}</ion-select-option>
+        <ion-select-option *ngFor="let ward of filteredWards" [value]="ward.ward">{{ ward.ward }}</ion-select-option>
       </ion-select>
     </ion-item>
 

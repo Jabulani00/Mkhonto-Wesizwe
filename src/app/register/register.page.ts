@@ -32,6 +32,11 @@ export class RegisterPage implements OnInit {
   selectedMunicipalityWards: any;
   ward: string = '';
 
+  municipalitySearchText: string = '';
+  wardSearchText: string = '';
+  filteredMunicipalities: any[] = [];
+  filteredWards: any[] = [];
+
   constructor(
     private firestoreService: FirestoreService,
     private db: AngularFirestore,
@@ -42,11 +47,15 @@ export class RegisterPage implements OnInit {
     this.loadMunicipalities();
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.filteredMunicipalities = [...this.municipalities];
+    this.filteredWards = [...this.selectedMunicipalityWards];
+  }
 
   loadMunicipalities() {
     this.firestoreService.getMunicipalities().subscribe((municipalities: any[]) => {
       this.municipalities = municipalities;
+      this.filteredMunicipalities = [...municipalities];
     });
   }
 
@@ -56,8 +65,10 @@ export class RegisterPage implements OnInit {
 
     if (selectedMunicipalityObject) {
       this.selectedMunicipalityWards = selectedMunicipalityObject.wards || [];
+      this.filteredWards = [...this.selectedMunicipalityWards];
     } else {
       this.selectedMunicipalityWards = [];
+      this.filteredWards = [];
     }
   }
 
@@ -66,6 +77,20 @@ export class RegisterPage implements OnInit {
       this.loadMunicipalities();
     }
   }
+
+  filterMunicipalities(event: any) {
+    const searchText = event.detail.value.toLowerCase();
+    this.filteredMunicipalities = this.municipalities.filter(municipality =>
+      municipality.municipality.toLowerCase().includes(searchText)
+    );
+  }
+
+ filterWards(event: any) {
+  const searchText = event.detail.value.toLowerCase();
+  this.filteredWards = this.selectedMunicipalityWards.filter((ward: { ward: string }) =>
+    ward.ward.toLowerCase().includes(searchText)
+  );
+}
 
   async Register() {
     if (this.name === '') {
