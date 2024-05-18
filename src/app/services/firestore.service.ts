@@ -4,7 +4,10 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 import { Ward } from '../interfaces/ward.interface';
 import { Observable } from 'rxjs';
-
+interface MunicipalityData {
+  municipality: string;
+  wards: Ward[];
+}
 @Injectable({
   providedIn: 'root',
 })
@@ -28,9 +31,45 @@ export class FirestoreService {
   }
 
   updateWard(municipalityId: string, ward: Ward): Promise<void> {
-    return this.firestore.collection('municipalities').doc(municipalityId)
-      .update({
-        wards: firebase.firestore.FieldValue.arrayUnion(ward)
+    const wardIndex = ward.ward.split(' ').pop(); // Get the ward number
+  
+    return this.firestore
+      .collection('municipalities')
+      .doc(municipalityId)
+      .get()
+      .toPromise()
+      .then((doc) => {
+        if (doc) {
+          if (!doc.exists) {
+            // If the document doesn't exist, create a new one with the ward
+            return this.firestore.collection('municipalities').doc(municipalityId).set({
+              municipality: municipalityId,
+              wards: [ward],
+            });
+          } else {
+            // If the document exists, update the wards array
+            const data: MunicipalityData | undefined = doc.data() as MunicipalityData | undefined;
+            const wards = data?.wards ?? [];
+  
+            const updatedWards = wards.map((w: Ward) => {
+              if (w.ward === ward.ward) {
+                return ward;
+              }
+              return w;
+            });
+  
+            return this.firestore
+              .collection('municipalities')
+              .doc(municipalityId)
+              .update({ wards: updatedWards });
+          }
+        } else {
+          console.error('Error retrieving document');
+          return Promise.resolve(); // Return an empty Promise to satisfy the return type
+        }
+      })
+      .catch((error) => {
+        console.error('Error updating ward: ', error);
       });
   }
 

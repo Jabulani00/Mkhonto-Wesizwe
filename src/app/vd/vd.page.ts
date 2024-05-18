@@ -29,7 +29,7 @@ export class VdPage implements OnInit {
       this.municipalities = data.map((item: any) => {
         return {
           municipality: item.municipality,
-          wards: item.wards,
+          wards: item.wards || [], // Handle missing wards property
         };
       });
     });
@@ -46,21 +46,20 @@ export class VdPage implements OnInit {
 
   addVotingStation() {
     if (this.selectedWard && this.votingStationNumber.trim()) {
-      if (!this.selectedWard.votingStations) {
-        this.selectedWard.votingStations = []; // Ensure votingStations array is initialized
-      }
-      this.selectedWard.votingStations.push(this.votingStationNumber.trim());
+      const updatedWard: Ward = {
+        ...this.selectedWard,
+        votingStations: [...(this.selectedWard.votingStations || []), this.votingStationNumber.trim()], // Handle missing votingStations array
+      };
+
       this.votingStationNumber = '';
-      this.updateWardInFirestore(this.selectedWard);
+      this.updateWardInFirestore(updatedWard);
     }
   }
 
   updateWardInFirestore(ward: Ward) {
     if (this.selectedMunicipality) {
       const municipalityId = this.selectedMunicipality.municipality;
-      this.firestoreService.updateWard(municipalityId, ward).catch((error) => {
-        console.error('Error updating ward: ', error);
-      });
+      this.firestoreService.updateWard(municipalityId, ward);
     }
   }
 }
