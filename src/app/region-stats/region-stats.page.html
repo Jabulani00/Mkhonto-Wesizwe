@@ -1,13 +1,66 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>regionStats</ion-title>
+    <ion-title>Stats</ion-title>
+    <ion-icon routerLink="/super-admin" slot="end" name="arrow-back-outline"></ion-icon>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">regionStats</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content>
+  <div class="container">
+    <!-- Stats Section -->
+    <div class="stats">
+      <h2>Election Statistics</h2>
+      <div class="stats-grid">
+        <div class="stat-block">
+          <strong>Total Voter Roll:</strong>
+          <span>{{ totalVoterRoll }}</span>
+        </div>
+        <div class="stat-block">
+          <strong>Total Voter Turnout:</strong>
+          <span>{{ totalVoterTurnout }}</span>
+        </div>
+        <div class="stat-block">
+          <strong>Total Spoilt Ballots:</strong>
+          <span>{{ totalSpoiltBallots }}</span>
+        </div>
+        <div class="stat-block">
+          <strong>Total Votes:</strong>
+          <span>{{ totalVotes }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fraud Alerts Section -->
+    <div class="fraud-alerts" *ngIf="fraudAlerts.length > 0">
+      <h2>Fraud Alerts</h2>
+      <div class="alert-slider">
+        <div class="alert" *ngFor="let alert of fraudAlerts">
+          <ion-icon name="warning-outline" class="alert-icon"></ion-icon>
+          <div class="alert-content">
+            <strong>{{ alert.municipality }} - Ward {{ alert.ward }}:</strong>
+            <p>Total Votes: {{ alert.totalVotes }}</p>
+            <p>Voter Roll: {{ alert.voterRoll }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Segment Control -->
+    <ion-segment (ionChange)="segmentChanged($event)" [scrollable]="true">
+      <ion-segment-button value="votesAndTurnout" checked>Votes and Turnout</ion-segment-button>
+      <ion-segment-button value="votesVsVoterRoll">Votes vs Voter Roll</ion-segment-button>
+      <ion-segment-button value="mkVotes">MK Votes</ion-segment-button>
+    </ion-segment>
+
+    <!-- Charts -->
+    <div id="votesAndTurnout-chart" class="chart-container">
+      <canvas #votesAndTurnoutChart></canvas>
+    </div>
+    <div id="votesVsVoterRoll-chart" class="chart-container" style="display: none;">
+      <canvas #votesVsVoterRollChart></canvas>
+    </div>
+    <div id="mkVotes-chart" class="chart-container" style="display: none;">
+      <canvas #mkVotesChartCanvas></canvas>
+    </div>
+  </div>
 </ion-content>
