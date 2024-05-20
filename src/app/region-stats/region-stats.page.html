@@ -75,9 +75,10 @@
 
     <!-- Segment Control -->
     <ion-segment (ionChange)="segmentChanged($event)" [scrollable]="true">
-      <ion-segment-button value="votesAndTurnout" checked>Votes and Turnout</ion-segment-button>
-      <ion-segment-button value="votesVsVoterRoll">Votes vs Voter Roll</ion-segment-button>
-      <ion-segment-button value="mkVotes">MK Votes</ion-segment-button>
+      
+      <ion-segment-button value="votesVsVoterRoll" checked>Votes Percentage</ion-segment-button>
+      
+      <ion-segment-button value="generalStats">General Stats</ion-segment-button>
     </ion-segment>
 
     <!-- Charts -->
@@ -88,7 +89,10 @@
       <canvas #votesVsVoterRollChart></canvas>
     </div>
     <div id="mkVotes-chart" class="chart-container" style="display: none;">
-      <canvas #mkVotesChartCanvas></canvas>
+      <canvas #mkVotesChart></canvas>
+    </div>
+    <div id="generalStats-chart" class="chart-container" style="display: none;">
+      <canvas #generalStatsChart></canvas>
     </div>
   </div>
 </ion-content>

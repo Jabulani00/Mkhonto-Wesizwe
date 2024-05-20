@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import Chart from 'chart.js/auto';
 
 interface Statistics {
   totalVoterRoll: number;
@@ -29,6 +30,9 @@ interface FraudAlert {
   styleUrls: ['./region-stats.page.scss']
 })
 export class RegionStatsPage implements OnInit {
+  @ViewChild('votesVsVoterRollChart') votesVsVoterRollChart!: ElementRef;
+  @ViewChild('generalStatsChart') generalStatsChart!: ElementRef;
+
   currentMunicipality: string = '';
   totalVoterRoll: number = 0;
   totalVoterTurnout: number = 0;
@@ -42,6 +46,9 @@ export class RegionStatsPage implements OnInit {
   nfpVotes: number = 0;
   udmVotes: number = 0;
   fraudAlerts: FraudAlert[] = [];
+
+  chart: any;
+  barChart: any;
 
   constructor(
     private auth: AngularFireAuth,
@@ -122,6 +129,9 @@ export class RegionStatsPage implements OnInit {
           this.mkVotes = statistics.mkVotes;
           this.nfpVotes = statistics.nfpVotes;
           this.udmVotes = statistics.udmVotes;
+
+          this.updateChart();
+          this.updateBarChart();
         },
         (error) => {
           console.error('Error fetching statistics:', error);
@@ -166,6 +176,68 @@ export class RegionStatsPage implements OnInit {
         chartContainer.style.display = 'block';
       } else {
         chartContainer.style.display = 'none';
+      }
+    });
+  }
+
+  updateChart() {
+    if (this.chart) {
+      this.chart.destroy();
+    }
+
+    this.chart = new Chart(this.votesVsVoterRollChart.nativeElement, {
+      type: 'pie',
+      data: {
+        labels: ['ANC Votes', 'DA Votes', 'EFF Votes', 'IFP Votes', 'MK Votes', 'NFP Votes', 'UDM Votes'],
+        datasets: [{
+          data: [
+            this.ancVotes,
+            this.daVotes,
+            this.effVotes,
+            this.ifpVotes,
+            this.mkVotes,
+            this.nfpVotes,
+            this.udmVotes
+          ],
+          backgroundColor: [
+            '#FF6384',
+            '#36A2EB',
+            '#FFCE56',
+            '#FF5733',
+            '#C70039',
+            '#900C3F',
+            '#581845'
+          ],
+        }]
+      }
+    });
+  }
+
+  updateBarChart() {
+    if (this.barChart) {
+      this.barChart.destroy();
+    }
+
+    this.barChart = new Chart(this.generalStatsChart.nativeElement, {
+      type: 'bar',
+      data: {
+        labels: ['Total Voter Roll', 'Total Voter Turnout', 'Total Spoilt Ballots', 'Total Votes'],
+        datasets: [{
+          data: [
+            this.totalVoterRoll,
+            this.totalVoterTurnout,
+            this.totalSpoiltBallots,
+            this.totalVotes
+          ],
+          backgroundColor: '#36A2EB'
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
       }
     });
   }
