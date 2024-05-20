@@ -217,7 +217,7 @@ export class StatsPage implements OnInit, AfterViewInit {
         datasets: [{
           data: values,
           backgroundColor: [
-            '#FF6384',
+            '#53A546',
             '#36A2EB',
             '#FFCE56',
             '#9ACD32', // Green
