@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FirestoreService } from '../services/firestore.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 
 @Component({
   selector: 'app-election-results',
@@ -13,12 +14,14 @@ export class ElectionResultsPage implements OnInit {
   municipalities: any[] = [];
   selectedMunicipalityWards: any;
 
-  constructor(private fb: FormBuilder,private firestoreService:FirestoreService,private auth:AngularFireAuth) {
-  
+  constructor(private firestore: AngularFirestore,private fb: FormBuilder,private firestoreService:FirestoreService,private auth:AngularFireAuth) {
+    this.createForm();
+    this.getDoc();
   }
 
   ngOnInit() {
-    this.createForm();
+   //this.createForm();
+    
   
   }
 
@@ -35,19 +38,19 @@ export class ElectionResultsPage implements OnInit {
       spoiltBallots: ['', Validators.required],
       totalVotes: ['', Validators.required],
       mkVotes: ['', Validators.required],
-      mkPercentage: ['', Validators.required],
+      // mkPercentage: ['', Validators.required],
       ancVotes: ['', Validators.required],
-      ancPercentage: ['', Validators.required],
+      // ancPercentage: ['', Validators.required],
       effVotes: ['', Validators.required],
-      effPercentage: ['', Validators.required],
+      // effPercentage: ['', Validators.required],
       ifpVotes: ['', Validators.required],
-      ifpPercentage: ['', Validators.required],
+      // ifpPercentage: ['', Validators.required],
       nfpVotes: ['', Validators.required],
-      nfpPercentage: ['', Validators.required],
+      // nfpPercentage: ['', Validators.required],
       daVotes: ['', Validators.required],
-      daPercentage: ['', Validators.required],
+      // daPercentage: ['', Validators.required],
       udmVotes: ['', Validators.required],
-      udmPercentage: ['', Validators.required],
+      // udmPercentage: ['', Validators.required],
     });
   }
 
@@ -121,4 +124,47 @@ alert(user?.email);
   }
 
 }
+
+
+async getDoc(){
+  const user = await this.auth.currentUser;
+  if (user) {
+    const userEmail = user.email;
+
+    this.firestore.collection('electionData', ref => ref.where('userEmail', '==', userEmail))
+      .valueChanges()
+      .subscribe((docs: any[]) => {
+        // Iterate through each document in the filtered collection
+        docs.forEach(doc => {
+          // Add the user input to the fetched data
+          const updatedDoc = {
+            ancVotes: doc.ancVotes + this.electionForm.get('ancVotes')?.value,
+            daVotes: doc.daVotes + this.electionForm.get('daVotes')?.value,
+            effVotes: doc.effVotes + this.electionForm.get('effVotes')?.value,
+            ifpVotes: doc.ifpVotes + this.electionForm.get('ifpVotes')?.value,
+            mkVotes: doc.mkVotes + this.electionForm.get('mkVotes')?.value,
+            nfpVotes: doc.nfpVotes + this.electionForm.get('nfpVotes')?.value,
+            spoiltBallots: doc.spoiltBallots + this.electionForm.get('spoiltBallots')?.value,
+          };
+
+          // Update the document in Firestore
+     this.updateDocument(doc.id, updatedDoc);
+        });
+      });
+  }
+}
+
+updateDocument(docId: string, updatedDoc: any) {
+  // Update the document in Firestore
+  this.firestore.collection('electionData').doc(docId).update(updatedDoc)
+    .then(() => {
+      console.log('Document updated successfully:', docId);
+      alert('Document updated successfully:'+ docId);
+    })
+    .catch((error) => {
+      console.error('Error updating document:', error);
+    });
+}
+
+
 }

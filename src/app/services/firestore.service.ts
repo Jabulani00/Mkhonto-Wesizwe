@@ -30,6 +30,10 @@ export class FirestoreService {
       .collection<Ward>('wards').valueChanges();
   }
 
+  getMun(docID:any){
+    return this.firestore.collection('municipalities').doc(docID)
+  }
+
   updateWard(municipalityId: string, ward: Ward): Promise<void> {
     const wardIndex = ward.ward.split(' ').pop(); // Get the ward number
   
@@ -77,8 +81,8 @@ export class FirestoreService {
     return this.firestore.collection('municipalities').valueChanges();
   }
 
-  submitElectionFormData(formData: any) {
-    return this.firestore.collection('electionData').add(formData);
+  submitElectionFormData(formData: any,docId:any) {
+    return this.firestore.collection('electionData').doc(docId).set(formData);
   }
 
   getResults() {

@@ -14,14 +14,21 @@ export class CounterPage implements OnInit {
   electionForm!: FormGroup;
   municipalities: any[] = [];
   selectedMunicipalityWards: any;
+  vdNumbers: any[] = [];
+votingStations : any;
+  
 
   constructor(private firestore: AngularFirestore,private fb: FormBuilder,private firestoreService:FirestoreService,private auth:AngularFireAuth) {
     this.loadMunicipalities();
-    this.initializeForm()
+    this.initializeForm();
+
   }
 
   ngOnInit() {
     this.createForm();
+    this.electionForm.valueChanges.subscribe(() => {
+      this.getDoc(); // Call getDoc() whenever form values change
+    });
   
   }
 
@@ -37,19 +44,19 @@ export class CounterPage implements OnInit {
       spoiltBallots: ['', Validators.required],
       totalVotes: ['', Validators.required],
       mkVotes: ['', Validators.required],
-      mkPercentage: ['', Validators.required],
+      // mkPercentage: ['', Validators.required],
       ancVotes: ['', Validators.required],
-      ancPercentage: ['', Validators.required],
+      // ancPercentage: ['', Validators.required],
       effVotes: ['', Validators.required],
-      effPercentage: ['', Validators.required],
+      // effPercentage: ['', Validators.required],
       ifpVotes: ['', Validators.required],
-      ifpPercentage: ['', Validators.required],
+      // ifpPercentage: ['', Validators.required],
       nfpVotes: ['', Validators.required],
-      nfpPercentage: ['', Validators.required],
+      // nfpPercentage: ['', Validators.required],
       daVotes: ['', Validators.required],
-      daPercentage: ['', Validators.required],
+      // daPercentage: ['', Validators.required],
       udmVotes: ['', Validators.required],
-      udmPercentage: ['', Validators.required],
+      // udmPercentage: ['', Validators.required],
       timestamp: [new Date()]
     });
   }
@@ -78,6 +85,7 @@ this.firestore.collection('Users').ref
   }
 
   async onSubmit() {
+   
     const user = await this.auth.currentUser;
     const formData = { ...this.electionForm.value, userEmail:user?.email };
 
@@ -91,8 +99,9 @@ this.firestore.collection('Users').ref
     console.error('Some fields are empty:', emptyFields);
     return; // Prevent form submission
   }
+  const docId = this.generateDocId(formData);
     // Add your collection name where you want to store the data
-    this.firestoreService.submitElectionFormData(formData)
+    this.firestoreService.submitElectionFormData(formData,docId)
     .then(() => {
       alert("Form data submitted successfully to Firestore");
       console.log('Form data submitted successfully to Firestore');
@@ -107,7 +116,14 @@ this.firestore.collection('Users').ref
     });
   }
 
-
+  generateDocId(formData: any): string {
+    const municipality = formData.municipality;
+    const ward = formData.ward;
+    const vdNumber = formData.vdNumber;
+    const now = new Date();
+    const dateNow = now.toISOString().slice(0, 10); // Get today's date in YYYY-MM-DD format
+    return `${municipality}-${ward}-${vdNumber}-${dateNow}`;
+  }
 
 
 
@@ -122,8 +138,11 @@ this.firestore.collection('Users').ref
 
 
   loadMunicipalities() {
+
     this.firestoreService.getMunicipalities().subscribe((municipalities: any[]) => {
       this.municipalities = municipalities;
+      const municipality = this.electionForm.get('municipality')?.value;
+      const ward = this.electionForm.get('ward')?.value;
     });
   }
 
@@ -131,6 +150,44 @@ this.firestore.collection('Users').ref
     const selectedMunicipality = event.detail.value;
     this.selectedMunicipalityWards = this.municipalities.find(municipality => municipality.municipality === selectedMunicipality)?.wards || [];
   }
-  
-  
+data:any;
+  async getDoc() {
+    const municipality =await this.electionForm.get('municipality')?.value;
+    const ward =await  this.electionForm.get('ward')?.value;
+    console.log(municipality);
+    console.log( ward)
+    this.firestore.collection('municipalities').valueChanges().subscribe((doc: any[]) => {
+      console.log(doc);
+      this.data=doc;
+      this.getVotingStationsForMunicipalityAndWard(municipality, ward);
+    });
+    
+  }
+
+  async getVotingStationsForMunicipalityAndWard(municipalityName: string, wardName: string) {
+    // Filter the array of municipalities to find the one with the matching name
+    // Find the index of the municipality "CHANI"
+const chaniIndex = this.data.findIndex((entry:any) => entry.municipality === municipalityName);
+
+if (chaniIndex !== -1) {
+  const chaniMunicipality = this.data[chaniIndex];
+
+  // Find the ward "FFFFFFF" within the municipality "CHANI"
+  const wardIndex = chaniMunicipality.wards.findIndex((ward:any) => ward.ward === wardName);
+
+  if (wardIndex !== -1) {
+    const ward = await chaniMunicipality.wards[wardIndex];
+    this.votingStations = await ward.votingStations;
+
+    console.log(`Voting stations for ward ${wardName} in ${municipalityName} municipality:`);
+  } else {
+    console.log(`Ward ${wardName} not found in ${municipalityName} municipality.`);
+    this.votingStations = [];
+
+  }
+} else {
+  console.log(`Municipality ${municipalityName} not found.`);
+  this.votingStations = [];
+}
+}
 }
