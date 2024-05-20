@@ -13,10 +13,11 @@ export class ElectionResultsPage implements OnInit {
   electionForm!: FormGroup;
   municipalities: any[] = [];
   selectedMunicipalityWards: any;
+  docId:any;
 
   constructor(private firestore: AngularFirestore,private fb: FormBuilder,private firestoreService:FirestoreService,private auth:AngularFireAuth) {
     this.createForm();
-    this.getDoc();
+ 
   }
 
   ngOnInit() {
@@ -28,29 +29,42 @@ export class ElectionResultsPage implements OnInit {
   createForm() {
 
     this.electionForm = this.fb.group({
-      municipality: ['', Validators.required],
-      ward: ['', Validators.required],
-      vdNumber: ['', Validators.required],
-      leader: ['', Validators.required],
-      cellNumber: ['', Validators.required],
-      voterRoll: ['', Validators.required],
-      voterTurnout: ['', Validators.required],
-      spoiltBallots: ['', Validators.required],
-      totalVotes: ['', Validators.required],
-      mkVotes: ['', Validators.required],
+      // municipality: ['', Validators.required],
+      // ward: ['', Validators.required],
+      // vdNumber: ['', Validators.required],
+      // leader: ['', Validators.required],
+      // cellNumber: ['', Validators.required],
+      // voterRoll: ['', Validators.required],
+      // voterTurnout: ['', Validators.required],
+      // spoiltBallots: ['', Validators.required],
+      // totalVotes: ['', Validators.required],
+      mkVotes: ['', Validators.required, Validators.pattern('^[0-9]*$')],
       // mkPercentage: ['', Validators.required],
-      ancVotes: ['', Validators.required],
+      ancVotes: ['', Validators.required, Validators.pattern('^[0-9]*$')],
       // ancPercentage: ['', Validators.required],
-      effVotes: ['', Validators.required],
+      effVotes: ['', Validators.required, Validators.pattern('^[0-9]*$')],
       // effPercentage: ['', Validators.required],
-      ifpVotes: ['', Validators.required],
+      ifpVotes: ['', Validators.required, Validators.pattern('^[0-9]*$')],
       // ifpPercentage: ['', Validators.required],
-      nfpVotes: ['', Validators.required],
+      nfpVotes: ['', Validators.required, Validators.pattern('^[0-9]*$')],
       // nfpPercentage: ['', Validators.required],
-      daVotes: ['', Validators.required],
+      daVotes: ['', Validators.required, Validators.pattern('^[0-9]*$')],
       // daPercentage: ['', Validators.required],
-      udmVotes: ['', Validators.required],
+      udmVotes: ['', Validators.required, Validators.pattern('^[0-9]*$')],
       // udmPercentage: ['', Validators.required],
+      abcVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
+      alVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
+      aadpVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
+      actsaVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
+
+      araVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
+      acdpVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
+      actVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
+      acmVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
+      ahcVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
+      aicVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
+      amcVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
+      apcVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
     });
   }
 
@@ -67,92 +81,45 @@ export class ElectionResultsPage implements OnInit {
       return; // Prevent form submission
     }
     
-    // Construct the data to be updated
-    const dataToUpdate = { ...formData };
-    
-    const collectionRef = this.firestoreService.getCollectionRef('electionData');
-alert(user?.email);
-  // Query documents where userEmail is equal to the current user's email
-  const querySnapshot = await collectionRef.ref.where('userEmail', '==', user?.email).get();
-
-  // If there's no document matching the user's email, create a new one
-  if (querySnapshot.empty) {
-    // Create a new document with the form data
-    collectionRef.add({ ...formData, userEmail: user?.email })
-      .then(() => {
-        alert("New document created successfully in Firestore");
-        console.log('New document created successfully in Firestore');
-        // Optionally, display a success message to the user
-        // Reset form after successful submission
-        alert('New document created successfully in Firestore');
-        this.electionForm.reset();
-      })
-      .catch((error:any) => {
-        alert("Error creating new document. Please try again.");
-        console.error('Error creating new document:', error);
-        // Optionally, display an error message to the user
-      });
-  } else {
-    // There's an existing document, update it
-    querySnapshot.forEach((doc:any) => {
-      const existingData = doc.data();
-      // Update the existing document with the form data
-      Object.keys(formData).forEach(key => {
-        // Check if the key exists in both form data and existing data
-        if (formData.hasOwnProperty(key) && existingData.hasOwnProperty(key)) {
-          // Add the value from the form data to the existing value in the database
-          existingData[key] += formData[key];
-        }
-      });
-      
-      // Update the document with the updated data
-      collectionRef.doc(doc.id).update(existingData)
-        .then(() => {
-          alert("Document updated successfully in Firestore");
-          console.log('Document updated successfully in Firestore');
-          alert('Document updated successfully in Firestore');
-          // Optionally, display a success message to the user
-          // Reset form after successful submission
-          this.electionForm.reset();
-        })
-        .catch((error:any) => {
-          alert("Error updating document. Please try again.");
-          console.error('Error updating document:', error);
-          // Optionally, display an error message to the user
-        });
-    });
-  }
-
-}
-
-
-async getDoc(){
-  const user = await this.auth.currentUser;
+  
   if (user) {
     const userEmail = user.email;
 
     this.firestore.collection('electionData', ref => ref.where('userEmail', '==', userEmail))
-      .valueChanges()
-      .subscribe((docs: any[]) => {
-        // Iterate through each document in the filtered collection
-        docs.forEach(doc => {
+      .get()
+      .toPromise()
+      .then((querySnapshot:any) => {
+        querySnapshot.forEach((doc:any) => {
+          // Display the document ID
+          console.log("Document ID:", doc.id);
+
           // Add the user input to the fetched data
           const updatedDoc = {
-            ancVotes: doc.ancVotes + this.electionForm.get('ancVotes')?.value,
-            daVotes: doc.daVotes + this.electionForm.get('daVotes')?.value,
-            effVotes: doc.effVotes + this.electionForm.get('effVotes')?.value,
-            ifpVotes: doc.ifpVotes + this.electionForm.get('ifpVotes')?.value,
-            mkVotes: doc.mkVotes + this.electionForm.get('mkVotes')?.value,
-            nfpVotes: doc.nfpVotes + this.electionForm.get('nfpVotes')?.value,
-            spoiltBallots: doc.spoiltBallots + this.electionForm.get('spoiltBallots')?.value,
+            ancVotes: doc.data().ancVotes + this.electionForm.get('ancVotes')?.value,
+            daVotes: doc.data().daVotes + this.electionForm.get('daVotes')?.value,
+            effVotes: doc.data().effVotes + this.electionForm.get('effVotes')?.value,
+            ifpVotes: doc.data().ifpVotes + this.electionForm.get('ifpVotes')?.value,
+            mkVotes: doc.data().mkVotes + this.electionForm.get('mkVotes')?.value,
+            nfpVotes: doc.data().nfpVotes + this.electionForm.get('nfpVotes')?.value,
+            udmVotes: doc.data().udmVotes + this.electionForm.get('udmVotes')?.value,
+            spoiltBallots: doc.data().spoiltBallots + this.electionForm.get('spoiltBallots')?.value,
           };
-
+          this.docId= doc.id;
+          console.log(updatedDoc)
           // Update the document in Firestore
-     this.updateDocument(doc.id, updatedDoc);
+          this.updateDocument(doc.id, updatedDoc);
         });
+      })
+      .catch(error => {
+        console.error("Error fetching documents: ", error);
       });
   }
+  
+
 }
+
+
+
 
 updateDocument(docId: string, updatedDoc: any) {
   // Update the document in Firestore

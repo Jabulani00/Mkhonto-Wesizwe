@@ -57,7 +57,21 @@ votingStations : any;
       // daPercentage: ['', Validators.required],
       udmVotes: ['', Validators.required],
       // udmPercentage: ['', Validators.required],
-      timestamp: [new Date()]
+      timestamp: [new Date()],
+      actsaVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
+
+      abcVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
+      alVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
+      aadpVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
+      actsAVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
+      araVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
+      acdpVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
+      actVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
+      acmVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
+      ahcVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
+      aicVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
+      amcVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
+      apcVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
     });
   }
 
