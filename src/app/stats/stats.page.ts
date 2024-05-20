@@ -90,11 +90,11 @@ export class StatsPage implements OnInit, AfterViewInit {
   createMkVotesChart() {
     const labels = Object.keys(this.mkVotesByMunicipality);
     const values = Object.values(this.mkVotesByMunicipality);
-
+  
     if (this.mkVotesChart) {
-      this.mkVotesChart.destroy(); // Destroy existing chart before creating a new one
+      this.mkVotesChart.destroy();
     }
-
+  
     this.mkVotesChart = new Chart<'pie', number[], string>(this.mkVotesChartCanvas.nativeElement, {
       type: 'pie',
       data: {
@@ -105,9 +105,51 @@ export class StatsPage implements OnInit, AfterViewInit {
             '#FF6384',
             '#36A2EB',
             '#FFCE56',
+            '#9ACD32', // Green
+            '#8A2BE2', // Purple
+            '#FFA500', // Orange
+            '#800080', // Maroon
+            '#00FF00', // Lime
+            '#DC143C', // Crimson
+            '#00CED1', // Dark Turquoise
+            '#FF4500', // OrangeRed
             // Add more colors as needed
           ],
         }],
+      },
+    });
+  }
+  
+  createVotesVsVoterRollChart(data: { total: number; voterRoll: number }[]) {
+    if (this.votesVsVoterRollChart) {
+      this.votesVsVoterRollChart.destroy(); // Destroy existing chart before creating a new one
+    }
+
+    this.votesVsVoterRollChart = new Chart(this.votesVsVoterRollChartCanvas.nativeElement, {
+      type: 'bar',
+      data: {
+        labels: ['Votes vs Voter Roll'],
+        datasets: [
+          {
+            label: 'Total Votes',
+            data: data.map((item) => item.total),
+            backgroundColor: data.map((item) =>
+              item.total > item.voterRoll ? 'red' : 'green'
+            ),
+          },
+          {
+            label: 'Voter Roll',
+            data: data.map((item) => item.voterRoll),
+            backgroundColor: 'gray',
+          },
+        ],
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+          },
+        },
       },
     });
   }
@@ -119,8 +161,8 @@ export class StatsPage implements OnInit, AfterViewInit {
   segmentChanged(event: CustomEvent) {
     const selectedSegment = event.detail.value;
     const chartContainers = document.querySelectorAll('.chart-container');
-
-    chartContainers.forEach(container => {
+  
+    chartContainers.forEach((container) => {
       const chartContainer = container as HTMLElement;
       if (chartContainer.id === `${selectedSegment}-chart`) {
         chartContainer.style.display = 'block';
@@ -131,55 +173,88 @@ export class StatsPage implements OnInit, AfterViewInit {
   }
 
   loadVotesAndTurnoutData() {
-    this.afs.collection<ElectionData>('electionData').snapshotChanges().subscribe((snapshot) => {
-      const data = snapshot.map((doc) => doc.payload.doc.data() as ElectionData);
-      console.log('Fetched data:', data); // Log fetched data
-
-      this.votesAndTurnoutData = data.reduce<any[]>((acc, item) => [
-        ...acc,
-        { label: 'ANC Votes', value: item.ancVotes },
-        { label: 'DA Votes', value: item.daVotes },
-        { label: 'EFF Votes', value: item.effVotes },
-        { label: 'IFP Votes', value: item.ifpVotes },
-        { label: 'MK Votes', value: +item.mkVotes }, // Ensure mkVotes is a number
-        { label: 'NFP Votes', value: item.nfpVotes },
-        { label: 'UDM Votes', value: item.udmVotes },
-        { label: 'Total Votes', value: item.totalVotes },
-        { label: 'Spoilt Ballots', value: item.spoiltBallots },
-        { label: 'Voter Turnout', value: item.voterTurnout },
-        { label: 'Voter Roll', value: item.voterRoll },
-      ], []);
-
-      console.log('Transformed data for votes and turnout:', this.votesAndTurnoutData); // Log transformed data
-
-      // Aggregate stats
-      this.totalVoterRoll = data.reduce((acc, item) => acc + item.voterRoll, 0);
-      this.totalVoterTurnout = data.reduce((acc, item) => acc + item.voterTurnout, 0);
-      this.totalSpoiltBallots = data.reduce((acc, item) => acc + item.spoiltBallots, 0);
-      this.totalVotes = data.reduce((acc, item) => acc + item.totalVotes, 0);
-
-      // Check for fraud alerts
-      this.fraudAlerts = data.filter(item => item.totalVotes > item.voterRoll).map(item => ({
-        municipality: item.municipality,
-        ward: item.ward,
-        totalVotes: item.totalVotes,
-        voterRoll: item.voterRoll,
-      }));
-
-      const votesVsVoterRollData = data.map((item) => ({
-        total: item.totalVotes,
-        voterRoll: item.voterRoll,
-      }));
-
-      console.log('Data for Votes vs Voter Roll chart:', votesVsVoterRollData); // Log data for votes vs voter roll
-
-      this.createVotesAndTurnoutChart();
-      this.createVotesVsVoterRollChart(votesVsVoterRollData);
-    }, (error) => {
-      console.error('Error fetching data from Firestore:', error);
-    });
+    this.afs.collection<ElectionData>('electionData').snapshotChanges().subscribe(
+      (snapshot) => {
+        const data = snapshot.map((doc) => doc.payload.doc.data() as ElectionData);
+        console.log('Fetched data:', data);
+  
+        // Initialize combined data
+        const combinedData: { [key: string]: number } = {
+          ancVotes: 0,
+          daVotes: 0,
+          effVotes: 0,
+          ifpVotes: 0,
+          mkVotes: 0,
+          nfpVotes: 0,
+          udmVotes: 0,
+          totalVotes: 0,
+          spoiltBallots: 0,
+          voterTurnout: 0,
+          voterRoll: 0,
+        };
+  
+        // Combine data from all documents
+        data.forEach((item) => {
+          combinedData['ancVotes'] += item.ancVotes;
+          combinedData['daVotes'] += item.daVotes;
+          combinedData['effVotes'] += item.effVotes;
+          combinedData['ifpVotes'] += item.ifpVotes;
+          combinedData['mkVotes'] += item.mkVotes;
+          combinedData['nfpVotes'] += item.nfpVotes;
+          combinedData['udmVotes'] += item.udmVotes;
+          combinedData['totalVotes'] += item.totalVotes;
+          combinedData['spoiltBallots'] += item.spoiltBallots;
+          combinedData['voterTurnout'] += item.voterTurnout;
+          combinedData['voterRoll'] += item.voterRoll;
+        });
+  
+        // Update other properties
+        this.totalVoterRoll = combinedData['voterRoll'];
+        this.totalVoterTurnout = combinedData['voterTurnout'];
+        this.totalSpoiltBallots = combinedData['spoiltBallots'];
+        this.totalVotes = combinedData['totalVotes'];
+  
+        // Update fraudAlerts
+        this.fraudAlerts = data.filter((item) => item.totalVotes > item.voterRoll).map((item) => ({
+          municipality: item.municipality,
+          ward: item.ward,
+          totalVotes: item.totalVotes,
+          voterRoll: item.voterRoll,
+        }));
+  
+        // Create votesAndTurnoutData array with combined data
+        this.votesAndTurnoutData = [
+          { label: 'ANC Votes', value: combinedData['ancVotes'] },
+          { label: 'DA Votes', value: combinedData['daVotes'] },
+          { label: 'EFF Votes', value: combinedData['effVotes'] },
+          { label: 'IFP Votes', value: combinedData['ifpVotes'] },
+          { label: 'MK Votes', value: combinedData['mkVotes'] },
+          { label: 'NFP Votes', value: combinedData['nfpVotes'] },
+          { label: 'UDM Votes', value: combinedData['udmVotes'] },
+          { label: 'Total Votes', value: combinedData['totalVotes'] },
+          { label: 'Spoilt Ballots', value: combinedData['spoiltBallots'] },
+          { label: 'Voter Turnout', value: combinedData['voterTurnout'] },
+          { label: 'Voter Roll', value: combinedData['voterRoll'] },
+        ];
+  
+        console.log('Transformed data for votes and turnout:', this.votesAndTurnoutData);
+  
+        // Create data for the createVotesVsVoterRollChart function
+        const votesVsVoterRollData = [
+          {
+            total: combinedData['totalVotes'],
+            voterRoll: combinedData['voterRoll']
+          }
+        ];
+  
+        this.createVotesAndTurnoutChart();
+        this.createVotesVsVoterRollChart(votesVsVoterRollData);
+      },
+      (error) => {
+        console.error('Error fetching data from Firestore:', error);
+      }
+    );
   }
-
   createVotesAndTurnoutChart() {
     if (this.votesAndTurnoutChart) {
       this.votesAndTurnoutChart.destroy(); // Destroy existing chart before creating a new one
@@ -219,37 +294,5 @@ export class StatsPage implements OnInit, AfterViewInit {
     });
   }
 
-  createVotesVsVoterRollChart(data: { total: number; voterRoll: number }[]) {
-    if (this.votesVsVoterRollChart) {
-      this.votesVsVoterRollChart.destroy(); // Destroy existing chart before creating a new one
-    }
-
-    this.votesVsVoterRollChart = new Chart(this.votesVsVoterRollChartCanvas.nativeElement, {
-      type: 'bar',
-      data: {
-        labels: ['Votes vs Voter Roll'],
-        datasets: [
-          {
-            label: 'Total Votes',
-            data: data.map((item) => item.total),
-            backgroundColor: data.map((item) =>
-              item.total > item.voterRoll ? 'red' : 'green'
-            ),
-          },
-          {
-            label: 'Voter Roll',
-            data: data.map((item) => item.voterRoll),
-            backgroundColor: 'gray',
-          },
-        ],
-      },
-      options: {
-        scales: {
-          y: {
-            beginAtZero: true,
-          },
-        },
-      },
-    });
-  }
+  
 }
