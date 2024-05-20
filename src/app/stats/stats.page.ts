@@ -1,6 +1,13 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { Chart, registerables } from 'chart.js';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { Point, BubbleDataPoint } from 'chart.js';
+import { map } from 'rxjs/operators';
+import { take } from 'rxjs/operators';
+import { DocumentChangeAction } from '@angular/fire/compat/firestore';
+import 'chartjs-plugin-zoom';
+
+
 
 Chart.register(...registerables);
 
@@ -48,6 +55,11 @@ export class StatsPage implements OnInit, AfterViewInit {
   mkVotesChart!: Chart<'pie', number[], string>; // Specify type for Chart instance
   mkVotesByMunicipality: MkVotesByMunicipality = {}; // Use the defined interface
 
+
+  @ViewChild('percentageVotesChartCanvas') percentageVotesChartCanvas!: ElementRef;
+  percentageVotesChart: Chart<'pie', number[], string>;
+
+
   votesAndTurnoutData: any[] = [];
   votesAndTurnoutChart!: Chart;
 
@@ -60,12 +72,115 @@ export class StatsPage implements OnInit, AfterViewInit {
   // Property to hold fraud alerts
   fraudAlerts: { municipality: string; ward: string; totalVotes: number; voterRoll: number }[] = [];
 
-  constructor(private afs: AngularFirestore) { }
+  constructor(private afs: AngularFirestore) { 
+    this.percentageVotesChart = {} as Chart<'pie', number[], string>;
+  }
 
   ngOnInit() {
     this.loadVotesAndTurnoutData();
     this.fetchMkVotesData();
+    this.loadPercentageVotesData();
   }
+
+  loadPercentageVotesData() {
+    this.afs.collection<ElectionData>('electionData').snapshotChanges().pipe(
+      map(snapshot => snapshot.map(doc => doc.payload.doc.data() as ElectionData)),
+      take(1) // take only one snapshot
+    ).subscribe(
+      (data: ElectionData[]) => {
+        console.log('Fetched data:', data);
+  
+        const totalVotes = data.reduce((total, item) => total + item.totalVotes, 0);
+  
+        const combinedVotes = data.reduce((combined, item) => {
+          combined['ANC'] = (combined['ANC'] || 0) + item.ancVotes;
+          combined['DA'] = (combined['DA'] || 0) + item.daVotes;
+          combined['EFF'] = (combined['EFF'] || 0) + item.effVotes;
+          combined['IFP'] = (combined['IFP'] || 0) + item.ifpVotes;
+          combined['MK'] = (combined['MK'] || 0) + item.mkVotes;
+          combined['NFP'] = (combined['NFP'] || 0) + item.nfpVotes;
+          combined['UDM'] = (combined['UDM'] || 0) + item.udmVotes;
+          return combined;
+        }, {} as { [party: string]: number });
+  
+        const percentages = {
+          ANC: this.calculatePercentage(combinedVotes['ANC'], totalVotes),
+          DA: this.calculatePercentage(combinedVotes['DA'], totalVotes),
+          EFF: this.calculatePercentage(combinedVotes['EFF'], totalVotes),
+          IFP: this.calculatePercentage(combinedVotes['IFP'], totalVotes),
+          MK: this.calculatePercentage(combinedVotes['MK'], totalVotes),
+          NFP: this.calculatePercentage(combinedVotes['NFP'], totalVotes),
+          UDM: this.calculatePercentage(combinedVotes['UDM'], totalVotes),
+        };
+  
+        console.log('Combined Percentages:', percentages);
+  
+        // Update chart with new data
+        this.updatePercentageVotesChart(percentages);
+      },
+      (error) => {
+        console.error('Error fetching data from Firestore:', error);
+      }
+    );
+  }
+  
+  calculatePercentage(votes: number, totalVotes: number): number {
+    return (votes / totalVotes) * 100;
+  }
+  
+  updatePercentageVotesChart(percentages: { [party: string]: number }) {
+    // Check if chart has been initialized
+    if (this.percentageVotesChart && this.percentageVotesChart.data) {
+      // Update chart data
+      this.percentageVotesChart.data.labels = Object.keys(percentages);
+      this.percentageVotesChart.data.datasets[0].data = Object.values(percentages);
+      // Update chart
+      this.percentageVotesChart.update();
+    } else {
+      console.error('Percentage votes chart not initialized.');
+    }
+  }
+
+  createPercentageVotesChart(percentages: { [party: string]: number }) {
+    const canvas = this.percentageVotesChartCanvas.nativeElement;
+    const ctx = canvas.getContext('2d');
+    this.percentageVotesChart = new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: Object.keys(percentages),
+        datasets: [{
+          data: Object.values(percentages),
+          backgroundColor: [
+            '#FF6384',
+            '#36A2EB',
+            '#FFCE56',
+            '#9ACD32',
+            '#8A2BE2',
+            '#FFA500',
+            '#800080',
+          ],
+        }],
+      },
+      options: {
+        plugins: {
+          zoom: {
+            zoom: {
+              wheel: {
+                enabled: true,
+              },
+              pinch: {
+                enabled: true,
+              },
+              mode: 'xy',
+            },
+          },
+        },
+        responsive: true,
+        maintainAspectRatio: false,
+      },
+    });
+  }
+  
 
   fetchMkVotesData() {
     this.afs.collection<ElectionData>('electionData').snapshotChanges().subscribe((snapshot) => {
@@ -102,7 +217,7 @@ export class StatsPage implements OnInit, AfterViewInit {
         datasets: [{
           data: values,
           backgroundColor: [
-            '#FF6384',
+            '#53A546',
             '#36A2EB',
             '#FFCE56',
             '#9ACD32', // Green
@@ -116,6 +231,21 @@ export class StatsPage implements OnInit, AfterViewInit {
             // Add more colors as needed
           ],
         }],
+      },
+      options: {
+        plugins: {
+          zoom: {
+            zoom: {
+              wheel: {
+                enabled: true,
+              },
+              pinch: {
+                enabled: true,
+              },
+              mode: 'xy',
+            },
+          },
+        },
       },
     });
   }
@@ -154,8 +284,11 @@ export class StatsPage implements OnInit, AfterViewInit {
     });
   }
 
+
+
   ngAfterViewInit() {
     this.createVotesAndTurnoutChart();
+    this.createPercentageVotesChart({});
   }
 
   segmentChanged(event: CustomEvent) {
@@ -257,9 +390,9 @@ export class StatsPage implements OnInit, AfterViewInit {
   }
   createVotesAndTurnoutChart() {
     if (this.votesAndTurnoutChart) {
-      this.votesAndTurnoutChart.destroy(); // Destroy existing chart before creating a new one
+      this.votesAndTurnoutChart.destroy();
     }
-
+  
     this.votesAndTurnoutChart = new Chart(this.votesAndTurnoutChartCanvas.nativeElement, {
       type: 'bar',
       data: {
@@ -285,14 +418,28 @@ export class StatsPage implements OnInit, AfterViewInit {
         ],
       },
       options: {
+        plugins: {
+          zoom: {
+            zoom: {
+              wheel: {
+                enabled: true,
+              },
+              pinch: {
+                enabled: true,
+              },
+              mode: 'xy',
+            },
+          },
+        },
         scales: {
           y: {
             beginAtZero: true,
           },
         },
+        responsive: true,
+        maintainAspectRatio: false,
       },
     });
   }
-
   
 }

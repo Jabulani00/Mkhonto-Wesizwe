@@ -3,6 +3,8 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import Chart from 'chart.js/auto';
 
+
+
 interface Statistics {
   totalVoterRoll: number;
   totalVoterTurnout: number;
@@ -184,7 +186,7 @@ export class RegionStatsPage implements OnInit {
     if (this.chart) {
       this.chart.destroy();
     }
-
+  
     this.chart = new Chart(this.votesVsVoterRollChart.nativeElement, {
       type: 'pie',
       data: {
@@ -209,6 +211,23 @@ export class RegionStatsPage implements OnInit {
             '#581845'
           ],
         }]
+      },
+      options: {
+        plugins: {
+          zoom: {
+            zoom: {
+              wheel: {
+                enabled: true,
+              },
+              pinch: {
+                enabled: true,
+              },
+              mode: 'xy',
+            },
+          },
+        },
+        responsive: true,
+        maintainAspectRatio: false,
       }
     });
   }
@@ -217,7 +236,7 @@ export class RegionStatsPage implements OnInit {
     if (this.barChart) {
       this.barChart.destroy();
     }
-
+  
     this.barChart = new Chart(this.generalStatsChart.nativeElement, {
       type: 'bar',
       data: {
@@ -233,11 +252,26 @@ export class RegionStatsPage implements OnInit {
         }]
       },
       options: {
+        plugins: {
+          zoom: {
+            zoom: {
+              wheel: {
+                enabled: true,
+              },
+              pinch: {
+                enabled: true,
+              },
+              mode: 'xy',
+            },
+          },
+        },
         scales: {
           y: {
             beginAtZero: true
           }
-        }
+        },
+        responsive: true,
+        maintainAspectRatio: false,
       }
     });
   }
