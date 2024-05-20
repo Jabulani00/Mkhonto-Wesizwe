@@ -3,7 +3,6 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router } from '@angular/router';
 import { LoadingController } from '@ionic/angular';
-import { ProfilePage } from '../profile/profile.page';
 import { FirestoreService } from '../services/firestore.service';
 
 interface UserData {
@@ -21,26 +20,25 @@ interface UserData {
   styleUrls: ['./register.page.scss'],
 })
 export class RegisterPage implements OnInit {
-  name: string = '';
-  email: string = '';
-  password: string = '';
-  confirm_password: string = '';
-  selectedRole: string = '';
-  selectedWard: string = '';
+  name = '';
+  email = '';
+  password = '';
+  confirm_password = '';
+  selectedRole = '';
+  selectedWard = '';
   selectedMunicipality: any;
   municipalities: any[] = [];
-  selectedMunicipalityWards: any;
-  ward: string = '';
-
-  municipalitySearchText: string = '';
-  wardSearchText: string = '';
+  selectedMunicipalityWards: any[] = [];
   filteredMunicipalities: any[] = [];
   filteredWards: any[] = [];
+
+  municipalitySearchText = '';
+  wardSearchText = '';
 
   constructor(
     private firestoreService: FirestoreService,
     private db: AngularFirestore,
-    private Auth: AngularFireAuth,
+    private auth: AngularFireAuth,
     private router: Router,
     private loadingController: LoadingController
   ) {
@@ -52,7 +50,7 @@ export class RegisterPage implements OnInit {
     this.filteredWards = [...this.selectedMunicipalityWards];
   }
 
-  loadMunicipalities() {
+  private loadMunicipalities() {
     this.firestoreService.getMunicipalities().subscribe((municipalities: any[]) => {
       this.municipalities = municipalities;
       this.filteredMunicipalities = [...municipalities];
@@ -67,13 +65,12 @@ export class RegisterPage implements OnInit {
       this.selectedMunicipalityWards = selectedMunicipalityObject.wards || [];
       this.filteredWards = [...this.selectedMunicipalityWards];
     } else {
-      this.selectedMunicipalityWards = [];
-      this.filteredWards = [];
+      this.resetWards();
     }
   }
 
   onRoleChange() {
-    if (this.selectedRole === 'GroundWorker') {
+    if (this.selectedRole === 'GroundWorker' || this.selectedRole === 'RegionAdmin') {
       this.loadMunicipalities();
     }
   }
@@ -84,7 +81,7 @@ export class RegisterPage implements OnInit {
       municipality.municipality.toLowerCase().includes(searchText)
     );
   }
-  
+
   filterWards(event: any) {
     const searchText = event.detail.value.toLowerCase();
     this.filteredWards = this.selectedMunicipalityWards.filter((ward: { ward: string }) =>
@@ -93,66 +90,63 @@ export class RegisterPage implements OnInit {
   }
 
   async Register() {
-    if (this.name === '') {
-      alert("Enter your full name");
-      return;
-    }
-
-    if (this.email === '') {
-      alert("Enter email Address");
-      return;
-    }
-
-    if (this.password === '') {
-      alert("Enter password");
-      return;
-    }
-
-    if (this.password !== this.confirm_password) {
-      console.error('Passwords do not match');
-      return;
-    }
+    if (!this.validateInput()) return;
 
     const loader = await this.loadingController.create({
-      message: '|Registering you...',
+      message: 'Registering you...',
       cssClass: 'custom-loader-class'
     });
 
     await loader.present();
 
-    this.Auth.createUserWithEmailAndPassword(this.email, this.password)
-      .then((userCredential: any) => {
-        if (userCredential.user) {
-          const userData: UserData = {
-            name: this.name,
-            email: this.email,
-            status: "pending",
-            role: this.selectedRole,
-          };
+    try {
+      const userCredential = await this.auth.createUserWithEmailAndPassword(this.email, this.password);
 
-          if (this.selectedRole === 'GroundWorker') {
-            userData.municipality = this.selectedMunicipality;
-            userData.ward = this.selectedWard;
-          } else if (this.selectedRole === 'RegionAdmin') {
-            userData.municipality = this.selectedMunicipality;
-          }
+      if (userCredential.user) {
+        const userData: UserData = {
+          name: this.name,
+          email: this.email,
+          status: 'pending',
+          role: this.selectedRole,
+          municipality: this.selectedMunicipality,
+          ward: this.selectedRole === 'GroundWorker' ? this.selectedWard : undefined
+        };
 
-          this.db.collection('Users').add(userData)
-            .then(() => {
-              loader.dismiss();
-              console.log('User data added successfully');
-              this.router.navigate(['/profile']);
-            })
-            .catch((error: any) => {
-              loader.dismiss();
-              console.error('Error adding user data:', error);
-            });
-        } else {
-          console.error('User credential is missing');
-        }
-      })
-      .catch((error: any) => {
-        console.error('Error creating user:', error);
-      });
+        await this.db.collection('Users').add(userData);
+        loader.dismiss();
+        console.log('User data added successfully');
+        this.router.navigate(['/profile']);
+      } else {
+        throw new Error('User credential is missing');
+      }
+    } catch (error) {
+      loader.dismiss();
+      console.error('Error during registration:', error);
+    }
+  }
+
+  private validateInput(): boolean {
+    if (!this.name) {
+      alert("Enter your full name");
+      return false;
+    }
+    if (!this.email) {
+      alert("Enter email address");
+      return false;
+    }
+    if (!this.password) {
+      alert("Enter password");
+      return false;
+    }
+    if (this.password !== this.confirm_password) {
+      alert('Passwords do not match');
+      return false;
+    }
+    return true;
+  }
+
+  private resetWards() {
+    this.selectedMunicipalityWards = [];
+    this.filteredWards = [];
   }
 }
