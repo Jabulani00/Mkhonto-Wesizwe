@@ -1,10 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FirestoreService } from '../services/firestore.service';
 import { Observable } from 'rxjs';
-
-interface Ward {
-  ward: string;
-}
+import { Ward } from '../interfaces/ward.interface'; // Import the Ward interface
 
 interface Municipality {
   municipality: string;
@@ -24,22 +21,17 @@ export class MunicipalityPage implements OnInit {
 
   constructor(private firestoreService: FirestoreService) {}
 
-  ngOnInit() {
-  
-  }
-
-
+  ngOnInit() {}
 
   addMunicipality() {
     const municipality: Municipality = { municipality: this.municipalityName, wards: [] };
     this.municipalities.push(municipality);
-   
     this.selectMunicipality(municipality);
   }
 
   addWard() {
     if (this.selectedMunicipality) {
-      const ward: Ward = { ward: this.wardName };
+      const ward: Ward = { ward: this.wardName, votingStations: [] }; // Add an empty array for votingStations
       this.selectedMunicipality.wards.push(ward);
       this.wardName = '';
     } else {
@@ -53,8 +45,9 @@ export class MunicipalityPage implements OnInit {
 
   submitAll() {
     this.municipalities.forEach((municipality) => {
-      this.firestoreService.addMunicipality(municipality).then(docRef => {
-        const municipalityId = docRef.id;
+      this.firestoreService.addMunicipality(municipality).then(() => {
+        // No document reference to extract ID from
+        const municipalityId = municipality.municipality; // Use the municipality name as the ID
         municipality.wards.forEach((ward: Ward) => {
           this.firestoreService.addWard(municipalityId, ward).catch(error => {
             console.error('Error adding ward: ', error);
@@ -64,12 +57,10 @@ export class MunicipalityPage implements OnInit {
         console.error('Error adding municipality: ', error);
       });
     });
-
+  
     // Clear the arrays after submission
     this.municipalities = [];
-
     this.municipalityName = '';
     this.selectedMunicipality = null;
-    
   }
 }

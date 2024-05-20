@@ -1,19 +1,21 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar >
     <ion-title>Sign Up</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-list>
+  <ion-list lines="full">
     <ion-item>
       <ion-label position="floating">Name</ion-label>
       <ion-input type="text" [(ngModel)]="name"></ion-input>
+      <ion-icon slot="start" name="person-circle-outline"></ion-icon>
     </ion-item>
 
     <ion-item>
       <ion-label position="floating">Email</ion-label>
       <ion-input type="email" [(ngModel)]="email"></ion-input>
+      <ion-icon slot="start" name="mail-outline"></ion-icon>
     </ion-item>
 
     <ion-item>
@@ -21,9 +23,10 @@
       <ion-select [(ngModel)]="selectedRole" (ionChange)="onRoleChange()">
         <ion-select-option value="SuperAdmin">Super Admin</ion-select-option>
         <ion-select-option value="RegionAdmin">Region Admin</ion-select-option>
-        <ion-select-option value="GroundWorker">Ground Worker</ion-select-option>
+        <ion-select-option value="GroundForce">Ground Force</ion-select-option>
       </ion-select>
     </ion-item>
+
     <ion-item *ngIf="selectedRole === 'RegionAdmin' || selectedRole === 'GroundWorker'">
       <ion-label position="floating">Municipality</ion-label>
       <ion-searchbar
@@ -60,21 +63,26 @@
         >
       </ion-select>
     </ion-item>
+
     <ion-item>
       <ion-label position="floating">Password</ion-label>
       <ion-input type="password" [(ngModel)]="password"></ion-input>
+      <ion-icon slot="start" name="lock-closed-outline"></ion-icon>
     </ion-item>
 
     <ion-item>
       <ion-label position="floating">Confirm Password</ion-label>
       <ion-input type="password" [(ngModel)]="confirm_password"></ion-input>
+      <ion-icon slot="start" name="lock-closed-outline"></ion-icon>
     </ion-item>
   </ion-list>
 
   <div class="ion-padding">
-    <ion-button expand="block" (click)="Register()">Sign Up</ion-button>
+    <ion-button expand="block"  (click)="Register()">Sign Up</ion-button>
   </div>
 
-  <p>Already have an account? <a routerLink="/login">Login</a></p>
-  <p>........................<a routerLink="/reset">reset</a></p>
+  <div class="ion-text-center ion-padding">
+    <p>Already have an account? <a routerLink="/login">Login</a></p>
+    <p>Forgot your password? <a routerLink="/reset">Reset</a></p>
+  </div>
 </ion-content>

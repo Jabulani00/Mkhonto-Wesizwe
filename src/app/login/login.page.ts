@@ -83,7 +83,7 @@ export class LoginPage implements OnInit {
             // Check the user's role and navigate to the appropriate page
             if (userData['role'] === 'RegionAdmin') {
               this.router.navigate(['/region']);
-            } else if (userData['role'] === 'GroundAdmin') {
+            } else if (userData['role'] === 'GroundForce') {
               this.router.navigate(['/counter']);
             } else if (userData['role'] === 'SuperAdmin') {
               this.router.navigate(['/super-admin']);
