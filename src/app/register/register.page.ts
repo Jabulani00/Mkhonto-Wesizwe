@@ -74,7 +74,7 @@ export class RegisterPage implements OnInit {
   }
 
   onRoleChange() {
-    if (this.selectedRole === 'GroundWorker') {
+    if (this.selectedRole === 'GroundForce') {
       this.loadMunicipalities();
     }
   }
@@ -131,7 +131,7 @@ export class RegisterPage implements OnInit {
             role: this.selectedRole,
           };
 
-          if (this.selectedRole === 'GroundWorker') {
+          if (this.selectedRole === 'GroundForce') {
             userData.municipality = this.selectedMunicipality;
             userData.ward = this.selectedWard;
           } else if (this.selectedRole === 'RegionAdmin') {
