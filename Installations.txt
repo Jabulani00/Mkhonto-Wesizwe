@@ -1,3 +1,4 @@
 npm install @angular/fire firebase
 npm install chart.js
 npm install chart.js ng2-charts
+npm install --save-dev @types/chart.js

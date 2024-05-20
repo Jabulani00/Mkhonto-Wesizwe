@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { Chart, registerables } from 'chart.js';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { Point, BubbleDataPoint } from 'chart.js';
 
 Chart.register(...registerables);
 
@@ -48,6 +49,11 @@ export class StatsPage implements OnInit, AfterViewInit {
   mkVotesChart!: Chart<'pie', number[], string>; // Specify type for Chart instance
   mkVotesByMunicipality: MkVotesByMunicipality = {}; // Use the defined interface
 
+
+  @ViewChild('percentageVotesChartCanvas') percentageVotesChartCanvas!: ElementRef;
+  percentageVotesChart: Chart<'pie', number[], string>;
+
+
   votesAndTurnoutData: any[] = [];
   votesAndTurnoutChart!: Chart;
 
@@ -60,12 +66,112 @@ export class StatsPage implements OnInit, AfterViewInit {
   // Property to hold fraud alerts
   fraudAlerts: { municipality: string; ward: string; totalVotes: number; voterRoll: number }[] = [];
 
-  constructor(private afs: AngularFirestore) { }
+  constructor(private afs: AngularFirestore) { 
+    this.percentageVotesChart = {} as Chart<'pie', number[], string>;
+  }
 
   ngOnInit() {
     this.loadVotesAndTurnoutData();
     this.fetchMkVotesData();
+    this.loadPercentageVotesData();
   }
+
+  loadPercentageVotesData() {
+    this.afs.collection<ElectionData>('electionData').snapshotChanges().subscribe(
+      (snapshot) => {
+        const data = snapshot.map((doc) => doc.payload.doc.data() as ElectionData);
+        console.log('Fetched data:', data);
+  
+        const totalVotes = data.map((item) => item.totalVotes).reduce((a, b) => a + b, 0);
+        const percentages = {
+          ANC: this.calculatePercentage(data.map((item) => item.ancVotes).reduce((a, b) => a + b, 0), totalVotes),
+          DA: this.calculatePercentage(data.map((item) => item.daVotes).reduce((a, b) => a + b, 0), totalVotes),
+          EFF: this.calculatePercentage(data.map((item) => item.effVotes).reduce((a, b) => a + b, 0), totalVotes),
+          IFP: this.calculatePercentage(data.map((item) => item.ifpVotes).reduce((a, b) => a + b, 0), totalVotes),
+          MK: this.calculatePercentage(data.map((item) => item.mkVotes).reduce((a, b) => a + b, 0), totalVotes),
+          NFP: this.calculatePercentage(data.map((item) => item.nfpVotes).reduce((a, b) => a + b, 0), totalVotes),
+          UDM: this.calculatePercentage(data.map((item) => item.udmVotes).reduce((a, b) => a + b, 0), totalVotes),
+        };
+  
+        console.log('Percentages:', percentages);
+  
+        // Update chart with new data
+        this.updatePercentageVotesChart(percentages);
+      },
+      (error) => {
+        console.error('Error fetching data from Firestore:', error);
+      }
+    );
+  }
+  
+  calculatePercentage(votes: number, totalVotes: number): number {
+    return (votes / totalVotes) * 100;
+  }
+  
+  updatePercentageVotesChart(percentages: { [party: string]: number }) {
+    // Check if chart has been initialized
+    if (this.percentageVotesChart && this.percentageVotesChart.data) {
+      // Update chart data
+      this.percentageVotesChart.data.labels = Object.keys(percentages);
+      this.percentageVotesChart.data.datasets[0].data = Object.values(percentages);
+      // Update chart
+      this.percentageVotesChart.update();
+    } else {
+      console.error('Percentage votes chart not initialized.');
+    }
+  }
+
+  createPercentageVotesChart(percentages: { [party: string]: number }) {
+    const canvas = this.percentageVotesChartCanvas.nativeElement;
+    const ctx = canvas.getContext('2d');
+    this.percentageVotesChart = new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: Object.keys(percentages),
+        datasets: [{
+          data: Object.values(percentages),
+          backgroundColor: [
+            '#FF6384',
+            '#36A2EB',
+            '#FFCE56',
+            '#9ACD32',
+            '#8A2BE2',
+            '#FFA500',
+            '#800080',
+          ],
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                const tooltipItem = context.dataIndex;
+                const dataset = context.chart.data.datasets[0];
+                const total = dataset.data.reduce<number>((previousValue: number, currentValue: number | [number, number] | Point | BubbleDataPoint | null) => {
+                  let value = 0;
+                  if (typeof currentValue === 'number') {
+                    value = currentValue;
+                  } else if (Array.isArray(currentValue)) {
+                    value = currentValue[0];
+                  } else if (currentValue !== null && typeof currentValue === 'object') {
+                    value = currentValue.y;
+                  }
+                  return previousValue + value;
+                }, 0);
+                const currentValue = dataset.data[tooltipItem] as number;
+                const percentage = Math.round(((currentValue) / ((total as number) || 1)) * 100);
+                return percentage + '%';
+              }
+            }
+          }
+        }
+      },
+    });
+  }
+  
 
   fetchMkVotesData() {
     this.afs.collection<ElectionData>('electionData').snapshotChanges().subscribe((snapshot) => {
@@ -154,8 +260,11 @@ export class StatsPage implements OnInit, AfterViewInit {
     });
   }
 
+
+
   ngAfterViewInit() {
     this.createVotesAndTurnoutChart();
+    this.createPercentageVotesChart({});
   }
 
   segmentChanged(event: CustomEvent) {

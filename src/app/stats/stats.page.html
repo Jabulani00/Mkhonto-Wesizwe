@@ -50,6 +50,7 @@
       <ion-segment-button value="votesAndTurnout" checked>Votes and Turnout</ion-segment-button>
       <ion-segment-button value="votesVsVoterRoll">Votes vs Voter Roll</ion-segment-button>
       <ion-segment-button value="mkVotes">MK Votes</ion-segment-button>
+      <ion-segment-button value="percentageVotes">Percentage Votes</ion-segment-button> <!-- Added segment button -->
     </ion-segment>
 
     <!-- Charts -->
@@ -61,6 +62,9 @@
     </div>
     <div id="mkVotes-chart" class="chart-container" style="display: none;">
       <canvas #mkVotesChartCanvas></canvas>
+    </div>
+    <div id="percentageVotes-chart" class="chart-container" style="display: none;"> <!-- Added chart container -->
+      <canvas #percentageVotesChartCanvas></canvas>
     </div>
   </div>
 </ion-content>
