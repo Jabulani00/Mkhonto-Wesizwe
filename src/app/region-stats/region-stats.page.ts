@@ -7,6 +7,13 @@ interface Statistics {
   totalVoterTurnout: number;
   totalSpoiltBallots: number;
   totalVotes: number;
+  ancVotes: number;
+  daVotes: number;
+  effVotes: number;
+  ifpVotes: number;
+  mkVotes: number;
+  nfpVotes: number;
+  udmVotes: number;
 }
 
 interface FraudAlert {
@@ -22,11 +29,18 @@ interface FraudAlert {
   styleUrls: ['./region-stats.page.scss']
 })
 export class RegionStatsPage implements OnInit {
-  currentMunicipality: string='';
+  currentMunicipality: string = '';
   totalVoterRoll: number = 0;
   totalVoterTurnout: number = 0;
   totalSpoiltBallots: number = 0;
   totalVotes: number = 0;
+  ancVotes: number = 0;
+  daVotes: number = 0;
+  effVotes: number = 0;
+  ifpVotes: number = 0;
+  mkVotes: number = 0;
+  nfpVotes: number = 0;
+  udmVotes: number = 0;
   fraudAlerts: FraudAlert[] = [];
 
   constructor(
@@ -73,7 +87,14 @@ export class RegionStatsPage implements OnInit {
             totalVoterRoll: 0,
             totalVoterTurnout: 0,
             totalSpoiltBallots: 0,
-            totalVotes: 0
+            totalVotes: 0,
+            ancVotes: 0,
+            daVotes: 0,
+            effVotes: 0,
+            ifpVotes: 0,
+            mkVotes: 0,
+            nfpVotes: 0,
+            udmVotes: 0,
           };
 
           electionData.forEach((data) => {
@@ -81,12 +102,26 @@ export class RegionStatsPage implements OnInit {
             statistics.totalVoterTurnout += data.voterTurnout;
             statistics.totalSpoiltBallots += data.spoiltBallots;
             statistics.totalVotes += data.totalVotes;
+            statistics.ancVotes += data.ancVotes;
+            statistics.daVotes += data.daVotes;
+            statistics.effVotes += data.effVotes;
+            statistics.ifpVotes += data.ifpVotes;
+            statistics.mkVotes += data.mkVotes;
+            statistics.nfpVotes += data.nfpVotes;
+            statistics.udmVotes += data.udmVotes;
           });
 
           this.totalVoterRoll = statistics.totalVoterRoll;
           this.totalVoterTurnout = statistics.totalVoterTurnout;
           this.totalSpoiltBallots = statistics.totalSpoiltBallots;
           this.totalVotes = statistics.totalVotes;
+          this.ancVotes = statistics.ancVotes;
+          this.daVotes = statistics.daVotes;
+          this.effVotes = statistics.effVotes;
+          this.ifpVotes = statistics.ifpVotes;
+          this.mkVotes = statistics.mkVotes;
+          this.nfpVotes = statistics.nfpVotes;
+          this.udmVotes = statistics.udmVotes;
         },
         (error) => {
           console.error('Error fetching statistics:', error);
