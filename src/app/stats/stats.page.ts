@@ -5,6 +5,8 @@ import { Point, BubbleDataPoint } from 'chart.js';
 import { map } from 'rxjs/operators';
 import { take } from 'rxjs/operators';
 import { DocumentChangeAction } from '@angular/fire/compat/firestore';
+import 'chartjs-plugin-zoom';
+
 
 
 Chart.register(...registerables);
@@ -160,6 +162,19 @@ export class StatsPage implements OnInit, AfterViewInit {
         }],
       },
       options: {
+        plugins: {
+          zoom: {
+            zoom: {
+              wheel: {
+                enabled: true,
+              },
+              pinch: {
+                enabled: true,
+              },
+              mode: 'xy',
+            },
+          },
+        },
         responsive: true,
         maintainAspectRatio: false,
       },
@@ -216,6 +231,21 @@ export class StatsPage implements OnInit, AfterViewInit {
             // Add more colors as needed
           ],
         }],
+      },
+      options: {
+        plugins: {
+          zoom: {
+            zoom: {
+              wheel: {
+                enabled: true,
+              },
+              pinch: {
+                enabled: true,
+              },
+              mode: 'xy',
+            },
+          },
+        },
       },
     });
   }
@@ -360,9 +390,9 @@ export class StatsPage implements OnInit, AfterViewInit {
   }
   createVotesAndTurnoutChart() {
     if (this.votesAndTurnoutChart) {
-      this.votesAndTurnoutChart.destroy(); // Destroy existing chart before creating a new one
+      this.votesAndTurnoutChart.destroy();
     }
-
+  
     this.votesAndTurnoutChart = new Chart(this.votesAndTurnoutChartCanvas.nativeElement, {
       type: 'bar',
       data: {
@@ -388,14 +418,28 @@ export class StatsPage implements OnInit, AfterViewInit {
         ],
       },
       options: {
+        plugins: {
+          zoom: {
+            zoom: {
+              wheel: {
+                enabled: true,
+              },
+              pinch: {
+                enabled: true,
+              },
+              mode: 'xy',
+            },
+          },
+        },
         scales: {
           y: {
             beginAtZero: true,
           },
         },
+        responsive: true,
+        maintainAspectRatio: false,
       },
     });
   }
-
   
 }
