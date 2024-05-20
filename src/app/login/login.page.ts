@@ -12,7 +12,6 @@ import 'firebase/compat/firestore';
   styleUrls: ['./login.page.scss'],
 })
 export class LoginPage implements OnInit {
-
   email: string = '';
   password: string = '';
 
@@ -23,10 +22,10 @@ export class LoginPage implements OnInit {
   constructor(
     private router: Router,
     private loadingController: LoadingController,
-    private controller: NavController,
+    private navController: NavController,
     private auth: AngularFireAuth,
     private firestore: AngularFirestore,
-    private toastController: ToastController // Inject ToastController
+    private toastController: ToastController
   ) {}
 
   ngOnInit() {}
@@ -42,79 +41,80 @@ export class LoginPage implements OnInit {
   }
 
   async login() {
-    // ... (existing code for email and password validation)
-  
+    if (!this.email || !this.password) {
+      this.presentToast('Please enter email and password', 'danger');
+      return;
+    }
+
     const loader = await this.loadingController.create({
       message: 'Logging in...',
       cssClass: 'custom-loader-class',
     });
     await loader.present();
-  
-    // Check if the user is trying to log in with the default admin credentials
-    if (this.email === this.defaultAdminEmail && this.password === this.defaultAdminPassword) {
-      loader.dismiss();
-      this.router.navigate(['/super-admin']);
-      return;
-    }
-  
-    // Query Firestore to find the document with the matching email
-    const userQuerySnapshot = await firebase
-      .firestore()
-      .collection('Users')
-      .where('email', '==', this.email)
-      .get();
-  
-    if (userQuerySnapshot.empty) {
-      loader.dismiss();
-      this.presentToast('User does not exist', 'danger');
-      return;
-    }
-  
-    // Since email is unique, there should be only one document in the query snapshot
-    const userData = userQuerySnapshot.docs[0].data();
-  
-    if (userData) {
+
+    try {
+      if (this.email === this.defaultAdminEmail && this.password === this.defaultAdminPassword) {
+        loader.dismiss();
+        this.router.navigate(['/super-admin']);
+        return;
+      }
+
+      const userQuerySnapshot = await firebase
+        .firestore()
+        .collection('Users')
+        .where('email', '==', this.email)
+        .get();
+
+      if (userQuerySnapshot.empty) {
+        loader.dismiss();
+        this.presentToast('User does not exist', 'danger');
+        return;
+      }
+
+      const userData = userQuerySnapshot.docs[0].data();
+
       if (userData['status'] === 'active') {
-        this.auth
-          .signInWithEmailAndPassword(this.email, this.password)
-          .then((userCredential) => {
-            loader.dismiss();
-            const user = userCredential.user;
-            // Check the user's role and navigate to the appropriate page
-            if (userData['role'] === 'RegionAdmin') {
-              this.router.navigate(['/region']);
-            } else if (userData['role'] === 'GroundForce') {
-              this.router.navigate(['/counter']);
-            } else if (userData['role'] === 'SuperAdmin') {
-              this.router.navigate(['/super-admin']);
-            } else {
-              // Handle other roles or default behavior
-              this.router.navigate(['/counter']);
-            }
-          })
-          .catch((error) => {
-            loader.dismiss();
-            const errorMessage = error.message;
-            if (errorMessage.includes('wrong-password')) {
-              this.presentToast('Incorrect password', 'danger');
-            } else {
-              this.presentToast(errorMessage, 'danger');
-            }
-          });
-      } else if (userData['status'] === 'denied') {
+        const userCredential = await this.auth.signInWithEmailAndPassword(this.email, this.password);
         loader.dismiss();
-        this.presentToast('You are not allowed in the system', 'danger');
-      } else if (userData['status'] === 'pending') {
-        loader.dismiss();
-        this.presentToast(
-          'Your account is pending. Please wait for admin approval.',
-          'warning'
-        );
-        // Redirect to profile page
-        this.router.navigate(['/profile']);
+        const user = userCredential.user;
+
+        switch (userData['role']) {
+          case 'RegionAdmin':
+            this.router.navigate(['/region']);
+            break;
+          case 'GroundForce':
+            this.router.navigate(['/counter']);
+            break;
+          case 'SuperAdmin':
+            this.router.navigate(['/super-admin']);
+            break;
+          default:
+            this.router.navigate(['/counter']);
+            break;
+        }
       } else {
         loader.dismiss();
-        this.presentToast('You are not allowed in the system', 'danger');
+        this.presentToast(
+          userData['status'] === 'denied'
+            ? 'You are not allowed in the system'
+            : 'Your account is pending. Please wait for admin approval.',
+          userData['status'] === 'pending' ? 'warning' : 'danger'
+        );
+        if (userData['status'] === 'pending') {
+          this.router.navigate(['/profile']);
+        }
+      }
+    } catch (error) {
+      loader.dismiss();
+      if (error instanceof Error) {
+        const errorMessage = error.message;
+        if (errorMessage.includes('wrong-password')) {
+          this.presentToast('Incorrect password', 'danger');
+        } else {
+          this.presentToast(errorMessage, 'danger');
+        }
+      } else {
+        this.presentToast('An unexpected error occurred', 'danger');
       }
     }
   }

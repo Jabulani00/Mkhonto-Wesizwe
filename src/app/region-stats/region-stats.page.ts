@@ -1,9 +1,8 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { Router } from '@angular/router';
 import Chart from 'chart.js/auto';
-
-
 
 interface Statistics {
   totalVoterRoll: number;
@@ -54,11 +53,22 @@ export class RegionStatsPage implements OnInit {
 
   constructor(
     private auth: AngularFireAuth,
-    private firestore: AngularFirestore
+    private firestore: AngularFirestore,
+    private router: Router
   ) {}
 
   ngOnInit() {
-    this.getCurrentUserMunicipality();
+    this.checkAuthentication();
+  }
+
+  async checkAuthentication() {
+    const user = await this.auth.currentUser;
+
+    if (!user) {
+      this.router.navigate(['/login']);  // Redirect to login if not authenticated
+    } else {
+      this.getCurrentUserMunicipality();
+    }
   }
 
   async getCurrentUserMunicipality() {
@@ -71,9 +81,14 @@ export class RegionStatsPage implements OnInit {
         .ref.where('email', '==', userEmail)
         .get()
         .then((querySnapshot: any) => {
+          if (querySnapshot.empty) {
+            console.error('No matching user document found.');
+            return;
+          }
           querySnapshot.forEach((doc: any) => {
             const data = doc.data();
             this.currentMunicipality = data.municipality;
+            console.log('User municipality:', this.currentMunicipality);
             this.fetchStatistics();
             this.fetchFraudAlerts();
           });
@@ -81,6 +96,8 @@ export class RegionStatsPage implements OnInit {
         .catch((error: any) => {
           console.error('Error getting user municipality:', error);
         });
+    } else {
+      console.error('No user is currently logged in.');
     }
   }
 
@@ -92,6 +109,11 @@ export class RegionStatsPage implements OnInit {
       .valueChanges()
       .subscribe(
         (electionData: any[]) => {
+          if (!electionData.length) {
+            console.warn('No election data found for municipality:', this.currentMunicipality);
+            return;
+          }
+
           const statistics: Statistics = {
             totalVoterRoll: 0,
             totalVoterTurnout: 0,
@@ -149,18 +171,22 @@ export class RegionStatsPage implements OnInit {
       .valueChanges()
       .subscribe(
         (electionData: any[]) => {
-          const fraudAlerts: FraudAlert[] = electionData.filter((data) => {
-            const totalVotes = data.totalVotes;
-            const voterRoll = data.voterRoll;
-            return totalVotes > voterRoll;
-          }).map((data) => ({
-            municipality: data.municipality,
-            ward: data.ward,
-            totalVotes: data.totalVotes,
-            voterRoll: data.voterRoll
-          }));
+          if (!electionData.length) {
+            console.warn('No election data found for municipality:', this.currentMunicipality);
+            return;
+          }
+
+          const fraudAlerts: FraudAlert[] = electionData
+            .filter((data) => data.totalVotes > data.voterRoll)
+            .map((data) => ({
+              municipality: data.municipality,
+              ward: data.ward,
+              totalVotes: data.totalVotes,
+              voterRoll: data.voterRoll,
+            }));
 
           this.fraudAlerts = fraudAlerts;
+          console.log('Fraud alerts:', this.fraudAlerts);
         },
         (error) => {
           console.error('Error fetching fraud alerts:', error);
@@ -186,7 +212,7 @@ export class RegionStatsPage implements OnInit {
     if (this.chart) {
       this.chart.destroy();
     }
-  
+
     this.chart = new Chart(this.votesVsVoterRollChart.nativeElement, {
       type: 'pie',
       data: {
@@ -236,7 +262,7 @@ export class RegionStatsPage implements OnInit {
     if (this.barChart) {
       this.barChart.destroy();
     }
-  
+
     this.barChart = new Chart(this.generalStatsChart.nativeElement, {
       type: 'bar',
       data: {

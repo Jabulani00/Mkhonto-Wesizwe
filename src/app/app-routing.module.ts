@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { AuthGuard } from './auth.guard';
 
 const routes: Routes = [
   {
@@ -57,9 +58,11 @@ const routes: Routes = [
   },{
     path: 'election-results',
     loadChildren: () => import('./election-results/election-results.module').then( m => m.ElectionResultsPageModule)
-  },  {
+  },
+  {
     path: 'region-stats',
-    loadChildren: () => import('./region-stats/region-stats.module').then( m => m.RegionStatsPageModule)
+    loadChildren: () => import('./region-stats/region-stats.module').then(m => m.RegionStatsPageModule),
+    canActivate: [AuthGuard]  // Protect this route with the AuthGuard
   },
   {
     path: 'vd',
