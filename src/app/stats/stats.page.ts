@@ -2,6 +2,10 @@ import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angula
 import { Chart, registerables } from 'chart.js';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Point, BubbleDataPoint } from 'chart.js';
+import { map } from 'rxjs/operators';
+import { take } from 'rxjs/operators';
+import { DocumentChangeAction } from '@angular/fire/compat/firestore';
+
 
 Chart.register(...registerables);
 
@@ -77,23 +81,37 @@ export class StatsPage implements OnInit, AfterViewInit {
   }
 
   loadPercentageVotesData() {
-    this.afs.collection<ElectionData>('electionData').snapshotChanges().subscribe(
-      (snapshot) => {
-        const data = snapshot.map((doc) => doc.payload.doc.data() as ElectionData);
+    this.afs.collection<ElectionData>('electionData').snapshotChanges().pipe(
+      map(snapshot => snapshot.map(doc => doc.payload.doc.data() as ElectionData)),
+      take(1) // take only one snapshot
+    ).subscribe(
+      (data: ElectionData[]) => {
         console.log('Fetched data:', data);
   
-        const totalVotes = data.map((item) => item.totalVotes).reduce((a, b) => a + b, 0);
+        const totalVotes = data.reduce((total, item) => total + item.totalVotes, 0);
+  
+        const combinedVotes = data.reduce((combined, item) => {
+          combined['ANC'] = (combined['ANC'] || 0) + item.ancVotes;
+          combined['DA'] = (combined['DA'] || 0) + item.daVotes;
+          combined['EFF'] = (combined['EFF'] || 0) + item.effVotes;
+          combined['IFP'] = (combined['IFP'] || 0) + item.ifpVotes;
+          combined['MK'] = (combined['MK'] || 0) + item.mkVotes;
+          combined['NFP'] = (combined['NFP'] || 0) + item.nfpVotes;
+          combined['UDM'] = (combined['UDM'] || 0) + item.udmVotes;
+          return combined;
+        }, {} as { [party: string]: number });
+  
         const percentages = {
-          ANC: this.calculatePercentage(data.map((item) => item.ancVotes).reduce((a, b) => a + b, 0), totalVotes),
-          DA: this.calculatePercentage(data.map((item) => item.daVotes).reduce((a, b) => a + b, 0), totalVotes),
-          EFF: this.calculatePercentage(data.map((item) => item.effVotes).reduce((a, b) => a + b, 0), totalVotes),
-          IFP: this.calculatePercentage(data.map((item) => item.ifpVotes).reduce((a, b) => a + b, 0), totalVotes),
-          MK: this.calculatePercentage(data.map((item) => item.mkVotes).reduce((a, b) => a + b, 0), totalVotes),
-          NFP: this.calculatePercentage(data.map((item) => item.nfpVotes).reduce((a, b) => a + b, 0), totalVotes),
-          UDM: this.calculatePercentage(data.map((item) => item.udmVotes).reduce((a, b) => a + b, 0), totalVotes),
+          ANC: this.calculatePercentage(combinedVotes['ANC'], totalVotes),
+          DA: this.calculatePercentage(combinedVotes['DA'], totalVotes),
+          EFF: this.calculatePercentage(combinedVotes['EFF'], totalVotes),
+          IFP: this.calculatePercentage(combinedVotes['IFP'], totalVotes),
+          MK: this.calculatePercentage(combinedVotes['MK'], totalVotes),
+          NFP: this.calculatePercentage(combinedVotes['NFP'], totalVotes),
+          UDM: this.calculatePercentage(combinedVotes['UDM'], totalVotes),
         };
   
-        console.log('Percentages:', percentages);
+        console.log('Combined Percentages:', percentages);
   
         // Update chart with new data
         this.updatePercentageVotesChart(percentages);
@@ -144,30 +162,6 @@ export class StatsPage implements OnInit, AfterViewInit {
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        plugins: {
-          tooltip: {
-            callbacks: {
-              label: function(context) {
-                const tooltipItem = context.dataIndex;
-                const dataset = context.chart.data.datasets[0];
-                const total = dataset.data.reduce<number>((previousValue: number, currentValue: number | [number, number] | Point | BubbleDataPoint | null) => {
-                  let value = 0;
-                  if (typeof currentValue === 'number') {
-                    value = currentValue;
-                  } else if (Array.isArray(currentValue)) {
-                    value = currentValue[0];
-                  } else if (currentValue !== null && typeof currentValue === 'object') {
-                    value = currentValue.y;
-                  }
-                  return previousValue + value;
-                }, 0);
-                const currentValue = dataset.data[tooltipItem] as number;
-                const percentage = Math.round(((currentValue) / ((total as number) || 1)) * 100);
-                return percentage + '%';
-              }
-            }
-          }
-        }
       },
     });
   }
