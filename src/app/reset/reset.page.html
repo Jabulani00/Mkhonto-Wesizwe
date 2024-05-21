@@ -1,21 +1,22 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
+  <ion-toolbar style="--background: #53A546; color: white;">
     <ion-title>Reset Password</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <div class="container">
-    <div class="card">
-      <h1>Reset Password</h1>
+<ion-content [fullscreen]="true" style="--background: #E8F5E9;">
+  <div class="container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%;">
+    <div class="card" style="width: 90%; max-width: 400px; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+      <h1 style="text-align: center; color: #53A546;">Reset Password</h1>
       <form (ngSubmit)="resetPassword()">
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input type="email" id="email" placeholder="Enter your email" [(ngModel)]="email" name="email">
+        <div class="form-group" style="margin-bottom: 15px;">
+          <ion-icon name="mail-outline" style="margin-right: 10px; color: #53A546; vertical-align: middle;"></ion-icon>
+          <label for="email" style="color: #53A546;">Email</label>
+          <input type="email" id="email" placeholder="Enter your email" [(ngModel)]="email" name="email" style="width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #53A546; border-radius: 5px;">
         </div>
-        <button type="submit">Reset</button>
+        <button type="submit" style="width: 100%; padding: 10px; background: #53A546; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer;">Reset</button>
       </form>
-      <p>Already have an account? <a routerLink="/login">Login</a></p>
+      <p style="text-align: center; margin-top: 20px;">Already have an account? <a routerLink="/login" style="color: #53A546;">Login</a></p>
     </div>
   </div>
 </ion-content>
