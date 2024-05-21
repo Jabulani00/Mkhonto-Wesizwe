@@ -70,7 +70,10 @@
       </ion-segment-button>
       <ion-segment-button value="percentageVotes">
         <ion-label>Percentage Votes</ion-label>
-      </ion-segment-button> <!-- Added segment button -->
+      </ion-segment-button>
+      <ion-segment-button value="performanceChart">
+        <ion-label>Performance Chart</ion-label>
+      </ion-segment-button>
     </ion-segment>
 
     <!-- Charts -->
@@ -85,6 +88,10 @@
     </div>
     <div id="percentageVotes-chart" class="chart-container" style="display: none;"> <!-- Added chart container -->
       <canvas #percentageVotesChartCanvas></canvas>
+    </div>
+
+    <div id="performanceChart-chart" class="chart-container" style="display: none;">
+      <canvas #performanceChartCanvas></canvas>
     </div>
   </div>
 </ion-content>

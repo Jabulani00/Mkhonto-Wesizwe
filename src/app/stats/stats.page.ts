@@ -59,6 +59,9 @@ export class StatsPage implements OnInit, AfterViewInit {
   @ViewChild('percentageVotesChartCanvas') percentageVotesChartCanvas!: ElementRef;
   percentageVotesChart: Chart<'pie', number[], string>;
 
+  @ViewChild('performanceChartCanvas', { static: true }) performanceChartCanvas!: ElementRef;
+performanceChart!: Chart;
+
 
   votesAndTurnoutData: any[] = [];
   votesAndTurnoutChart!: Chart;
@@ -102,7 +105,7 @@ export class StatsPage implements OnInit, AfterViewInit {
           combined['UDM'] = (combined['UDM'] || 0) + item.udmVotes;
           return combined;
         }, {} as { [party: string]: number });
-  
+        this.createPerformanceChart(combinedVotes);
         const percentages = {
           ANC: this.calculatePercentage(combinedVotes['ANC'], totalVotes),
           DA: this.calculatePercentage(combinedVotes['DA'], totalVotes),
@@ -122,6 +125,53 @@ export class StatsPage implements OnInit, AfterViewInit {
         console.error('Error fetching data from Firestore:', error);
       }
     );
+  }
+  createPerformanceChart(combinedVotes: { [party: string]: number }) {
+    this.performanceChart = new Chart(this.performanceChartCanvas.nativeElement, {
+      type: 'line', // Change the chart type to 'line'
+      data: {
+        labels: Object.keys(combinedVotes),
+        datasets: [
+          {
+            label: 'Vote Count',
+            data: Object.values(combinedVotes),
+            backgroundColor: 'rgba(255, 99, 132, 0.2)', // Set a background color for the line
+            borderColor: 'rgba(255, 99, 132, 1)', // Set a border color for the line
+            borderWidth: 1, // Set the line width
+          },
+        ],
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Vote Count',
+            },
+          },
+          x: {
+            title: {
+              display: true,
+              text: 'Parties',
+            },
+          },
+        },
+        plugins: {
+          zoom: {
+            zoom: {
+              wheel: {
+                enabled: true,
+              },
+              pinch: {
+                enabled: true,
+              },
+              mode: 'xy',
+            },
+          },
+        },
+      },
+    });
   }
   
   calculatePercentage(votes: number, totalVotes: number): number {

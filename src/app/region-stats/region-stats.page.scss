@@ -40,10 +40,11 @@ h2 {
 .fraud-alerts .alert {
   display: flex;
   align-items: center;
-  background: #ffccbc;
+  background: #ffbcbc;
   padding: 8px;
   border-radius: 8px;
   margin-right: 16px;
+  color: #2e0909;
 }
 .alert-icon {
   margin-right: 8px;
@@ -51,9 +52,11 @@ h2 {
 }
 .alert-content p {
   margin: 0;
+  color: #ff0202;
 }
 ion-segment {
   margin: 16px 0;
+  color: #388E3C;
 }
 .chart-container {
   padding: 16px;
