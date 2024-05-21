@@ -24,7 +24,7 @@ export class ApprovePage implements OnInit {
   ngOnInit() {
     this.users = this.firestore
       .collection<User>('Users', (ref) =>
-        ref.where('role', '==', 'GroundWorker')
+        ref.where('role', '==', 'GroundForce')
       )
       .valueChanges();
   }
