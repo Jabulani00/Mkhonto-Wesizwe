@@ -100,6 +100,12 @@
       <ion-segment-button value="generalStats">
         <ion-label>General Stats</ion-label>
       </ion-segment-button>
+      <ion-segment-button value="lineChart">
+        <ion-label>Line Chart</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="radarChart">
+        <ion-label>Radar Chart</ion-label>
+      </ion-segment-button>
     </ion-segment>
 
     <!-- Charts -->
@@ -108,6 +114,12 @@
     </div>
     <div id="generalStats-chart" class="chart-container" style="display: none;">
       <canvas #generalStatsChart></canvas>
+    </div>
+    <div id="lineChart-chart" class="chart-container" style="display: none;">
+      <canvas #lineChart></canvas>
+    </div>
+    <div id="radarChart-chart" class="chart-container" style="display: none;">
+      <canvas #radarChart></canvas>
     </div>
   </div>
 </ion-content>

@@ -3,6 +3,8 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { Router } from '@angular/router';
 import Chart from 'chart.js/auto';
+import 'chartjs-plugin-zoom';
+
 
 interface Statistics {
   totalVoterRoll: number;
@@ -33,6 +35,8 @@ interface FraudAlert {
 export class RegionStatsPage implements OnInit {
   @ViewChild('votesVsVoterRollChart') votesVsVoterRollChart!: ElementRef;
   @ViewChild('generalStatsChart') generalStatsChart!: ElementRef;
+  @ViewChild('lineChart') lineChart!: ElementRef;
+  @ViewChild('radarChart') radarChart!: ElementRef;
 
   currentMunicipality: string = '';
   totalVoterRoll: number = 0;
@@ -50,6 +54,8 @@ export class RegionStatsPage implements OnInit {
 
   chart: any;
   barChart: any;
+  line: any;
+  radar: any;
 
   constructor(
     private auth: AngularFireAuth,
@@ -156,6 +162,8 @@ export class RegionStatsPage implements OnInit {
 
           this.updateChart();
           this.updateBarChart();
+          this.updateLineChart();
+          this.updateRadarChart();
         },
         (error) => {
           console.error('Error fetching statistics:', error);
@@ -298,6 +306,103 @@ export class RegionStatsPage implements OnInit {
         },
         responsive: true,
         maintainAspectRatio: false,
+      }
+    });
+  }
+
+  updateLineChart() {
+    if (this.line) {
+      this.line.destroy();
+    }
+
+    this.line = new Chart(this.lineChart.nativeElement, {
+      type: 'line',
+      data: {
+        labels: ['ANC Votes', 'DA Votes', 'EFF Votes', 'IFP Votes', 'MK Votes', 'NFP Votes', 'UDM Votes'],
+        datasets: [{
+          label: 'Votes Over Time',
+          data: [
+            this.ancVotes,
+            this.daVotes,
+            this.effVotes,
+            this.ifpVotes,
+            this.mkVotes,
+            this.nfpVotes,
+            this.udmVotes
+          ],
+          backgroundColor: 'rgba(75, 192, 192, 0.2)',
+          borderColor: 'rgba(75, 192, 192, 1)',
+          borderWidth: 1,
+          fill: true,
+        }]
+      },
+      options: {
+        plugins: {
+          zoom: {
+            zoom: {
+              wheel: {
+                enabled: true,
+              },
+              pinch: {
+                enabled: true,
+              },
+              mode: 'xy',
+            },
+          },
+        },
+        responsive: true,
+        maintainAspectRatio: false,
+      }
+    });
+  }
+
+  updateRadarChart() {
+    if (this.radar) {
+      this.radar.destroy();
+    }
+
+    this.radar = new Chart(this.radarChart.nativeElement, {
+      type: 'radar',
+      data: {
+        labels: ['ANC Votes', 'DA Votes', 'EFF Votes', 'IFP Votes', 'MK Votes', 'NFP Votes', 'UDM Votes'],
+        datasets: [{
+          label: 'Votes Distribution',
+          data: [
+            this.ancVotes,
+            this.daVotes,
+            this.effVotes,
+            this.ifpVotes,
+            this.mkVotes,
+            this.nfpVotes,
+            this.udmVotes
+          ],
+          backgroundColor: 'rgba(255, 99, 132, 0.2)',
+          borderColor: 'rgba(255, 99, 132, 1)',
+          borderWidth: 1,
+          fill: true,
+        }]
+      },
+      options: {
+        plugins: {
+          zoom: {
+            zoom: {
+              wheel: {
+                enabled: true,
+              },
+              pinch: {
+                enabled: true,
+              },
+              mode: 'xy',
+            },
+          },
+        },
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          r: {
+            beginAtZero: true
+          }
+        }
       }
     });
   }
