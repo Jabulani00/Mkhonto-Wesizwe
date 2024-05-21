@@ -287,7 +287,7 @@
   <ion-label position="stacked">AFRICAN PEOPLE'S CONVENTION Votes</ion-label>
   <ion-input formControlName="apcVotes" type="number" required></ion-input>
 </ion-item>
-
+<div *ngIf="formDir.submitted && (electionForm.get('apcVotes')?.invalid && electionForm.get('apcVotes')?.touched && electionForm.get('apcVotes')?.value === '')" class="error-message">AFRICAN NATIONAL CONGRESS Votes is required.</div>
 
 </div>
 

@@ -19,18 +19,25 @@ votingStations : any;
   
 
   constructor(private firestore: AngularFirestore,private fb: FormBuilder,private firestoreService:FirestoreService,private auth:AngularFireAuth) {
-    this.loadMunicipalities();
-    this.initializeForm();
-    this.getDoc();
+  
+
+
+    
   }
 
   ngOnInit() {
     this.createForm();
+    this.loadMunicipalities();
+
+    // Ensure this.getDoc() is called only when form values change and the form is fully initialized
     this.electionForm.valueChanges.subscribe(() => {
       this.getDoc(); // Call getDoc() whenever form values change
     });
-  
+
+    // Initialize form data after creating the form
+    this.initializeForm();
   }
+
 
   createForm() {
     this.electionForm = this.fb.group({
@@ -58,12 +65,11 @@ votingStations : any;
       udmVotes: ['', Validators.required, Validators.pattern('^[0-9]*$')],
       // udmPercentage: ['', Validators.required],
       timestamp: [new Date()],
-      // actsaVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
 
+      actsaVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
       abcVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
       alVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
       aadpVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
-
       araVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
       acdpVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
       actVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
@@ -71,7 +77,7 @@ votingStations : any;
       ahcVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
       aicVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
       amcVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
-      // apcVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
+      apcVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
     });
   }
 
@@ -124,6 +130,7 @@ this.firestore.collection('Users').ref
       const vdNumberValue = this.electionForm.get('vdNumber')?.value;
       this.electionForm.reset();
       this.electionForm.patchValue({ vdNumber: vdNumberValue });
+      this.initializeForm();
     })
     .catch((error) => {
       alert("Error submitting form try again");
