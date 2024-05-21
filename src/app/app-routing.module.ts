@@ -23,41 +23,50 @@ const routes: Routes = [
   {
     path: 'register',
     loadChildren: () => import('./register/register.module').then( m => m.RegisterPageModule)
+    
   },
   {
     path: 'stats',
-    loadChildren: () => import('./stats/stats.module').then( m => m.StatsPageModule)
+    loadChildren: () => import('./stats/stats.module').then( m => m.StatsPageModule),
+    canActivate: [AuthGuard]  // Protect this route with the AuthGuard
   },
   {
     path: 'super-admin',
-    loadChildren: () => import('./super-admin/super-admin.module').then( m => m.SuperAdminPageModule)
+    loadChildren: () => import('./super-admin/super-admin.module').then( m => m.SuperAdminPageModule),
+    canActivate: [AuthGuard]  // Protect this route with the AuthGuard
   },
   {
     path: 'counter',
-    loadChildren: () => import('./counter/counter.module').then( m => m.CounterPageModule)
+    loadChildren: () => import('./counter/counter.module').then( m => m.CounterPageModule),
+    canActivate: [AuthGuard]  // Protect this route with the AuthGuard
   },
   {
     path: 'profile',
-    loadChildren: () => import('./profile/profile.module').then( m => m.ProfilePageModule)
+    loadChildren: () => import('./profile/profile.module').then( m => m.ProfilePageModule),
+    canActivate: [AuthGuard]  // Protect this route with the AuthGuard
   },
   {
     path: 'validation',
-    loadChildren: () => import('./validation/validation.module').then( m => m.ValidationPageModule)
+    loadChildren: () => import('./validation/validation.module').then( m => m.ValidationPageModule),
+    canActivate: [AuthGuard]  // Protect this route with the AuthGuard
   },
   {
     path: 'municipality',
-    loadChildren: () => import('./municipality/municipality.module').then( m => m.MunicipalityPageModule)
+    loadChildren: () => import('./municipality/municipality.module').then( m => m.MunicipalityPageModule),
+    canActivate: [AuthGuard]  // Protect this route with the AuthGuard
   },
   {
     path: 'region',
-    loadChildren: () => import('./region/region.module').then( m => m.RegionPageModule)
+    loadChildren: () => import('./region/region.module').then( m => m.RegionPageModule),
+    canActivate: [AuthGuard]  // Protect this route with the AuthGuard
   },
   {
     path: 'approve',
     loadChildren: () => import('./approve/approve.module').then( m => m.ApprovePageModule)
   },{
     path: 'election-results',
-    loadChildren: () => import('./election-results/election-results.module').then( m => m.ElectionResultsPageModule)
+    loadChildren: () => import('./election-results/election-results.module').then( m => m.ElectionResultsPageModule),
+    canActivate: [AuthGuard]  // Protect this route with the AuthGuard
   },
   {
     path: 'region-stats',
@@ -66,7 +75,8 @@ const routes: Routes = [
   },
   {
     path: 'vd',
-    loadChildren: () => import('./vd/vd.module').then( m => m.VdPageModule)
+    loadChildren: () => import('./vd/vd.module').then( m => m.VdPageModule),
+    canActivate: [AuthGuard]  // Protect this route with the AuthGuard
   },
 
   
