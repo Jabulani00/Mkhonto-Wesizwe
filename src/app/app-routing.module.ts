@@ -62,7 +62,8 @@ const routes: Routes = [
   },
   {
     path: 'approve',
-    loadChildren: () => import('./approve/approve.module').then( m => m.ApprovePageModule)
+    loadChildren: () => import('./approve/approve.module').then( m => m.ApprovePageModule),
+    canActivate: [AuthGuard] 
   },{
     path: 'election-results',
     loadChildren: () => import('./election-results/election-results.module').then( m => m.ElectionResultsPageModule),
