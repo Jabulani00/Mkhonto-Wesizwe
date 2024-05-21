@@ -1,38 +1,47 @@
-/* Dashboard Card Styles */
+
+
 .dashboard-card {
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    transition: box-shadow 0.3s ease-in-out;
-  }
-  
-  .dashboard-card:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  }
-  
-  .card-header {
-    background-color: #5f8a59;
-    color: #fff;
-    padding: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-  }
-  
-  .card-icon {
-    font-size: 24px;
-    margin-right: 8px;
-  }
-  
-  .card-content {
-    padding: 16px;
-    text-align: center;
-  }
-  
-  /* Responsive Styles */
-  @media (max-width: 767px) {
-    ion-col {
-      padding: 8px;
-    }
-  }
+  --background: #e6ffe6; /* Light green background for cards */
+  transition: transform 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+  border-radius: 12px;
+}
+
+.dashboard-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+}
+
+.card-icon {
+  font-size: 2.5rem;
+  color: #004d00; /* Dark green color for icons */
+  margin-right: 12px;
+}
+
+ion-card-title {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #004d00; /* Dark green color for card titles */
+}
+
+.card-content {
+  font-size: 1rem;
+  color: #004d00; /* Dark green color for card content */
+}
+
+ion-row {
+  margin-bottom: 20px;
+}
+
+.wide-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}

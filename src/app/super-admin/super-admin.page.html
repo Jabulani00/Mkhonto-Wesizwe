@@ -1,16 +1,14 @@
 <ion-header [translucent]="true">
-  <ion-toolbar>
+  <ion-toolbar >
     <ion-title>superAdmin</ion-title>
-    <ion-icon slot="end" name="power-outline" (click)="presentConfirmationAlert()"></ion-icon>
+    <ion-icon slot="end" name="power-outline" (click)="presentConfirmationAlert()" style="color: white;"></ion-icon>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
- 
-
   <ion-grid>
     <ion-row>
-      <ion-col size="12" size-md="4">
+      <ion-col size="12" size-md="6">
         <ion-card routerLink="/municipality" routerDirection="root" class="dashboard-card">
           <ion-card-header class="card-header">
             <ion-icon name="business" class="card-icon"></ion-icon>
@@ -21,8 +19,7 @@
           </ion-card-content>
         </ion-card>
       </ion-col>
-
-      <ion-col size="12" size-md="4">
+      <ion-col size="12" size-md="6">
         <ion-card routerLink="/validation" routerDirection="root" class="dashboard-card">
           <ion-card-header class="card-header">
             <ion-icon name="person" class="card-icon"></ion-icon>
@@ -33,9 +30,10 @@
           </ion-card-content>
         </ion-card>
       </ion-col>
-
-      <ion-col size="12" size-md="4">
-        <ion-card routerLink="/stats" routerDirection="root" class="dashboard-card">
+    </ion-row>
+    <ion-row>
+      <ion-col size="12">
+        <ion-card routerLink="/stats" routerDirection="root" class="dashboard-card wide-card">
           <ion-card-header class="card-header">
             <ion-icon name="stats-chart" class="card-icon"></ion-icon>
             <ion-card-title>Stats</ion-card-title>

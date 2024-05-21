@@ -1,48 +1,45 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>Region Admin</ion-title>
-    <ion-icon slot="end" name="power-outline" (click)="presentConfirmationAlert()"></ion-icon>
+    <ion-icon slot="end" name="power-outline" (click)="presentConfirmationAlert()" style="color: white;"></ion-icon>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
- 
-
   <ion-grid>
-    <ion-row>
-
-      <ion-col size="12" size-md="4">
+    <ion-row class="top-row">
+      <ion-col size="12" size-md="6">
         <ion-card routerLink="/vd" routerDirection="root" class="dashboard-card">
           <ion-card-header class="card-header">
-            <ion-icon name="stats-chart" class="card-icon"></ion-icon>
+            <ion-icon name="add-circle-outline" class="card-icon"></ion-icon>
             <ion-card-title>Add Voting Station</ion-card-title>
           </ion-card-header>
           <ion-card-content class="card-content">
-            Add Voting stations
+            Add new voting stations to your region.
           </ion-card-content>
         </ion-card>
       </ion-col>
-      
-      <ion-col size="12" size-md="4">
+      <ion-col size="12" size-md="6">
         <ion-card routerLink="/approve" routerDirection="root" class="dashboard-card">
           <ion-card-header class="card-header">
-            <ion-icon name="person" class="card-icon"></ion-icon>
+            <ion-icon name="person-circle-outline" class="card-icon"></ion-icon>
             <ion-card-title>Ward User Profile</ion-card-title>
           </ion-card-header>
           <ion-card-content class="card-content">
-            View and update your region user profiles.
+            View and update user profiles within your region.
           </ion-card-content>
         </ion-card>
       </ion-col>
-
-      <ion-col size="12" size-md="4">
-        <ion-card routerLink="/region-stats" routerDirection="root" class="dashboard-card">
+    </ion-row>
+    <ion-row class="bottom-row">
+      <ion-col size="12">
+        <ion-card routerLink="/region-stats" routerDirection="root" class="dashboard-card wide-card">
           <ion-card-header class="card-header">
-            <ion-icon name="stats-chart" class="card-icon"></ion-icon>
+            <ion-icon name="bar-chart-outline" class="card-icon"></ion-icon>
             <ion-card-title>Region Stats</ion-card-title>
           </ion-card-header>
           <ion-card-content class="card-content">
-            View statistics and reports of Region.
+            View detailed statistics and reports of your region.
           </ion-card-content>
         </ion-card>
       </ion-col>
