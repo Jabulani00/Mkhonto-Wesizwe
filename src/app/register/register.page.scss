@@ -1,34 +1,59 @@
-ion-header, ion-toolbar {
-  --background: #53A546;
-  --color: #fff;
+ion-toolbar {
+  --background: #53A546; /* Dark green background for toolbar */
+  --color: white; /* White text color for toolbar */
 }
 
-ion-content {
-  --background: #f3f4f6;
+ion-icon {
+  color: #53A546; /* Dark green color for icons */
 }
 
 ion-item {
-  --background: #fff;
+  --background: #e6ffe6; /* Light green background for input items */
+  --color: #53A546; /* Dark green text color */
+  --border-color: #53A546; /* Dark green border color */
 }
 
 ion-label {
-  --color: #222428;
+  color: #53A546; /* Dark green label color */
 }
 
 ion-input {
-  --color: #222428;
+  --placeholder-color: #53A546; /* Dark green placeholder color */
 }
 
 ion-button {
-  --background: #53A546;
-  --color: #fff;
+  --background: #53A546; /* Dark green background for button */
+  --color: white; /* White text color for button */
+}
+
+.link {
+  color: #53A546; /* Dark green color for links */
+  text-decoration: underline;
+}
+p {
+  text-align: center;
+  margin-top: 20px;
 }
 
 a {
   color: #53A546;
   text-decoration: none;
+
 }
 
-a:hover {
-  text-decoration: underline;
+.ion-padding {
+  padding: 16px;
+}
+.search-dropdown-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.search-dropdown {
+  display: flex;
+}
+
+.search-dropdown ion-searchbar {
+  flex-grow: 1;
+  margin-right: 8px;
 }

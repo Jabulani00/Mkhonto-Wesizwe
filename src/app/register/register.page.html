@@ -1,21 +1,21 @@
 <ion-header>
-  <ion-toolbar >
+  <ion-toolbar>
     <ion-title>Sign Up</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content class="ion-padding">
   <ion-list lines="full">
     <ion-item>
+      <ion-icon slot="start" name="person-circle-outline"></ion-icon>
       <ion-label position="floating">Name</ion-label>
       <ion-input type="text" [(ngModel)]="name"></ion-input>
-      <ion-icon slot="start" name="person-circle-outline"></ion-icon>
     </ion-item>
 
     <ion-item>
+      <ion-icon slot="start" name="mail-outline"></ion-icon>
       <ion-label position="floating">Email</ion-label>
       <ion-input type="email" [(ngModel)]="email"></ion-input>
-      <ion-icon slot="start" name="mail-outline"></ion-icon>
     </ion-item>
 
     <ion-item>
@@ -27,58 +27,74 @@
       </ion-select>
     </ion-item>
 
-    <ion-item *ngIf="selectedRole === 'RegionAdmin' || selectedRole === 'GroundForce'">
-      <ion-label position="floating">Municipality</ion-label>
-      <ion-searchbar
-        [(ngModel)]="municipalitySearchText"
-        (ionChange)="filterMunicipalities($event)"
-        showCancelButton="never"
-        debounce="500"
-      ></ion-searchbar>
-      <ion-select
-        [(ngModel)]="selectedMunicipality"
-        (ionChange)="onMunicipalityChange($event)"
-      >
-        <ion-select-option
-          *ngFor="let municipality of filteredMunicipalities"
-          [value]="municipality.municipality"
-          >{{ municipality.municipality }}</ion-select-option
-        >
-      </ion-select>
-    </ion-item>
-    
-    <ion-item *ngIf="selectedRole === 'GroundForce'">
-      <ion-label position="floating">Ward</ion-label>
-      <ion-searchbar
-        [(ngModel)]="wardSearchText"
-        (ionChange)="filterWards($event)"
-        showCancelButton="never"
-        debounce="500"
-      ></ion-searchbar>
-      <ion-select [(ngModel)]="selectedWard">
-        <ion-select-option
-          *ngFor="let ward of filteredWards"
-          [value]="ward.ward"
-          >{{ ward.ward }}</ion-select-option
-        >
-      </ion-select>
-    </ion-item>
+    <div class="search-dropdown-container">
+      <ion-item *ngIf="selectedRole === 'RegionAdmin' || selectedRole === 'GroundForce'">
+        <ion-label position="stacked">Municipality</ion-label>
+        <div class="search-dropdown">
+          <ion-searchbar
+            [(ngModel)]="municipalitySearchText"
+            (ionChange)="filterMunicipalities($event)"
+            showCancelButton="never"
+            debounce="500"
+            placeholder="Search Municipality"
+          ></ion-searchbar>
+          <ion-select
+            [(ngModel)]="selectedMunicipality"
+            (ionChange)="onMunicipalityChange($event)"
+            interface="popover"
+            placeholder="Select Municipality"
+          >
+            <ion-select-option
+              *ngFor="let municipality of filteredMunicipalities"
+              [value]="municipality.municipality"
+            >
+              {{ municipality.municipality }}
+            </ion-select-option>
+          </ion-select>
+        </div>
+      </ion-item>
+
+      <ion-item *ngIf="selectedRole === 'GroundForce'">
+        <ion-label position="stacked">Ward</ion-label>
+        <div class="search-dropdown">
+          <ion-searchbar
+            [(ngModel)]="wardSearchText"
+            (ionChange)="filterWards($event)"
+            showCancelButton="never"
+            debounce="500"
+            placeholder="Search Ward"
+          ></ion-searchbar>
+          <ion-select
+            [(ngModel)]="selectedWard"
+            interface="popover"
+            placeholder="Select Ward"
+          >
+            <ion-select-option
+              *ngFor="let ward of filteredWards"
+              [value]="ward.ward"
+            >
+              {{ ward.ward }}
+            </ion-select-option>
+          </ion-select>
+        </div>
+      </ion-item>
+    </div>
 
     <ion-item>
+      <ion-icon slot="start" name="lock-closed-outline"></ion-icon>
       <ion-label position="floating">Password</ion-label>
       <ion-input type="password" [(ngModel)]="password"></ion-input>
-      <ion-icon slot="start" name="lock-closed-outline"></ion-icon>
     </ion-item>
 
     <ion-item>
+      <ion-icon slot="start" name="lock-closed-outline"></ion-icon>
       <ion-label position="floating">Confirm Password</ion-label>
       <ion-input type="password" [(ngModel)]="confirm_password"></ion-input>
-      <ion-icon slot="start" name="lock-closed-outline"></ion-icon>
     </ion-item>
   </ion-list>
 
   <div class="ion-padding">
-    <ion-button expand="block"  (click)="Register()">Sign Up</ion-button>
+    <ion-button expand="block" (click)="Register()">Sign Up</ion-button>
   </div>
 
   <div class="ion-text-center ion-padding">
