@@ -108,7 +108,7 @@ export class ElectionResultsPage implements OnInit {
             mkVotes: doc.data().mkVotes + this.electionForm.get('mkVotes')?.value,
             nfpVotes: doc.data().nfpVotes + this.electionForm.get('nfpVotes')?.value,
             udmVotes: doc.data().udmVotes + this.electionForm.get('udmVotes')?.value,
-            spoiltBallots: doc.data().spoiltBallots + this.electionForm.get('spoiltBallots')?.value,
+            //spoiltBallots: doc.data().spoiltBallots + this.electionForm.get('spoiltBallots')?.value,
           };
           this.docId= doc.id;
           console.log(updatedDoc)
@@ -133,6 +133,7 @@ updateDocument(docId: string, updatedDoc: any) {
     .then(() => {
       console.log('Document updated successfully:', docId);
       alert('Document updated successfully:'+ docId);
+      this.electionForm.reset();
     })
     .catch((error) => {
       console.error('Error updating document:', error);

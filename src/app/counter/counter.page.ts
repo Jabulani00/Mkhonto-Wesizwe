@@ -39,23 +39,23 @@ votingStations : any;
       vdNumber: ['', Validators.required],
       leader: ['', Validators.required],
       cellNumber: ['', Validators.required],
-      voterRoll: ['', Validators.required],
-      voterTurnout: ['', Validators.required],
-      spoiltBallots: ['', Validators.required],
-      totalVotes: ['', Validators.required],
-      mkVotes: ['', Validators.required],
+      voterRoll: ['', Validators.required, Validators.pattern('^[0-9]*$')],
+      voterTurnout: ['', Validators.required, Validators.pattern('^[0-9]*$')],
+      spoiltBallots: ['', Validators.required, Validators.pattern('^[0-9]*$')],
+      totalVotes: ['', Validators.required, Validators.pattern('^[0-9]*$')],
+      mkVotes: ['', Validators.required, Validators.pattern('^[0-9]*$')],
       // mkPercentage: ['', Validators.required],
-      ancVotes: ['', Validators.required],
+      ancVotes: ['', Validators.required, Validators.pattern('^[0-9]*$')],
       // ancPercentage: ['', Validators.required],
-      effVotes: ['', Validators.required],
+      effVotes: ['', Validators.required, Validators.pattern('^[0-9]*$')],
       // effPercentage: ['', Validators.required],
-      ifpVotes: ['', Validators.required],
+      ifpVotes: ['', Validators.required, Validators.pattern('^[0-9]*$')],
       // ifpPercentage: ['', Validators.required],
-      nfpVotes: ['', Validators.required],
+      nfpVotes: ['', Validators.required, Validators.pattern('^[0-9]*$')],
       // nfpPercentage: ['', Validators.required],
-      daVotes: ['', Validators.required],
+      daVotes: ['', Validators.required, Validators.pattern('^[0-9]*$')],
       // daPercentage: ['', Validators.required],
-      udmVotes: ['', Validators.required],
+      udmVotes: ['', Validators.required, Validators.pattern('^[0-9]*$')],
       // udmPercentage: ['', Validators.required],
       timestamp: [new Date()],
       // actsaVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
@@ -121,7 +121,9 @@ this.firestore.collection('Users').ref
       console.log('Form data submitted successfully to Firestore');
       // Optionally, display a success message to the user
       // Reset form after successful submission
+      const vdNumberValue = this.electionForm.get('vdNumber')?.value;
       this.electionForm.reset();
+      this.electionForm.patchValue({ vdNumber: vdNumberValue });
     })
     .catch((error) => {
       alert("Error submitting form try again");
