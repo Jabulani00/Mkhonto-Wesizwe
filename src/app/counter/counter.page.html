@@ -210,11 +210,11 @@
 <div *ngIf="formDir.submitted && (electionForm.get('aadpVotes')?.invalid && electionForm.get('aadpVotes')?.touched && electionForm.get('aadpVotes')?.value === '')" class="error-message">ACTION ALLIANCE DEVELOPMENT PARTY Votes is required.</div>
 
 <!-- ACTSA Votes -->
-<!-- <ion-item class="input-item">
+<ion-item class="input-item">
   <ion-label position="stacked">ACTIONSA Votes</ion-label>
   <ion-input formControlName="actsaVotes" type="number" required></ion-input>
 </ion-item>
-<div *ngIf="formDir.submitted && (electionForm.get('actsaVotes')?.invalid && electionForm.get('actsaVotes')?.touched && electionForm.get('actsaVotes')?.value === '')" class="error-message">ACTIONSA Votes is required.</div> -->
+<div *ngIf="formDir.submitted && (electionForm.get('actsaVotes')?.invalid && electionForm.get('actsaVotes')?.touched && electionForm.get('actsaVotes')?.value === '')" class="error-message">ACTIONSA Votes is required.</div>
 
 <!-- ARA Votes -->
 <ion-item class="input-item">
@@ -272,11 +272,12 @@
 </ion-item>
 <div *ngIf="formDir.submitted && (electionForm.get('ancVotes')?.invalid && electionForm.get('ancVotes')?.touched && electionForm.get('ancVotes')?.value === '')" class="error-message">AFRICAN NATIONAL CONGRESS Votes is required.</div>
 
-<!-- APC Votes -->
-<!-- <ion-item class="input-item">
+<!-- APC Votes  -->
+ <ion-item class="input-item">
   <ion-label position="stacked">AFRICAN PEOPLE'S CONVENTION Votes</ion-label>
   <ion-input formControlName="apcVotes" type="number" required></ion-input>
-</ion-item> -->
+</ion-item>
+<div *ngIf="formDir.submitted && (electionForm.get('apcVotes')?.invalid && electionForm.get('apcVotes')?.touched && electionForm.get('apcVotes')?.value === '')" class="error-message">AFRICAN PEOPLE'S CONVENTION  Votes is required.</div>
 
 </div>
 
