@@ -57,8 +57,9 @@ h2 {
 .alert-content p {
   margin: 0;
 }
-ion-segment {
+ion-segment, ion-label {
   margin: 16px 0;
+  color: #388E3C;
 }
 .chart-container {
   padding: 16px;
