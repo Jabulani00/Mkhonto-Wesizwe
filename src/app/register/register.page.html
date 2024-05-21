@@ -27,7 +27,7 @@
       </ion-select>
     </ion-item>
 
-    <ion-item *ngIf="selectedRole === 'RegionAdmin' || selectedRole === 'GroundWorker'">
+    <ion-item *ngIf="selectedRole === 'RegionAdmin' || selectedRole === 'GroundForce'">
       <ion-label position="floating">Municipality</ion-label>
       <ion-searchbar
         [(ngModel)]="municipalitySearchText"
@@ -47,7 +47,7 @@
       </ion-select>
     </ion-item>
     
-    <ion-item *ngIf="selectedRole === 'GroundWorker'">
+    <ion-item *ngIf="selectedRole === 'GroundForce'">
       <ion-label position="floating">Ward</ion-label>
       <ion-searchbar
         [(ngModel)]="wardSearchText"
