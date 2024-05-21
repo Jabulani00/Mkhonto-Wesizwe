@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar color="success">
     <ion-title>Stats</ion-title>
     <ion-icon routerLink="/region" slot="end" name="arrow-back-outline"></ion-icon>
   </ion-toolbar>
@@ -7,51 +7,70 @@
 
 <ion-content>
   <div class="container">
+
+    <!-- Main Stats Section -->
+    <div class="main-stats">
+      <h2>Main Election Statistics</h2>
+      <div class="stats-grid">
+        <div class="stat-block main-stat-block">
+          <ion-icon name="people-circle-outline"></ion-icon>
+          <strong>Total Voter Roll:</strong>
+          <span>{{ totalVoterRoll }}</span>
+        </div>
+        <div class="stat-block main-stat-block">
+          <ion-icon name="checkmark-done-circle-outline"></ion-icon>
+          <strong>Total Voter Turnout:</strong>
+          <span>{{ totalVoterTurnout }}</span>
+        </div>
+        <div class="stat-block main-stat-block">
+          <ion-icon name="close-circle-outline"></ion-icon>
+          <strong>Total Spoilt Ballots:</strong>
+          <span>{{ totalSpoiltBallots }}</span>
+        </div>
+        <div class="stat-block main-stat-block">
+          <ion-icon name="document-text-outline"></ion-icon>
+          <strong>Total Votes:</strong>
+          <span>{{ totalVotes }}</span>
+        </div>
+      </div>
+    </div>
+
     <!-- Stats Section -->
     <div class="stats">
       <h2>Election Statistics</h2>
       <div class="stats-grid">
         <div class="stat-block">
-          <strong>Total Voter Roll:</strong>
-          <span>{{ totalVoterRoll }}</span>
-        </div>
-        <div class="stat-block">
-          <strong>Total Voter Turnout:</strong>
-          <span>{{ totalVoterTurnout }}</span>
-        </div>
-        <div class="stat-block">
-          <strong>Total Spoilt Ballots:</strong>
-          <span>{{ totalSpoiltBallots }}</span>
-        </div>
-        <div class="stat-block">
-          <strong>Total Votes:</strong>
-          <span>{{ totalVotes }}</span>
-        </div>
-        <div class="stat-block">
+          <ion-icon name="trending-up-outline"></ion-icon>
           <strong>ANC Votes:</strong>
           <span>{{ ancVotes }}</span>
         </div>
         <div class="stat-block">
+          <ion-icon name="trending-up-outline"></ion-icon>
           <strong>DA Votes:</strong>
           <span>{{ daVotes }}</span>
         </div>
         <div class="stat-block">
+          <ion-icon name="trending-up-outline"></ion-icon>
           <strong>EFF Votes:</strong>
           <span>{{ effVotes }}</span>
         </div>
         <div class="stat-block">
+          <ion-icon name="trending-up-outline"></ion-icon>
           <strong>IFP Votes:</strong>
           <span>{{ ifpVotes }}</span>
         </div>
         <div class="stat-block">
+          <ion-icon name="trending-up-outline"></ion-icon>
           <strong>MK Votes:</strong>
           <span>{{ mkVotes }}</span>
         </div>
         <div class="stat-block">
+          <ion-icon name="trending-up-outline"></ion-icon>
           <strong>NFP Votes:</strong>
           <span>{{ nfpVotes }}</span>
         </div>
         <div class="stat-block">
+          <ion-icon name="trending-up-outline"></ion-icon>
           <strong>UDM Votes:</strong>
           <span>{{ udmVotes }}</span>
         </div>
@@ -75,18 +94,18 @@
 
     <!-- Segment Control -->
     <ion-segment (ionChange)="segmentChanged($event)" [scrollable]="true">
-      
-      <ion-segment-button value="votesVsVoterRoll" checked>Votes Parties</ion-segment-button>
-      
-      <ion-segment-button value="generalStats">General Stats</ion-segment-button>
+      <ion-segment-button value="votesVsVoterRoll" checked>
+        <ion-label>Votes Parties</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="generalStats">
+        <ion-label>General Stats</ion-label>
+      </ion-segment-button>
     </ion-segment>
 
     <!-- Charts -->
-    
-    <div id="votesVsVoterRoll-chart" class="chart-container" >
+    <div id="votesVsVoterRoll-chart" class="chart-container">
       <canvas #votesVsVoterRollChart></canvas>
     </div>
-  
     <div id="generalStats-chart" class="chart-container" style="display: none;">
       <canvas #generalStatsChart></canvas>
     </div>
