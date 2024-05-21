@@ -21,7 +21,7 @@ votingStations : any;
   constructor(private firestore: AngularFirestore,private fb: FormBuilder,private firestoreService:FirestoreService,private auth:AngularFireAuth) {
     this.loadMunicipalities();
     this.initializeForm();
-
+    this.getDoc();
   }
 
   ngOnInit() {
@@ -58,12 +58,12 @@ votingStations : any;
       udmVotes: ['', Validators.required],
       // udmPercentage: ['', Validators.required],
       timestamp: [new Date()],
-      actsaVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
+      // actsaVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
 
       abcVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
       alVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
       aadpVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
-      actsAVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
+
       araVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
       acdpVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
       actVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
@@ -71,7 +71,7 @@ votingStations : any;
       ahcVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
       aicVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
       amcVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
-      apcVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
+      // apcVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
     });
   }
 

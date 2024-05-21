@@ -86,7 +86,13 @@
             <ion-input formControlName="mkPercentage" type="text" required></ion-input>
           </ion-item>
           <div *ngIf="formDir.submitted && (electionForm.get('mkPercentage')?.invalid && electionForm.get('mkPercentage')?.touched && electionForm.get('mkPercentage')?.value === '')" class="error-message">MK Percentage is required.</div> -->
-
+          <ion-item class="input-item">
+            <ion-label position="stacked">VD Number</ion-label>
+            <ion-select formControlName="vdNumber" interface="action-sheet" placeholder="Select VD Number">
+              <ion-select-option *ngFor="let vd of votingStations" [value]="vd">{{ vd }}</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <div *ngIf="formDir.submitted && (electionForm.get('vdNumber')?.invalid && electionForm.get('vdNumber')?.touched && electionForm.get('vdNumber')?.value === '')" class="error-message">VD Number is required.</div>
   <div class="parties"> 
 <!-- MK Votes -->
     <ion-item>

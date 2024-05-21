@@ -14,10 +14,14 @@ export class ElectionResultsPage implements OnInit {
   municipalities: any[] = [];
   selectedMunicipalityWards: any;
   docId:any;
+  data: any;
+  votingStations: any;
+  ward: any;
 
   constructor(private firestore: AngularFirestore,private fb: FormBuilder,private firestoreService:FirestoreService,private auth:AngularFireAuth) {
     this.createForm();
- 
+    this.initializeForm();
+
   }
 
   ngOnInit() {
@@ -31,7 +35,7 @@ export class ElectionResultsPage implements OnInit {
     this.electionForm = this.fb.group({
       // municipality: ['', Validators.required],
       // ward: ['', Validators.required],
-      // vdNumber: ['', Validators.required],
+      vdNumber: ['', Validators.required],
       // leader: ['', Validators.required],
       // cellNumber: ['', Validators.required],
       // voterRoll: ['', Validators.required],
@@ -84,8 +88,10 @@ export class ElectionResultsPage implements OnInit {
   
   if (user) {
     const userEmail = user.email;
+    const vdNumber = formData.vdNumber;
 
-    this.firestore.collection('electionData', ref => ref.where('userEmail', '==', userEmail))
+    this.firestore.collection('electionData', ref => ref.where('userEmail', '==', userEmail)
+    .where('vdNumber', '==', vdNumber))
       .get()
       .toPromise()
       .then((querySnapshot:any) => {
@@ -133,5 +139,70 @@ updateDocument(docId: string, updatedDoc: any) {
     });
 }
 
+
+async getDoc( municipalities:any,ward:any) {
+
+
+  this.firestore.collection('municipalities').valueChanges().subscribe((doc: any[]) => {
+    console.log(doc);
+    this.data=doc;
+    this.getVotingStationsForMunicipalityAndWard(municipalities,ward);
+  });
+  
+}
+
+async getVotingStationsForMunicipalityAndWard(municipalityName: string, wardName: string) {
+  // Filter the array of municipalities to find the one with the matching name
+  // Find the index of the municipality "CHANI"
+const chaniIndex = this.data.findIndex((entry:any) => entry.municipality === municipalityName);
+
+if (chaniIndex !== -1) {
+const chaniMunicipality = this.data[chaniIndex];
+
+// Find the ward "FFFFFFF" within the municipality "CHANI"
+const wardIndex = chaniMunicipality.wards.findIndex((ward:any) => ward.ward === wardName);
+
+if (wardIndex !== -1) {
+  const ward = await chaniMunicipality.wards[wardIndex];
+  this.votingStations = await ward.votingStations;
+
+  console.log(`Voting stations for ward ${wardName} in ${municipalityName} municipality:`);
+} else {
+  console.log(`Ward ${wardName} not found in ${municipalityName} municipality.`);
+  this.votingStations = [];
+
+}
+} else {
+console.log(`Municipality ${municipalityName} not found.`);
+this.votingStations = [];
+}
+}
+
+  async initializeForm() {
+  const user = await this.auth.currentUser;
+
+  // Check if user is logged in
+  if (user) {
+    // Query Firestore to retrieve document where email matches the current user's email
+    this.firestore.collection('Users').ref
+      .where('email', '==', user?.email)
+      .get()
+      .then((querySnapshot: any) => {
+        querySnapshot.forEach((doc: any) => {
+          const data = doc.data();
+          // Populate form fields with retrieved data
+          this.municipalities = data.municipality || ''; // Assuming these fields exist in the document
+          this.ward = data.ward || '';
+          // Populate other form fields as needed
+          this.getDoc( this.municipalities,this.ward);
+        });
+      })
+      .catch((error: any) => {
+        console.error('Error getting documents:', error);
+      });
+  } else {
+    console.error('User is not logged in.'); // Handle case where user is not logged in
+  }
+}
 
 }
