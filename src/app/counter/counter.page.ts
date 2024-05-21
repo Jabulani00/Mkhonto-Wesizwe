@@ -130,6 +130,7 @@ this.firestore.collection('Users').ref
       const vdNumberValue = this.electionForm.get('vdNumber')?.value;
       this.electionForm.reset();
       this.electionForm.patchValue({ vdNumber: vdNumberValue });
+      this.initializeForm();
     })
     .catch((error) => {
       alert("Error submitting form try again");
