@@ -1,5 +1,5 @@
 <ion-header>
-  <ion-toolbar>
+  <ion-toolbar color="success">
     <ion-title>Stats</ion-title>
     <ion-icon routerLink="/super-admin" slot="end" name="arrow-back-outline"></ion-icon>
   </ion-toolbar>
@@ -11,21 +11,33 @@
     <div class="stats">
       <h2>Election Statistics</h2>
       <div class="stats-grid">
-        <div class="stat-block">
-          <strong>Total Voter Roll:</strong>
-          <span>{{ totalVoterRoll }}</span>
+        <div class="stat-card">
+          <ion-icon name="people-outline" class="stat-icon"></ion-icon>
+          <div class="stat-details">
+            <strong>Total Voter Roll:</strong>
+            <span>{{ totalVoterRoll }}</span>
+          </div>
         </div>
-        <div class="stat-block">
-          <strong>Total Voter Turnout:</strong>
-          <span>{{ totalVoterTurnout }}</span>
+        <div class="stat-card">
+          <ion-icon name="checkbox-outline" class="stat-icon"></ion-icon>
+          <div class="stat-details">
+            <strong>Total Voter Turnout:</strong>
+            <span>{{ totalVoterTurnout }}</span>
+          </div>
         </div>
-        <div class="stat-block">
-          <strong>Total Spoilt Ballots:</strong>
-          <span>{{ totalSpoiltBallots }}</span>
+        <div class="stat-card">
+          <ion-icon name="close-circle-outline" class="stat-icon"></ion-icon>
+          <div class="stat-details">
+            <strong>Total Spoilt Ballots:</strong>
+            <span>{{ totalSpoiltBallots }}</span>
+          </div>
         </div>
-        <div class="stat-block">
-          <strong>Total Votes:</strong>
-          <span>{{ totalVotes }}</span>
+        <div class="stat-card">
+          <ion-icon name="document-text-outline" class="stat-icon"></ion-icon>
+          <div class="stat-details">
+            <strong>Total Votes:</strong>
+            <span>{{ totalVotes }}</span>
+          </div>
         </div>
       </div>
     </div>
@@ -47,10 +59,18 @@
 
     <!-- Segment Control -->
     <ion-segment (ionChange)="segmentChanged($event)" [scrollable]="true">
-      <ion-segment-button value="votesAndTurnout" checked>Votes and Turnout</ion-segment-button>
-      <ion-segment-button value="votesVsVoterRoll">Votes vs Voter Roll</ion-segment-button>
-      <ion-segment-button value="mkVotes">MK Votes</ion-segment-button>
-      <ion-segment-button value="percentageVotes">Percentage Votes</ion-segment-button> <!-- Added segment button -->
+      <ion-segment-button value="votesAndTurnout" checked>
+        <ion-label>Votes and Turnout</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="votesVsVoterRoll">
+        <ion-label>Votes vs Voter Roll</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="mkVotes">
+        <ion-label>MK Votes</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="percentageVotes">
+        <ion-label>Percentage Votes</ion-label>
+      </ion-segment-button> <!-- Added segment button -->
     </ion-segment>
 
     <!-- Charts -->
