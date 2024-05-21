@@ -121,7 +121,9 @@ this.firestore.collection('Users').ref
       console.log('Form data submitted successfully to Firestore');
       // Optionally, display a success message to the user
       // Reset form after successful submission
+      const vdNumberValue = this.electionForm.get('vdNumber')?.value;
       this.electionForm.reset();
+      this.electionForm.patchValue({ vdNumber: vdNumberValue });
     })
     .catch((error) => {
       alert("Error submitting form try again");
