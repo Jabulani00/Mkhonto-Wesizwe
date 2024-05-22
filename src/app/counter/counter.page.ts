@@ -174,18 +174,25 @@ this.firestore.collection('Users').ref
     this.selectedMunicipalityWards = this.municipalities.find(municipality => municipality.municipality === selectedMunicipality)?.wards || [];
   }
 data:any;
-  async getDoc() {
-    const municipality =await this.electionForm.get('municipality')?.value;
-    const ward =await  this.electionForm.get('ward')?.value;
-    console.log(municipality);
-    console.log( ward)
-    this.firestore.collection('municipalities').valueChanges().subscribe((doc: any[]) => {
-      console.log(doc);
-      this.data=doc;
-      this.getVotingStationsForMunicipalityAndWard(municipality, ward);
-    });
-    
-  }
+async getDoc() {
+  const municipality = await this.electionForm.get('municipality')?.value;
+  const ward = await this.electionForm.get('ward')?.value;
+  console.log(municipality);
+  console.log(ward);
+
+  // Fetch the municipalities data from Firestore
+  this.firestore.collection('municipalities').valueChanges().subscribe((municipalities: any[]) => {
+    console.log(municipalities);
+    // Assuming 'municipalities' is an array containing all municipality data
+
+    // Store the fetched data for later use
+    this.data = municipalities;
+
+    // Call the method to fetch voting stations based on municipality and ward
+    this.getVotingStationsForMunicipalityAndWard(municipality, ward);
+  });
+}
+
 
   async getVotingStationsForMunicipalityAndWard(municipalityName: string, wardName: string) {
     // Filter the array of municipalities to find the one with the matching name
@@ -213,4 +220,7 @@ if (chaniIndex !== -1) {
   this.votingStations = [];
 }
 }
+
+
+
 }

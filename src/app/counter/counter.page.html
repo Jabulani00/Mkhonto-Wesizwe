@@ -22,10 +22,11 @@
 
 
           
-          <ion-item class="input-item">
+          <ion-item>
             <ion-label position="stacked">VD Number</ion-label>
             <ion-select formControlName="vdNumber" interface="action-sheet" placeholder="Select VD Number">
-              <ion-select-option *ngFor="let vd of votingStations" [value]="vd">{{ vd }}</ion-select-option>
+              <!-- Iterate over the votingStations array and bind it to ion-select-option -->
+              <ion-select-option *ngFor="let station of votingStations" [value]="station.name">{{ station.name }}</ion-select-option>
             </ion-select>
           </ion-item>
           <div *ngIf="formDir.submitted && (electionForm.get('vdNumber')?.invalid && electionForm.get('vdNumber')?.touched && electionForm.get('vdNumber')?.value === '')" class="error-message">VD Number is required.</div>
