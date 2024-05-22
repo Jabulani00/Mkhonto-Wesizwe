@@ -3,7 +3,8 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FirestoreService } from '../services/firestore.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import * as firebase from 'firebase/compat';
+import {   ToastController , AlertController} from '@ionic/angular';
+import { NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-counter',
@@ -14,30 +15,26 @@ export class CounterPage implements OnInit {
   electionForm!: FormGroup;
   municipalities: any[] = [];
   selectedMunicipalityWards: any;
-  vdNumbers: any[] = [];
-votingStations : any;
-  
+  votingStations: any;
+  data: any;
+  navController: NavController;
 
-  constructor(private firestore: AngularFirestore,private fb: FormBuilder,private firestoreService:FirestoreService,private auth:AngularFireAuth) {
-  
-
-
-    
-  }
+  constructor(
+    private firestore: AngularFirestore,
+    private fb: FormBuilder,
+    private firestoreService: FirestoreService,
+    private auth: AngularFireAuth,
+    private alertController: AlertController,
+    private toastController: ToastController,
+    private navCtrl: NavController
+  ) {this.navController = navCtrl;}
 
   ngOnInit() {
     this.createForm();
     this.loadMunicipalities();
-
-    // Ensure this.getDoc() is called only when form values change and the form is fully initialized
-    this.electionForm.valueChanges.subscribe(() => {
-      this.getDoc(); // Call getDoc() whenever form values change
-    });
-
-    // Initialize form data after creating the form
     this.initializeForm();
+    this.electionForm.valueChanges.subscribe(() => this.getDoc());
   }
-
 
   createForm() {
     this.electionForm = this.fb.group({
@@ -46,126 +43,71 @@ votingStations : any;
       vdNumber: ['', Validators.required],
       leader: ['', Validators.required],
       cellNumber: ['', Validators.required],
-      voterRoll: ['', Validators.required, Validators.pattern('^[0-9]*$')],
-      voterTurnout: ['', Validators.required, Validators.pattern('^[0-9]*$')],
-      spoiltBallots: ['', Validators.required, Validators.pattern('^[0-9]*$')],
-      totalVotes: ['', Validators.required, Validators.pattern('^[0-9]*$')],
-      mkVotes: ['', Validators.required, Validators.pattern('^[0-9]*$')],
-      // mkPercentage: ['', Validators.required],
-      ancVotes: ['', Validators.required, Validators.pattern('^[0-9]*$')],
-      // ancPercentage: ['', Validators.required],
-      effVotes: ['', Validators.required, Validators.pattern('^[0-9]*$')],
-      // effPercentage: ['', Validators.required],
-      ifpVotes: ['', Validators.required, Validators.pattern('^[0-9]*$')],
-      // ifpPercentage: ['', Validators.required],
-      nfpVotes: ['', Validators.required, Validators.pattern('^[0-9]*$')],
-      // nfpPercentage: ['', Validators.required],
-      daVotes: ['', Validators.required, Validators.pattern('^[0-9]*$')],
-      // daPercentage: ['', Validators.required],
-      udmVotes: ['', Validators.required, Validators.pattern('^[0-9]*$')],
-      // udmPercentage: ['', Validators.required],
+      voterRoll: ['', Validators.required],
+      voterTurnout: ['', Validators.required],
+      spoiltBallots: ['', Validators.required],
+      totalVotes: ['', Validators.required],
+      mkVotes: ['', Validators.required],
+      ancVotes: ['', Validators.required],
+      effVotes: ['', Validators.required],
+      ifpVotes: ['', Validators.required],
+      daVotes: ['', Validators.required],
       timestamp: [new Date()],
-
-      actsaVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
-      abcVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
-      alVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
-      aadpVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
-      araVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
-      acdpVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
-      actVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
-      acmVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
-      ahcVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
-      aicVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
-      amcVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
-      apcVotes: ['', [Validators.required, Validators.pattern('^[0-9]*$')]],
+      actsaVotes: ['', Validators.required],
     });
   }
 
   async initializeForm() {
     const user = await this.auth.currentUser;
 
-    // Query Firestore to retrieve document where email is 'mike'
-this.firestore.collection('Users').ref
+    this.firestore.collection('Users').ref
       .where('email', '==', user?.email)
       .get()
-      .then((querySnapshot:any) => {
-        querySnapshot.forEach((doc:any) => {
+      .then((querySnapshot: any) => {
+        querySnapshot.forEach((doc: any) => {
           const data = doc.data();
-          // Populate form fields with retrieved data
           this.electionForm.patchValue({
-            municipality: data.municipality || '', // Assuming these fields exist in the document
+            municipality: data.municipality || '',
             ward: data.ward || '',
-            // Populate other form fields as needed
           });
         });
       })
-      .catch((error:any) => {
+      .catch((error: any) => {
         console.error('Error getting documents:', error);
       });
   }
 
   async onSubmit() {
-   
     const user = await this.auth.currentUser;
-    const formData = { ...this.electionForm.value, userEmail:user?.email };
-
-    //const formData = this.electionForm.value;
-
-
-     // Check if any form field is empty
-  const emptyFields = Object.keys(formData).filter(key => formData[key] === '');
-  if (emptyFields.length > 0) {
-    // Display an error message or highlight the empty fields
-    console.error('Some fields are empty:', emptyFields);
-    return; // Prevent form submission
+    const formData = { ...this.electionForm.value, userEmail: user?.email };
+  
+    const docId = this.generateDocId(formData);
+  
+    this.firestoreService.submitElectionFormData(formData, docId)
+      .then(() => {
+        alert("Form data submitted successfully to Firestore");
+        console.log('Form data submitted successfully to Firestore');
+        const vdNumberValue = this.electionForm.get('vdNumber')?.value;
+        this.electionForm.reset();
+        this.electionForm.patchValue({ vdNumber: vdNumberValue });
+        this.initializeForm();
+      })
+      .catch((error) => {
+        alert("Error submitting form try again");
+        console.error('Error submitting form:', error);
+      });
   }
-  const docId = this.generateDocId(formData);
-    // Add your collection name where you want to store the data
-    this.firestoreService.submitElectionFormData(formData,docId)
-    .then(() => {
-      alert("Form data submitted successfully to Firestore");
-      console.log('Form data submitted successfully to Firestore');
-      // Optionally, display a success message to the user
-      // Reset form after successful submission
-      const vdNumberValue = this.electionForm.get('vdNumber')?.value;
-      this.electionForm.reset();
-      this.electionForm.patchValue({ vdNumber: vdNumberValue });
-      this.initializeForm();
-    })
-    .catch((error) => {
-      alert("Error submitting form try again");
-      console.error('Error submitting form:', error);
-      // Optionally, display an error message to the user
-    });
-  }
+  
 
   generateDocId(formData: any): string {
-    const municipality = formData.municipality;
-    const ward = formData.ward;
-    const vdNumber = formData.vdNumber;
-    const now = new Date();
-    const dateNow = now.toISOString().slice(0, 10); // Get today's date in YYYY-MM-DD format
+    const { municipality, ward, vdNumber } = formData;
+    const dateNow = new Date().toISOString().slice(0, 10);
     return `${municipality}-${ward}-${vdNumber}-${dateNow}`;
   }
 
-
-
-
-  private submitElectionData() {
-    // Simulate sending data to backend (replace with actual HTTP request)
-    console.log('Election Data Submitted:', this.electionForm.value);
-
-    // Reset form after successful submission
-    this.electionForm.reset();
-  }
-
-
   loadMunicipalities() {
-
     this.firestoreService.getMunicipalities().subscribe((municipalities: any[]) => {
       this.municipalities = municipalities;
-      const municipality = this.electionForm.get('municipality')?.value;
-      const ward = this.electionForm.get('ward')?.value;
     });
   }
 
@@ -173,54 +115,81 @@ this.firestore.collection('Users').ref
     const selectedMunicipality = event.detail.value;
     this.selectedMunicipalityWards = this.municipalities.find(municipality => municipality.municipality === selectedMunicipality)?.wards || [];
   }
-data:any;
-async getDoc() {
-  const municipality = await this.electionForm.get('municipality')?.value;
-  const ward = await this.electionForm.get('ward')?.value;
-  console.log(municipality);
-  console.log(ward);
 
-  // Fetch the municipalities data from Firestore
-  this.firestore.collection('municipalities').valueChanges().subscribe((municipalities: any[]) => {
-    console.log(municipalities);
-    // Assuming 'municipalities' is an array containing all municipality data
+  async getDoc() {
+    const municipality = await this.electionForm.get('municipality')?.value;
+    const ward = await this.electionForm.get('ward')?.value;
 
-    // Store the fetched data for later use
-    this.data = municipalities;
-
-    // Call the method to fetch voting stations based on municipality and ward
-    this.getVotingStationsForMunicipalityAndWard(municipality, ward);
-  });
-}
-
+    this.firestore.collection('municipalities').valueChanges().subscribe((municipalities: any[]) => {
+      this.data = municipalities;
+      this.getVotingStationsForMunicipalityAndWard(municipality, ward);
+    });
+  }
 
   async getVotingStationsForMunicipalityAndWard(municipalityName: string, wardName: string) {
-    // Filter the array of municipalities to find the one with the matching name
-    // Find the index of the municipality "CHANI"
-const chaniIndex = this.data.findIndex((entry:any) => entry.municipality === municipalityName);
+    const chaniIndex = this.data.findIndex((entry: any) => entry.municipality === municipalityName);
 
-if (chaniIndex !== -1) {
-  const chaniMunicipality = this.data[chaniIndex];
+    if (chaniIndex !== -1) {
+      const chaniMunicipality = this.data[chaniIndex];
+      const wardIndex = chaniMunicipality.wards.findIndex((ward: any) => ward.ward === wardName);
 
-  // Find the ward "FFFFFFF" within the municipality "CHANI"
-  const wardIndex = chaniMunicipality.wards.findIndex((ward:any) => ward.ward === wardName);
-
-  if (wardIndex !== -1) {
-    const ward = await chaniMunicipality.wards[wardIndex];
-    this.votingStations = await ward.votingStations;
-
-    console.log(`Voting stations for ward ${wardName} in ${municipalityName} municipality:`);
-  } else {
-    console.log(`Ward ${wardName} not found in ${municipalityName} municipality.`);
-    this.votingStations = [];
-
+      if (wardIndex !== -1) {
+        const ward = await chaniMunicipality.wards[wardIndex];
+        this.votingStations = await ward.votingStations;
+        console.log(`Voting stations for ward ${wardName} in ${municipalityName} municipality:`);
+      } else {
+        console.log(`Ward ${wardName} not found in ${municipalityName} municipality.`);
+        this.votingStations = [];
+      }
+    } else {
+      console.log(`Municipality ${municipalityName} not found.`);
+      this.votingStations = [];
+    }
   }
-} else {
-  console.log(`Municipality ${municipalityName} not found.`);
-  this.votingStations = [];
-}
-}
 
-
-
+  async presentConfirmationAlert() {
+    const alert = await this.alertController.create({
+      header: 'Confirmation',
+      message: 'Are you sure you want to SIGN OUT?',
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+         cssClass: 'my-custom-alert',
+          handler: () => {
+            console.log('Confirmation canceled');
+          }
+        }, {
+          text: 'Confirm',
+          handler: () => {
+           
+            
+            this.auth.signOut().then(() => {
+              this.navController.navigateForward("/login");
+              this.presentToast()
+        
+        
+            }).catch((error) => {
+            
+            });
+  
+  
+  
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+  
+  async presentToast() {
+    const toast = await this.toastController.create({
+      message: 'SIGNED OUT!',
+      duration: 1500,
+      position: 'top',
+    
+    });
+  
+    await toast.present();
+  }
 }
