@@ -79,6 +79,12 @@ const routes: Routes = [
     loadChildren: () => import('./vd/vd.module').then( m => m.VdPageModule),
     canActivate: [AuthGuard]  // Protect this route with the AuthGuard
   },
+  {
+    path: 'slip-take',
+    loadChildren: () => import('./slip-take/slip-take.module').then( m => m.SlipTakePageModule),
+    canActivate: [AuthGuard] 
+  },
+
 
   
     

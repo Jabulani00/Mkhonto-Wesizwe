@@ -1,0 +1,26 @@
+<ion-header>
+  <ion-toolbar color="success">
+    <ion-title>
+      <ion-icon name="camera-outline" animation="pulse infinite"></ion-icon>
+      VD Station Photo
+    </ion-title>
+    <ion-icon routerLink="/counter" slot="end" name="arrow-back-outline" animation="bounce"></ion-icon>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form [formGroup]="uploadForm" animation="fade-in">
+    <ion-item>
+      <ion-label position="stacked">
+        <ion-icon name="location-outline" animation="shake"></ion-icon>
+        VD Station
+      </ion-label>
+      <ion-input formControlName="vdStation" placeholder="Enter VD Station" animation="wobble"></ion-input>
+    </ion-item>
+  </form>
+
+  <ion-button expand="full" (click)="takePhoto()" animation="pulse infinite">
+    <ion-icon name="camera" slot="start"></ion-icon>
+    Take Photo
+  </ion-button>
+</ion-content>
