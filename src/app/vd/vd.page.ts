@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FirestoreService } from '../services/firestore.service';
-import { Ward } from '../interfaces/ward.interface';
+import { Ward, VotingStation } from '../interfaces/ward.interface';
 
 interface Municipality {
   municipality: string;
@@ -16,7 +16,8 @@ export class VdPage implements OnInit {
   municipalities: Municipality[] = [];
   selectedMunicipality: Municipality | null = null;
   selectedWard: Ward | null = null;
-  votingStationNumber: string = '';
+  votingStationName: string = '';
+  votingStationRoll: number | null = null;
 
   constructor(private firestoreService: FirestoreService) {}
 
@@ -25,15 +26,23 @@ export class VdPage implements OnInit {
   }
 
   loadMunicipalities() {
-    this.firestoreService.getMunicipalities().subscribe((data: any) => {
-      this.municipalities = data.map((item: any) => {
-        return {
-          municipality: item.municipality,
-          wards: item.wards || [], // Handle missing wards property
-        };
-      });
+    this.firestoreService.getMunicipalities().subscribe({
+      next: (data: any) => {
+        if (Array.isArray(data)) {
+          this.municipalities = data.map((item: any) => ({
+            municipality: item.municipality,
+            wards: item.wards || []
+          }));
+        } else {
+          console.error('Invalid data format received:', data);
+        }
+      },
+      error: (error: any) => {
+        console.error('Error loading municipalities:', error);
+      }
     });
   }
+  
 
   selectMunicipality(municipality: Municipality) {
     this.selectedMunicipality = municipality;
@@ -45,14 +54,16 @@ export class VdPage implements OnInit {
   }
 
   addVotingStation() {
-    if (this.selectedWard && this.votingStationNumber.trim()) {
-      const updatedWard: Ward = {
-        ...this.selectedWard,
-        votingStations: [...(this.selectedWard.votingStations || []), this.votingStationNumber.trim()], // Handle missing votingStations array
+    if (this.selectedWard && this.votingStationName.trim() && this.votingStationRoll !== null) {
+      const newVotingStation: VotingStation = {
+        name: this.votingStationName.trim(),
+        voterRoll: this.votingStationRoll,
       };
 
-      this.votingStationNumber = '';
-      this.updateWardInFirestore(updatedWard);
+      this.selectedWard.votingStations = [...this.selectedWard.votingStations, newVotingStation];
+      this.votingStationName = '';
+      this.votingStationRoll = null;
+      this.updateWardInFirestore(this.selectedWard);
     }
   }
 

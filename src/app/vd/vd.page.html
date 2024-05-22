@@ -5,10 +5,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-
-  
-
+<ion-content class="ion-padding">
   <div class="municipality-container" *ngFor="let municipality of municipalities">
     <h2 (click)="selectMunicipality(municipality)">{{ municipality.municipality }}</h2>
     <ul *ngIf="selectedMunicipality === municipality">
@@ -16,18 +13,24 @@
         {{ ward.ward }}
         <ul *ngIf="selectedWard === ward">
           <li *ngFor="let votingStation of ward.votingStations">
-            Voting Station: {{ votingStation }}
+            Voting Station: {{ votingStation.name }} - Voter Roll: {{ votingStation.voterRoll }}
           </li>
           <li>
-            <input type="text" [(ngModel)]="votingStationNumber" placeholder="Add voting station" />
-            <button (click)="addVotingStation()">Add Voting Station</button>
+            <ion-item>
+              <ion-label position="floating">Voting Station Number</ion-label>
+              <ion-input [(ngModel)]="votingStationName"></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-label position="floating">Voter Roll</ion-label>
+              <ion-input type="number" [(ngModel)]="votingStationRoll"></ion-input>
+            </ion-item>
+            <ion-button expand="full" (click)="addVotingStation()">
+              <ion-icon name="add" slot="start"></ion-icon>
+              Add Voting Station
+            </ion-button>
           </li>
         </ul>
       </li>
     </ul>
   </div>
-  
-  
-  
-  
 </ion-content>
