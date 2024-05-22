@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { ModalController } from '@ionic/angular';
 
 @Component({
   selector: 'app-view',
@@ -8,8 +9,11 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 })
 export class ViewPage implements OnInit {
   imageData: any[] = [];
+  isModalOpen: boolean = false;
+  modalTitle: string = '';
+  selectedImageUrl: string = '';
 
-  constructor(private firestore: AngularFirestore) { }
+  constructor(private firestore: AngularFirestore,private modalController: ModalController) { }
 
   ngOnInit() {
     this.fetchImageData();
@@ -26,5 +30,15 @@ export class ViewPage implements OnInit {
   formatDate(date: any) {
     if (!date) return null;
     return new Date(date.seconds * 1000).toLocaleString();
+  }
+
+  async openImageModal(imageUrl: string, vdStation: string) {
+    this.isModalOpen = true;
+    this.selectedImageUrl = imageUrl;
+    this.modalTitle = vdStation; // Set modal title to vdStation
+  }
+
+  closeModal() {
+    this.isModalOpen = false;
   }
 }

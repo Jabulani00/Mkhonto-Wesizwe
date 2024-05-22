@@ -1,21 +1,43 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>view</ion-title>
+<ion-header>
+  <ion-toolbar color="success">
+    <ion-title>
+      VD Slip
+    </ion-title>
+    <ion-icon routerLink="/super-admin" slot="end" name="arrow-back-outline" animation="bounce"></ion-icon>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <ion-list>
-    <ion-item *ngFor="let item of imageData">
+    <ion-item *ngFor="let item of imageData" lines="full" class="image-item" (click)="openImageModal(item.imageUrl, item.vdStation)">
       <ion-thumbnail slot="start">
-        <img [src]="item.imageUrl" alt="Uploaded Image">
+        <img [src]="item.imageUrl" alt="Uploaded Image" class="thumbnail-image">
       </ion-thumbnail>
       <ion-label>
         <h2>VD Station: {{ item.vdStation }}</h2>
-        <p>Uploaded At: {{ item.createdAt }}</p> <!-- No date pipe -->
+        <p>Uploaded At: {{ item.createdAt }}</p>
       </ion-label>
     </ion-item>
   </ion-list>
+
+  <!-- Modal -->
+  <ion-modal [isOpen]="isModalOpen" (didDismiss)="isModalOpen = false">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar color="success">
+          <ion-title>{{ modalTitle }}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="closeModal()">
+              <ion-icon name="close-outline"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding modal-content">
+        <div class="image-container">
+          <img [src]="selectedImageUrl" alt="Full Image" class="modal-image">
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 </ion-content>
-
-
