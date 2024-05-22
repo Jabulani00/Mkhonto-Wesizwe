@@ -1,12 +1,12 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title> Manage Municipality </ion-title>
+    <ion-title>Manage Municipality</ion-title>
     <ion-icon routerLink="/super-admin" slot="end" name="arrow-back-outline"></ion-icon>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
-  <ion-card>
+<ion-content class="ion-padding">
+  <ion-card class="animate__animated animate__fadeInUp">
     <ion-card-header>
       <ion-icon name="add-circle-outline"></ion-icon>
       <ion-card-title>Add Municipality</ion-card-title>
@@ -16,16 +16,20 @@
         <ion-label position="floating">Municipality Name</ion-label>
         <ion-input [(ngModel)]="municipalityName"></ion-input>
       </ion-item>
-      <ion-button expand="full" (click)="addMunicipality()">
-        <ion-icon name="add"></ion-icon>
+      <ion-item>
+        <ion-label>Province</ion-label>
+        <ion-select [(ngModel)]="selectedProvince">
+          <ion-select-option *ngFor="let province of provinces" [value]="province">{{ province }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-button expand="full" color="success" (click)="addMunicipality()">
+        <ion-icon name="add" slot="start"></ion-icon>
         Add Municipality
       </ion-button>
     </ion-card-content>
   </ion-card>
 
- 
-
-  <ion-card *ngIf="selectedMunicipality !== null">
+  <ion-card *ngIf="selectedMunicipality !== null" class="animate__animated animate__fadeInUp">
     <ion-card-header>
       <ion-icon name="add-circle-outline"></ion-icon>
       <ion-card-title>Add Ward</ion-card-title>
@@ -35,15 +39,17 @@
         <ion-label position="floating">Ward Name</ion-label>
         <ion-input [(ngModel)]="wardName"></ion-input>
       </ion-item>
-      <ion-button expand="full" (click)="addWard()">
-        <ion-icon name="add"></ion-icon>
+      <ion-button expand="full" color="success" (click)="addWard()">
+        <ion-icon name="add" slot="start"></ion-icon>
         Add Ward
       </ion-button>
     </ion-card-content>
   </ion-card>
 
-  <ion-button expand="full" (click)="submitAll()">
-    <ion-icon name="send"></ion-icon>
-    Submit All
-  </ion-button>
+  <ion-card class="animate__animated animate__fadeInUp">
+    <ion-button expand="full" color="primary" (click)="submitAll()">
+      <ion-icon name="send" slot="start"></ion-icon>
+      Submit All
+    </ion-button>
+  </ion-card>
 </ion-content>

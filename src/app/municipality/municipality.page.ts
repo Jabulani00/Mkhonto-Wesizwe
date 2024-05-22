@@ -6,6 +6,7 @@ import { Ward } from '../interfaces/ward.interface'; // Import the Ward interfac
 interface Municipality {
   municipality: string;
   wards: Ward[];
+  province: string; // Add province field
 }
 
 @Component({
@@ -16,15 +17,18 @@ interface Municipality {
 export class MunicipalityPage implements OnInit {
   municipalityName: string = '';
   wardName: string = '';
+  selectedProvince: string = ''; // Add a field for the selected province
   municipalities: Municipality[] = [];
   selectedMunicipality: Municipality | null = null;
+
+  provinces: string[] = ['Eastern Cape', 'Free State', 'Gauteng','KwaZulu-Natal', 'Limpopo', 'Mpumalanga', 'Northern Cape', 'North-West', 'Western Cape']; // Example provinces
 
   constructor(private firestoreService: FirestoreService) {}
 
   ngOnInit() {}
 
   addMunicipality() {
-    const municipality: Municipality = { municipality: this.municipalityName, wards: [] };
+    const municipality: Municipality = { municipality: this.municipalityName, wards: [], province: this.selectedProvince };
     this.municipalities.push(municipality);
     this.selectMunicipality(municipality);
   }
@@ -57,10 +61,11 @@ export class MunicipalityPage implements OnInit {
         console.error('Error adding municipality: ', error);
       });
     });
-  
+
     // Clear the arrays after submission
     this.municipalities = [];
     this.municipalityName = '';
     this.selectedMunicipality = null;
+    this.selectedProvince = '';
   }
 }
