@@ -15,8 +15,8 @@
         <ion-list>
 
           <ion-item class="input-item">
-            <ion-label position="stacked">Municipality</ion-label>
-            <ion-input formControlName="municipality" type="text" required></ion-input>
+            <ion-label position="stacked" >Municipality</ion-label>
+            <ion-input formControlName="municipality" class="dissabledIndicator" type="text" required readonly></ion-input>
           </ion-item>
           <div *ngIf="formDir.submitted && electionForm.get('municipality')?.invalid" class="error-message">Municipality is required.</div>
           
@@ -47,26 +47,26 @@
          -->
          <ion-item class="input-item">
           <ion-label position="stacked">Ward</ion-label>
-          <ion-input formControlName="ward" type="text" required></ion-input>
+          <ion-input formControlName="ward" class="dissabledIndicator" type="text" required readonly></ion-input>
         </ion-item>
         <div *ngIf="formDir.submitted && (electionForm.get('ward')?.invalid && electionForm.get('ward')?.touched && electionForm.get('ward')?.value === '')" class="error-message">Ward is required.</div>
         
 
           <ion-item>
             <ion-label position="stacked">Leader</ion-label>
-            <ion-input formControlName="leader" type="text" required></ion-input>
+            <ion-input formControlName="leader" class="dissabledIndicator" type="text" required readonly></ion-input>
           </ion-item>
           <div *ngIf="formDir.submitted && (electionForm.get('leader')?.invalid && electionForm.get('leader')?.touched && electionForm.get('leader')?.value === '')" class="error-message">Leader is required.</div>
 
           <ion-item>
             <ion-label position="stacked">Cell Number</ion-label>
-            <ion-input formControlName="cellNumber" type="text" required></ion-input>
+            <ion-input class="dissabledIndicator" formControlName="cellNumber" type="text" required readonly></ion-input>
           </ion-item>
           <div *ngIf="formDir.submitted && (electionForm.get('cellNumber')?.invalid && electionForm.get('cellNumber')?.touched && electionForm.get('cellNumber')?.value === '')" class="error-message">Cell Number is required.</div>
 
           <ion-item>
             <ion-label position="stacked">Voter Roll</ion-label>
-            <ion-input formControlName="voterRoll" type="number" required></ion-input>
+            <ion-input formControlName="voterRoll" class="dissabledIndicator" type="number" required readonly></ion-input>
           </ion-item>
           <div *ngIf="formDir.submitted && (electionForm.get('voterRoll')?.invalid && electionForm.get('voterRoll')?.touched && electionForm.get('voterRoll')?.value === '')" class="error-message">Voter Roll is required.</div>
 
@@ -147,4 +147,4 @@
       <ion-icon name="receipt-outline"></ion-icon>
     </ion-fab-button>
   </ion-fab>
-</ion-content >
+</ion-content >A

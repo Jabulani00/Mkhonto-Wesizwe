@@ -9,18 +9,24 @@
 </ion-header>
 
 <ion-content>
-  <form [formGroup]="uploadForm" animation="fade-in">
-    <ion-item>
-      <ion-label position="stacked">
-        <ion-icon name="location-outline" animation="shake"></ion-icon>
-        VD Station
-      </ion-label>
-      <ion-input formControlName="vdStation" placeholder="Enter VD Station" animation="wobble"></ion-input>
+  <form [formGroup]="uploadForm" (ngSubmit)="onSubmit()" #formDir="ngForm"animation="fade-in">
+    <ion-item class="input-item">
+      <ion-label position="stacked">VD Number</ion-label>
+      <ion-select formControlName="vdNumber" interface="action-sheet" placeholder="Select VD Number">
+        <ion-select-option *ngFor="let station of votingStations" [value]="station.name">{{ station.name }}</ion-select-option>
+      </ion-select>
     </ion-item>
-  </form>
+    <div *ngIf="formDir.submitted && uploadForm.get('vdNumber')?.invalid && uploadForm.get('vdNumber')?.value === ''" class="error-message">VD Number is required.</div>
 
-  <ion-button expand="full" (click)="takePhoto()" animation="pulse infinite">
-    <ion-icon name="camera" slot="start"></ion-icon>
-    Take Photo
-  </ion-button>
+
+
+    <ion-img *ngIf="capturedImageUrl" [src]="capturedImageUrl" alt="Captured Image"></ion-img>
+
+    <ion-button class="camera-btn" expand="full" (click)="takePhoto()" animation="pulse infinite">
+      <ion-icon name="camera" slot="start"></ion-icon>
+      Take Photo
+    </ion-button>
+
+    <ion-button expand="full" type="submit">Submit</ion-button>
+  </form>
 </ion-content>

@@ -3,7 +3,7 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FirestoreService } from '../services/firestore.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import {   ToastController , AlertController} from '@ionic/angular';
+import { ToastController , AlertController} from '@ionic/angular';
 import { NavController } from '@ionic/angular';
 
 @Component({
@@ -18,6 +18,7 @@ export class CounterPage implements OnInit {
   votingStations: any;
   data: any;
   navController: NavController;
+  voterRoll: any;
 
   constructor(
     private firestore: AngularFirestore,
@@ -27,14 +28,23 @@ export class CounterPage implements OnInit {
     private alertController: AlertController,
     private toastController: ToastController,
     private navCtrl: NavController
-  ) {this.navController = navCtrl;}
+  ) {this.navController = navCtrl;
 
-  ngOnInit() {
     this.createForm();
     this.loadMunicipalities();
     this.initializeForm();
     this.electionForm.valueChanges.subscribe(() => this.getDoc());
   }
+
+  ngOnInit() {
+    this.electionForm.get('vdNumber')?.valueChanges.subscribe((vdNumber) => {
+      this.updateVoterRoll(vdNumber);
+    });
+
+  }
+
+
+
 
   createForm() {
     this.electionForm = this.fb.group({
@@ -47,15 +57,16 @@ export class CounterPage implements OnInit {
       voterTurnout: ['', Validators.required],
       spoiltBallots: ['', Validators.required],
       totalVotes: ['', Validators.required],
-      mkVotes: ['', Validators.required],
-      ancVotes: ['', Validators.required],
-      effVotes: ['', Validators.required],
-      ifpVotes: ['', Validators.required],
-      daVotes: ['', Validators.required],
+      mkVotes: [0, Validators.required],
+      ancVotes: [0, Validators.required],
+      effVotes: [0, Validators.required],
+      ifpVotes: [0, Validators.required],
+      daVotes: [0, Validators.required],
       timestamp: [new Date()],
-      actsaVotes: ['', Validators.required],
+      actsaVotes: [0, Validators.required],
     });
   }
+  
 
   async initializeForm() {
     const user = await this.auth.currentUser;
@@ -69,6 +80,9 @@ export class CounterPage implements OnInit {
           this.electionForm.patchValue({
             municipality: data.municipality || '',
             ward: data.ward || '',
+            cellNumber: data.cellNumber,
+            leader:data.leader,
+          
           });
         });
       })
@@ -126,6 +140,7 @@ export class CounterPage implements OnInit {
     });
   }
 
+ 
   async getVotingStationsForMunicipalityAndWard(municipalityName: string, wardName: string) {
     const chaniIndex = this.data.findIndex((entry: any) => entry.municipality === municipalityName);
 
@@ -136,6 +151,11 @@ export class CounterPage implements OnInit {
       if (wardIndex !== -1) {
         const ward = await chaniMunicipality.wards[wardIndex];
         this.votingStations = await ward.votingStations;
+    
+
+         // Find and log the voterRoll for a voting Station
+        
+
         console.log(`Voting stations for ward ${wardName} in ${municipalityName} municipality:`);
       } else {
         console.log(`Ward ${wardName} not found in ${municipalityName} municipality.`);
@@ -146,6 +166,21 @@ export class CounterPage implements OnInit {
       this.votingStations = [];
     }
   }
+
+
+  updateVoterRoll(vdNumber: string) {
+    const selectedStation = this.votingStations?.find((station: any) => station.name === vdNumber);
+    if (selectedStation) {
+      this.electionForm.patchValue({ voterRoll: selectedStation.voterRoll });
+      console.log(`Voter roll for ${vdNumber}: ${selectedStation.voterRoll}`);
+    } else {
+      this.electionForm.patchValue({ voterRoll: '' });
+      console.log(`VD Number ${vdNumber} not found.`);
+    }
+  }
+
+  
+
 
   async presentConfirmationAlert() {
     const alert = await this.alertController.create({

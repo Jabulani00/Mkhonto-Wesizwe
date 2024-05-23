@@ -13,7 +13,20 @@ import { AngularFireStorage } from '@angular/fire/compat/storage';
   styleUrls: ['./slip-take.page.scss'],
 })
 export class SlipTakePage implements OnInit {
-  uploadForm: FormGroup;
+  uploadForm!: FormGroup;
+  capturedImageUrl: string | undefined;
+  municipalities: any[] = [];
+  selectedMunicipalityWards: any;
+  votingStations: any;
+  data: any;
+  voterRoll: any;
+  ward: any;
+  email: any;
+  cellNumber: any;
+  name: any;
+  leader: any;
+  municipality: any;
+
 
   constructor(
     private firestore: AngularFirestore,
@@ -23,26 +36,22 @@ export class SlipTakePage implements OnInit {
     private loadingController: LoadingController,
     private alertController: AlertController
   ) {
-    this.uploadForm = this.fb.group({
-      vdStation: ['', Validators.required],
-    });
+    this.createForm();
+  this.initializeForm();
+  
   }
-
-  ngOnInit() {}
 
   
 
-  async takePhoto() {
-    if (this.uploadForm.invalid) {
-      const alert = await this.alertController.create({
-        header: 'Error',
-        message: 'Please enter a valid VD Station.',
-        buttons: ['OK'],
-      });
-      await alert.present();
-      return;
-    }
+  ngOnInit() {}
 
+  createForm() {
+    this.uploadForm = this.fb.group({
+      vdNumber: ['',Validators.required,,Validators.maxLength(150)],
+    });
+  }
+
+  async takePhoto() {
     try {
       const image = await Camera.getPhoto({
         quality: 90,
@@ -55,31 +64,66 @@ export class SlipTakePage implements OnInit {
         throw new Error('No image data found');
       }
 
+      this.capturedImageUrl = image.dataUrl;
+    } catch (error) {
+      console.error('Error taking photo', error);
+      const alert = await this.alertController.create({
+        header: 'Error',
+        message: 'There was an error taking the photo. Please try again.',
+        buttons: ['OK'],
+      });
+      await alert.present();
+    }
+  }
+
+  async onSubmit() {
+    if (!this.capturedImageUrl) {
+      const alert = await this.alertController.create({
+        header: 'Error',
+        message: 'Please take a photo first.',
+        buttons: ['OK'],
+      });
+      await alert.present();
+      return;
+    }
+
+    const vdNumber = this.uploadForm.get('vdNumber')?.value;
+    if (!vdNumber) {
+      const alert = await this.alertController.create({
+        header: 'Error',
+        message: 'VD Station is required.',
+        buttons: ['OK'],
+      });
+      await alert.present();
+      return;
+    }
+
+    try {
+      const blob = this.dataURLtoBlob(this.capturedImageUrl);
+      const filePath = `images/${new Date().getTime()}.jpg`;
+      const fileRef = this.afStorage.ref(filePath);
+      const task = this.afStorage.upload(filePath, blob);
+
       const loading = await this.loadingController.create({
         message: 'Uploading...',
       });
       await loading.present();
-
-      const blob = this.dataURLtoBlob(image.dataUrl);
-      const filePath = `images/${new Date().getTime()}.jpg`;
-      const fileRef = this.afStorage.ref(filePath);
-      const task = this.afStorage.upload(filePath, blob);
 
       task
         .snapshotChanges()
         .pipe(
           finalize(async () => {
             const downloadURL = await fileRef.getDownloadURL().toPromise();
-            await this.saveToFirestore(downloadURL);
+            await this.saveToFirestore(vdNumber, downloadURL);
             await loading.dismiss();
           })
         )
         .subscribe();
     } catch (error) {
-      console.error('Error taking photo', error);
+      console.error('Error uploading image', error);
       const alert = await this.alertController.create({
         header: 'Error',
-        message: 'There was an error taking the photo. Please try again.',
+        message: 'There was an error uploading the image. Please try again.',
         buttons: ['OK'],
       });
       await alert.present();
@@ -105,23 +149,18 @@ export class SlipTakePage implements OnInit {
     return new Blob([u8arr], { type: mime });
   }
 
-  async saveToFirestore(imageUrl: string) {
-    const vdStation = this.uploadForm.get('vdStation')?.value;
-    if (!vdStation) {
-      const alert = await this.alertController.create({
-        header: 'Error',
-        message: 'VD Station is required.',
-        buttons: ['OK'],
-      });
-      await alert.present();
-      return;
-    }
-
+  async saveToFirestore(vdStation: string, imageUrl: string) {
     const id = this.firestore.createId();
     await this.firestore.collection('vdCollection').doc(id).set({
       vdStation: vdStation,
       imageUrl: imageUrl,
       createdAt: new Date(),
+      email:this.email,
+      cellNumber:this.cellNumber,
+      ward : this.ward ,
+      name : this.name,
+      municipalities :this.municipality,
+      leader :  this.leader
     });
 
     const alert = await this.alertController.create({
@@ -131,7 +170,77 @@ export class SlipTakePage implements OnInit {
     });
     await alert.present();
 
-    // Reset the form
+    // Reset the form and captured image URL
     this.uploadForm.reset();
+    this.capturedImageUrl = undefined;
   }
+
+
+  async getVotingStationsForMunicipalityAndWard(municipalityName: string, wardName: string) {
+    const chaniIndex = this.data.findIndex((entry: any) => entry.municipality === municipalityName);
+
+    if (chaniIndex !== -1) {
+      const chaniMunicipality = this.data[chaniIndex];
+      const wardIndex = chaniMunicipality.wards.findIndex((ward: any) => ward.ward === wardName);
+
+      if (wardIndex !== -1) {
+        const ward = await chaniMunicipality.wards[wardIndex];
+        this.votingStations = await ward.votingStations;
+    
+
+         // Find and log the voterRoll for a voting Station
+        
+
+        console.log(`Voting stations for ward ${wardName} in ${municipalityName} municipality:`);
+      } else {
+        console.log(`Ward ${wardName} not found in ${municipalityName} municipality.`);
+        this.votingStations = [];
+      }
+    } else {
+      console.log(`Municipality ${municipalityName} not found.`);
+      this.votingStations = [];
+    }
+  }
+
+
+
+   
+  async getDoc(municipalities: any, ward: any) {
+    this.firestore.collection('municipalities').valueChanges().subscribe((doc: any[]) => {
+      this.data = doc;
+      this.getVotingStationsForMunicipalityAndWard(municipalities, ward);
+    });
+  }
+
+  async initializeForm() {
+    const user = await this.auth.currentUser;
+
+    if (user) {
+      this.firestore.collection('Users').ref
+        .where('email', '==', user?.email)
+        .get()
+        .then((querySnapshot: any) => {
+          querySnapshot.forEach((doc: any) => {
+            const data = doc.data();
+            this.municipalities = data.municipality || '';
+            this.ward = data.ward || '';
+            this.email = data.email;
+            this.name = data.name;
+            this.cellNumber=data.cellNumber,
+            this.municipality= data.municipality;
+            this.leader = data.leader
+           
+        
+            this.getDoc(this.municipalities, this.ward);
+          });
+        })
+        .catch((error: any) => {
+          console.error('Error getting documents:', error);
+        });
+    } else {
+      console.error('User is not logged in.');
+    }
+  }
+
+
 }

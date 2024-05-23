@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FirestoreService } from '../services/firestore.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
@@ -28,20 +28,25 @@ export class ElectionResultsPage implements OnInit {
     this.initializeForm();
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.electionForm.get('vdNumber')?.valueChanges.subscribe((vdNumber) => {
+      this.updateVoterRoll(vdNumber);
+    });
+  }
 
   createForm() {
     this.electionForm = this.fb.group({
       vdNumber: [''],
-      voterTurnout: [''],
-      spoiltBallots: [''],
-      totalVotes: [''],
-      mkVotes: [''],
-      ancVotes: [''],
-      effVotes: [''],
-      ifpVotes: [''],
-      daVotes: [''],
-      actsaVotes: [''],
+      voterRoll:[''],
+      voterTurnout: ['', Validators.required,Validators.maxLength(180)],
+      spoiltBallots: ['', Validators.required,Validators.maxLength(180)],
+      totalVotes: ['', Validators.required,Validators.maxLength(180)],
+      mkVotes: ['', Validators.required,Validators.maxLength(180)],
+      ancVotes: ['', Validators.required,Validators.maxLength(180)],
+      effVotes: ['', Validators.required,Validators.maxLength(180)],
+      ifpVotes: ['', Validators.required,Validators.maxLength(180)],
+      daVotes: ['', Validators.required,Validators.maxLength(180)],
+      actsaVotes: ['', Validators.required,Validators.maxLength(180)],
     });
   }
 
@@ -142,6 +147,17 @@ export class ElectionResultsPage implements OnInit {
         });
     } else {
       console.error('User is not logged in.');
+    }
+  }
+
+  updateVoterRoll(vdNumber: string) {
+    const selectedStation = this.votingStations?.find((station: any) => station.name === vdNumber);
+    if (selectedStation) {
+      this.electionForm.patchValue({ voterRoll: selectedStation.voterRoll });
+      console.log(`Voter roll for ${vdNumber}: ${selectedStation.voterRoll}`);
+    } else {
+      this.electionForm.patchValue({ voterRoll: '' });
+      console.log(`VD Number ${vdNumber} not found.`);
     }
   }
 }
