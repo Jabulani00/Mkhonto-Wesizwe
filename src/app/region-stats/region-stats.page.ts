@@ -16,7 +16,7 @@ interface Statistics {
   effVotes: number;
   ifpVotes: number;
   mkVotes: number;
-  nfpVotes: number;
+  actsaVotes: number;
   udmVotes: number;
 }
 
@@ -48,7 +48,7 @@ export class RegionStatsPage implements OnInit {
   effVotes: number = 0;
   ifpVotes: number = 0;
   mkVotes: number = 0;
-  nfpVotes: number = 0;
+  actsaVotes: number = 0;
   udmVotes: number = 0;
   fraudAlerts: FraudAlert[] = [];
 
@@ -130,7 +130,7 @@ export class RegionStatsPage implements OnInit {
             effVotes: 0,
             ifpVotes: 0,
             mkVotes: 0,
-            nfpVotes: 0,
+            actsaVotes: 0,
             udmVotes: 0,
           };
 
@@ -144,7 +144,7 @@ export class RegionStatsPage implements OnInit {
             statistics.effVotes += data.effVotes;
             statistics.ifpVotes += data.ifpVotes;
             statistics.mkVotes += data.mkVotes;
-            statistics.nfpVotes += data.nfpVotes;
+            statistics.actsaVotes += data.actsaVotes;
             statistics.udmVotes += data.udmVotes;
           });
 
@@ -157,7 +157,7 @@ export class RegionStatsPage implements OnInit {
           this.effVotes = statistics.effVotes;
           this.ifpVotes = statistics.ifpVotes;
           this.mkVotes = statistics.mkVotes;
-          this.nfpVotes = statistics.nfpVotes;
+          this.actsaVotes = statistics.actsaVotes;
           this.udmVotes = statistics.udmVotes;
 
           this.updateChart();
@@ -224,7 +224,7 @@ export class RegionStatsPage implements OnInit {
     this.chart = new Chart(this.votesVsVoterRollChart.nativeElement, {
       type: 'pie',
       data: {
-        labels: ['ANC Votes', 'DA Votes', 'EFF Votes', 'IFP Votes', 'MK Votes', 'NFP Votes', 'UDM Votes'],
+        labels: ['ANC Votes', 'DA Votes', 'EFF Votes', 'IFP Votes', 'MK Votes', 'ACTSA Votes'],
         datasets: [{
           data: [
             this.ancVotes,
@@ -232,17 +232,17 @@ export class RegionStatsPage implements OnInit {
             this.effVotes,
             this.ifpVotes,
             this.mkVotes,
-            this.nfpVotes,
-            this.udmVotes
+            this.actsaVotes,
+           
           ],
           backgroundColor: [
-            '#FF6384',
-            '#36A2EB',
-            '#FFCE56',
-            '#FF5733',
-            '#C70039',
-            '#900C3F',
-            '#581845'
+            '#F7C50C',
+            '#2364A7',
+            '#F71A17',
+            '#000000',
+            '#53A546',
+            '#06B014',
+            
           ],
         }]
       },
@@ -318,7 +318,7 @@ export class RegionStatsPage implements OnInit {
     this.line = new Chart(this.lineChart.nativeElement, {
       type: 'line',
       data: {
-        labels: ['ANC Votes', 'DA Votes', 'EFF Votes', 'IFP Votes', 'MK Votes', 'NFP Votes', 'UDM Votes'],
+        labels: ['ANC Votes', 'DA Votes', 'EFF Votes', 'IFP Votes', 'MK Votes', 'ActionSA Votes'],
         datasets: [{
           label: 'Votes Over Time',
           data: [
@@ -327,8 +327,8 @@ export class RegionStatsPage implements OnInit {
             this.effVotes,
             this.ifpVotes,
             this.mkVotes,
-            this.nfpVotes,
-            this.udmVotes
+            this.actsaVotes
+            
           ],
           backgroundColor: 'rgba(75, 192, 192, 0.2)',
           borderColor: 'rgba(75, 192, 192, 1)',
@@ -364,7 +364,7 @@ export class RegionStatsPage implements OnInit {
     this.radar = new Chart(this.radarChart.nativeElement, {
       type: 'radar',
       data: {
-        labels: ['ANC Votes', 'DA Votes', 'EFF Votes', 'IFP Votes', 'MK Votes', 'NFP Votes', 'UDM Votes'],
+        labels: ['ANC Votes', 'DA Votes', 'EFF Votes', 'IFP Votes', 'MK Votes', 'ActionSA Votes'],
         datasets: [{
           label: 'Votes Distribution',
           data: [
@@ -373,8 +373,8 @@ export class RegionStatsPage implements OnInit {
             this.effVotes,
             this.ifpVotes,
             this.mkVotes,
-            this.nfpVotes,
-            this.udmVotes
+            this.actsaVotes
+           
           ],
           backgroundColor: 'rgba(255, 99, 132, 0.2)',
           borderColor: 'rgba(255, 99, 132, 1)',
