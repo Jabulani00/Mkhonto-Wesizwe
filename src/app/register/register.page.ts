@@ -30,6 +30,7 @@ export class RegisterPage implements OnInit {
   selectedMunicipality: any;
   municipalities: any[] = [];
   selectedMunicipalityWards: any[] = [];
+  cellNumber:any;
 
   ward: string = '';
 

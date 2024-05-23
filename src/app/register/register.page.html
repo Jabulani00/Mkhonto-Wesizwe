@@ -19,6 +19,12 @@
     </ion-item>
 
     <ion-item>
+      <ion-icon slot="start" name="mail-outline"></ion-icon>
+      <ion-label position="floating">Cell Number</ion-label>
+      <ion-input type="email" [(ngModel)]="cellNumber"></ion-input>
+    </ion-item>
+
+    <ion-item>
       <ion-label>Select Role</ion-label>
       <ion-select [(ngModel)]="selectedRole" (ionChange)="onRoleChange()">
         <ion-select-option value="SuperAdmin">Super Admin</ion-select-option>
