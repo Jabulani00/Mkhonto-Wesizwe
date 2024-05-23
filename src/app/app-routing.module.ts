@@ -83,7 +83,8 @@ const routes: Routes = [
     path: 'slip-take',
     loadChildren: () => import('./slip-take/slip-take.module').then( m => m.SlipTakePageModule),
     canActivate: [AuthGuard] 
-  },  {
+  },
+  {
     path: 'view',
     loadChildren: () => import('./view/view.module').then( m => m.ViewPageModule)
   },
