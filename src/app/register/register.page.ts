@@ -13,6 +13,9 @@ interface UserData {
   role: string;
   municipality?: string;
   ward?: string;
+  leader:string;
+  cellNumber:string;
+  counterSubmitsCount:number;
 }
 
 @Component({
@@ -31,6 +34,7 @@ export class RegisterPage implements OnInit {
   municipalities: any[] = [];
   selectedMunicipalityWards: any[] = [];
   cellNumber:any;
+  leader:any;
 
   ward: string = '';
 
@@ -130,6 +134,10 @@ export class RegisterPage implements OnInit {
             email: this.email,
             status: "pending",
             role: this.selectedRole,
+            leader:this.leader,
+            cellNumber:this.cellNumber,
+            counterSubmitsCount:0,
+
           };
 
           if (this.selectedRole === 'GroundForce') {
