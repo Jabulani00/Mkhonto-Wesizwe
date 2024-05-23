@@ -41,6 +41,12 @@
       <div class="stats-grid">
         <div class="stat-block">
           <ion-icon name="trending-up-outline"></ion-icon>
+          <strong>MK Votes:</strong>
+          <span>{{ mkVotes }}</span>
+        </div>
+        
+        <div class="stat-block">
+          <ion-icon name="trending-up-outline"></ion-icon>
           <strong>ANC Votes:</strong>
           <span>{{ ancVotes }}</span>
         </div>
@@ -59,21 +65,13 @@
           <strong>IFP Votes:</strong>
           <span>{{ ifpVotes }}</span>
         </div>
+     
         <div class="stat-block">
           <ion-icon name="trending-up-outline"></ion-icon>
-          <strong>MK Votes:</strong>
-          <span>{{ mkVotes }}</span>
+          <strong>ActionSA Votes:</strong>
+          <span>{{ actsaVotes }}</span>
         </div>
-        <div class="stat-block">
-          <ion-icon name="trending-up-outline"></ion-icon>
-          <strong>NFP Votes:</strong>
-          <span>{{ nfpVotes }}</span>
-        </div>
-        <div class="stat-block">
-          <ion-icon name="trending-up-outline"></ion-icon>
-          <strong>UDM Votes:</strong>
-          <span>{{ udmVotes }}</span>
-        </div>
+        
       </div>
     </div>
 
@@ -101,10 +99,10 @@
         <ion-label>General Stats</ion-label>
       </ion-segment-button>
       <ion-segment-button value="lineChart">
-        <ion-label>Line Chart</ion-label>
+        <ion-label>Perfomance Line Chart</ion-label>
       </ion-segment-button>
       <ion-segment-button value="radarChart">
-        <ion-label>Radar Chart</ion-label>
+        <ion-label>Perfomance Radar Chart</ion-label>
       </ion-segment-button>
     </ion-segment>
 

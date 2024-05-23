@@ -25,12 +25,12 @@ interface ElectionData {
   mkPercentage: number;
   mkVotes: number; // Changed to number
   municipality: string;
-  nfpPercentage: number;
-  nfpVotes: number;
+  
+  actsaVotes: number;
   spoiltBallots: number;
   totalVotes: number;
-  udmPercentage: number;
-  udmVotes: number;
+  
+
   vdNumber: number;
   voterRoll: number;
   voterTurnout: number;
@@ -72,6 +72,8 @@ performanceChart!: Chart;
   totalSpoiltBallots: number = 0;
   totalVotes: number = 0;
 
+  
+
   // Property to hold fraud alerts
   fraudAlerts: { municipality: string; ward: string; totalVotes: number; voterRoll: number }[] = [];
 
@@ -101,8 +103,8 @@ performanceChart!: Chart;
           combined['EFF'] = (combined['EFF'] || 0) + item.effVotes;
           combined['IFP'] = (combined['IFP'] || 0) + item.ifpVotes;
           combined['MK'] = (combined['MK'] || 0) + item.mkVotes;
-          combined['NFP'] = (combined['NFP'] || 0) + item.nfpVotes;
-          combined['UDM'] = (combined['UDM'] || 0) + item.udmVotes;
+          combined['ActionSA'] = (combined['ActionSA'] || 0) + item.actsaVotes;
+         
           return combined;
         }, {} as { [party: string]: number });
         this.createPerformanceChart(combinedVotes);
@@ -112,8 +114,8 @@ performanceChart!: Chart;
           EFF: this.calculatePercentage(combinedVotes['EFF'], totalVotes),
           IFP: this.calculatePercentage(combinedVotes['IFP'], totalVotes),
           MK: this.calculatePercentage(combinedVotes['MK'], totalVotes),
-          NFP: this.calculatePercentage(combinedVotes['NFP'], totalVotes),
-          UDM: this.calculatePercentage(combinedVotes['UDM'], totalVotes),
+          ActionSA: this.calculatePercentage(combinedVotes['ActionSA'], totalVotes),
+          
         };
   
         console.log('Combined Percentages:', percentages);
@@ -201,12 +203,12 @@ performanceChart!: Chart;
         datasets: [{
           data: Object.values(percentages),
           backgroundColor: [
-            '#FF6384',
-            '#36A2EB',
-            '#FFCE56',
-            '#9ACD32',
-            '#8A2BE2',
-            '#FFA500',
+            '#F7C50C',
+            '#2364A7',
+            '#F71A17',
+            '#000000',
+            '#53A546',
+            '#06B014',
             '#800080',
           ],
         }],
@@ -300,7 +302,7 @@ performanceChart!: Chart;
     });
   }
   
-  createVotesVsVoterRollChart(data: { total: number; voterRoll: number }[]) {
+  createVotesVsVoterRollChart(data: { total: number; voterRoll: number; voterTurnout:number; spoiltBallots:number; }[]) {
     if (this.votesVsVoterRollChart) {
       this.votesVsVoterRollChart.destroy(); // Destroy existing chart before creating a new one
     }
@@ -321,6 +323,16 @@ performanceChart!: Chart;
             label: 'Voter Roll',
             data: data.map((item) => item.voterRoll),
             backgroundColor: 'gray',
+          },
+          {
+            label: 'Voter Turnout',
+            data: data.map((item) => item.voterTurnout),
+            backgroundColor: 'green',
+          },
+          {
+            label: 'Spoilt Ballots',
+            data: data.map((item) => item.spoiltBallots),
+            backgroundColor: 'yellow',
           },
         ],
       },
@@ -383,8 +395,8 @@ performanceChart!: Chart;
           combinedData['effVotes'] += item.effVotes;
           combinedData['ifpVotes'] += item.ifpVotes;
           combinedData['mkVotes'] += item.mkVotes;
-          combinedData['nfpVotes'] += item.nfpVotes;
-          combinedData['udmVotes'] += item.udmVotes;
+          combinedData['actsaVotes'] += item.actsaVotes;
+         
           combinedData['totalVotes'] += item.totalVotes;
           combinedData['spoiltBallots'] += item.spoiltBallots;
           combinedData['voterTurnout'] += item.voterTurnout;
@@ -412,12 +424,11 @@ performanceChart!: Chart;
           { label: 'EFF Votes', value: combinedData['effVotes'] },
           { label: 'IFP Votes', value: combinedData['ifpVotes'] },
           { label: 'MK Votes', value: combinedData['mkVotes'] },
-          { label: 'NFP Votes', value: combinedData['nfpVotes'] },
-          { label: 'UDM Votes', value: combinedData['udmVotes'] },
-          { label: 'Total Votes', value: combinedData['totalVotes'] },
-          { label: 'Spoilt Ballots', value: combinedData['spoiltBallots'] },
-          { label: 'Voter Turnout', value: combinedData['voterTurnout'] },
-          { label: 'Voter Roll', value: combinedData['voterRoll'] },
+          { label: 'ActionSA Votes', value: combinedData['actsaVotes'] },
+          // { label: 'Total Votes', value: combinedData['totalVotes'] },
+          // { label: 'Spoilt Ballots', value: combinedData['spoiltBallots'] },
+          // { label: 'Voter Turnout', value: combinedData['voterTurnout'] },
+          // { label: 'Voter Roll', value: combinedData['voterRoll'] },
         ];
   
         console.log('Transformed data for votes and turnout:', this.votesAndTurnoutData);
@@ -426,7 +437,10 @@ performanceChart!: Chart;
         const votesVsVoterRollData = [
           {
             total: combinedData['totalVotes'],
-            voterRoll: combinedData['voterRoll']
+            voterRoll: combinedData['voterRoll'],
+            spoiltBallots: combinedData['spoiltBallots'],
+            voterTurnout: combinedData['voterTurnout'],
+            //voterRoll: combinedData['voterRoll']
           }
         ];
   
@@ -452,12 +466,12 @@ performanceChart!: Chart;
             label: 'Votes and Turnout',
             data: this.votesAndTurnoutData.map((data) => data.value),
             backgroundColor: [
-              '#FF6384',
-              '#36A2EB',
-              '#FFCE56',
-              '#9ACD32',
-              '#8A2BE2',
-              '#FFA500',
+              '#F7C50C',
+              '#2364A7',
+              '#F71A17',
+              '#000000',
+              '#53A546',
+              '#06B014',
               '#800080',
               '#00FF00',
               '#DC143C',
