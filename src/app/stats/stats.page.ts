@@ -310,7 +310,7 @@ performanceChart!: Chart;
     this.votesVsVoterRollChart = new Chart(this.votesVsVoterRollChartCanvas.nativeElement, {
       type: 'bar',
       data: {
-        labels: ['Votes vs Voter Roll'],
+        labels: ['Gneral Stats'],
         datasets: [
           {
             label: 'Total Votes',
@@ -463,7 +463,7 @@ performanceChart!: Chart;
         labels: this.votesAndTurnoutData.map((data) => data.label),
         datasets: [
           {
-            label: 'Votes and Turnout',
+            label: 'Political Parties',
             data: this.votesAndTurnoutData.map((data) => data.value),
             backgroundColor: [
               '#F7C50C',
