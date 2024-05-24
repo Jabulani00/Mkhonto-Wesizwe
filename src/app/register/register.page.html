@@ -9,26 +9,24 @@
     <ion-item>
       <ion-icon slot="start" name="person-circle-outline"></ion-icon>
       <!-- <ion-label position="floating">Name</ion-label> -->
-      <ion-input type="text" placeholder="Leader name"  [(ngModel)]="leader"></ion-input>
+      <ion-input type="text" placeholder="Leader name" maxlength="80"  [(ngModel)]="leader"></ion-input>
     </ion-item>
     <ion-item>
       <ion-icon slot="start" name="person-circle-outline"></ion-icon>
       <!-- <ion-label position="floating">Name</ion-label> -->
-      <ion-input type="text" placeholder="Name"  [(ngModel)]="name"></ion-input>
+      <ion-input type="text" placeholder="Name"  maxlength="80"    [(ngModel)]="name"></ion-input>
     </ion-item>
-
- 
 
     <ion-item>
       <ion-icon slot="start" name="mail-outline"></ion-icon>
      
-      <ion-input type="email" placeholder="Email" [(ngModel)]="email"></ion-input>
+      <ion-input type="email" placeholder="Email"  maxlength="110"  [(ngModel)]="email"></ion-input>
     </ion-item>
 
     <ion-item>
       <ion-icon slot="start" name="phone-portrait-outline"></ion-icon>
       <!-- <ion-label position="floating">Cell Number</ion-label> -->
-      <ion-input type="email" placeholder="Cell Number" [(ngModel)]="cellNumber"></ion-input>
+      <ion-input type="email" placeholder="Cell Number" maxlength="15" [(ngModel)]="cellNumber"></ion-input>
     </ion-item>
 
     <ion-item>
@@ -96,7 +94,7 @@
     <ion-item>
       <ion-icon slot="start" name="lock-closed-outline"></ion-icon>
       <!-- <ion-label position="floating">Password</ion-label> -->
-      <ion-input type="password" placeholder="Password" [(ngModel)]="password"></ion-input>
+      <ion-input type="password" maxlength="80" placeholder="Password" [(ngModel)]="password"></ion-input>
     </ion-item>
 
     <ion-item>

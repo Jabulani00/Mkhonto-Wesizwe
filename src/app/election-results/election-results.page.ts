@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FirestoreService } from '../services/firestore.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { AlertController, LoadingController } from '@ionic/angular';
 
 @Component({
   selector: 'app-election-results',
@@ -19,10 +20,12 @@ export class ElectionResultsPage implements OnInit {
   ward: any;
 
   constructor(
+    private alertController: AlertController,
     private firestore: AngularFirestore,
     private fb: FormBuilder,
     private firestoreService: FirestoreService,
-    private auth: AngularFireAuth
+    private auth: AngularFireAuth,
+    private loadingController: LoadingController,
   ) {
     this.createForm();
     this.initializeForm();
@@ -36,8 +39,8 @@ export class ElectionResultsPage implements OnInit {
 
   createForm() {
     this.electionForm = this.fb.group({
-      vdNumber: [''],
-      voterRoll:[''],
+      vdNumber: ['', Validators.required],
+      voterRoll:['', Validators.required],
       voterTurnout: ['', Validators.required,Validators.maxLength(180)],
       spoiltBallots: ['', Validators.required,Validators.maxLength(180)],
       totalVotes: ['', Validators.required,Validators.maxLength(180)],
@@ -52,6 +55,14 @@ export class ElectionResultsPage implements OnInit {
 
   async onSubmit() {
     const formData = this.electionForm.value;
+
+
+    const loader = await this.loadingController.create({
+      // message: 'Logging in...',
+      cssClass: 'custom-loader-class',
+      spinner:"dots"
+    });
+    await loader.present();
     const user = await this.auth.currentUser;
 
     if (user) {
@@ -74,15 +85,19 @@ export class ElectionResultsPage implements OnInit {
               mkVotes: doc.data().mkVotes + this.electionForm.get('mkVotes')?.value,
               actsaVotes: doc.data().actsaVotes + this.electionForm.get('actsaVotes')?.value,
               spoiltBallots: doc.data().spoiltBallots + this.electionForm.get('spoiltBallots')?.value,
-              voterTurnout: doc.data().voterTurnout + this.electionForm.get('voterTurnout')?.value,
+              //voterTurnout: doc.data().voterTurnout + this.electionForm.get('voterTurnout')?.value,
               totalVotes: doc.data().totalVotes + this.electionForm.get('totalVotes')?.value,
             };
             this.docId = doc.id;
             this.updateDocument(doc.id, updatedDoc);
+            loader.dismiss();
+            this.presentSuccessAlert('Successfully added');
           });
         })
         .catch((error) => {
+          loader.dismiss();
           console.error("Error fetching documents: ", error);
+          this.presentSuccessAlert('Error fetching documents');
         });
     }
   }
@@ -159,5 +174,15 @@ export class ElectionResultsPage implements OnInit {
       this.electionForm.patchValue({ voterRoll: '' });
       console.log(`VD Number ${vdNumber} not found.`);
     }
+  }
+
+  async presentSuccessAlert(message:any) {
+    const alert = await this.alertController.create({
+      header: 'Success',
+      message: message,
+      buttons: ['OK']
+    });
+  
+    await alert.present();
   }
 }

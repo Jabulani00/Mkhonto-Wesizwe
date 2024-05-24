@@ -1,8 +1,8 @@
 <ion-header [translucent]="true">
   <ion-toolbar color="success">
     <ion-title>Election Form</ion-title>
-    <ion-icon slot="end" name="power-outline" style="zoom: 1.5; margin-right: 5px;" (click)="presentConfirmationAlert()" style="color: white;"></ion-icon>
-    <ion-icon slot="start" style="zoom: 1.5; margin-right: 5px;"  routerLink="/election-results" name="document-attach-outline"></ion-icon>
+    <ion-icon slot="end" name="power-outline" style="zoom: 1.6; margin-right: 10px; color: rgb(250, 69, 69)" (click)="presentConfirmationAlert()" ></ion-icon>
+    <ion-icon slot="start" style="zoom: 1.5; margin-left: 10px;"  routerLink="/election-results" name="document-attach-outline"></ion-icon>
   </ion-toolbar>
 </ion-header>
 
@@ -16,7 +16,7 @@
 
           <ion-item class="input-item">
             <ion-label position="stacked" >Municipality</ion-label>
-            <ion-input formControlName="municipality" class="dissabledIndicator" type="text" required readonly></ion-input>
+            <ion-input formControlName="municipality"  maxlength="110" class="dissabledIndicator" type="text" required readonly></ion-input>
           </ion-item>
           <div *ngIf="formDir.submitted && electionForm.get('municipality')?.invalid" class="error-message">Municipality is required.</div>
           
@@ -47,32 +47,32 @@
          -->
          <ion-item class="input-item">
           <ion-label position="stacked">Ward</ion-label>
-          <ion-input formControlName="ward" class="dissabledIndicator" type="text" required readonly></ion-input>
+          <ion-input formControlName="ward" maxlength="110"  class="dissabledIndicator" type="text" required readonly></ion-input>
         </ion-item>
         <div *ngIf="formDir.submitted && (electionForm.get('ward')?.invalid && electionForm.get('ward')?.touched && electionForm.get('ward')?.value === '')" class="error-message">Ward is required.</div>
         
 
           <ion-item>
             <ion-label position="stacked">Leader</ion-label>
-            <ion-input formControlName="leader" class="dissabledIndicator" type="text" required readonly></ion-input>
+            <ion-input formControlName="leader" maxlength="110"  class="dissabledIndicator" type="text" required readonly></ion-input>
           </ion-item>
           <div *ngIf="formDir.submitted && (electionForm.get('leader')?.invalid && electionForm.get('leader')?.touched && electionForm.get('leader')?.value === '')" class="error-message">Leader is required.</div>
 
           <ion-item>
             <ion-label position="stacked">Cell Number</ion-label>
-            <ion-input class="dissabledIndicator" formControlName="cellNumber" type="text" required readonly></ion-input>
+            <ion-input class="dissabledIndicator" maxlength="110"  formControlName="cellNumber" type="text" required readonly></ion-input>
           </ion-item>
           <div *ngIf="formDir.submitted && (electionForm.get('cellNumber')?.invalid && electionForm.get('cellNumber')?.touched && electionForm.get('cellNumber')?.value === '')" class="error-message">Cell Number is required.</div>
 
           <ion-item>
             <ion-label position="stacked">Voter Roll</ion-label>
-            <ion-input formControlName="voterRoll" class="dissabledIndicator" type="number" required readonly></ion-input>
+            <ion-input formControlName="voterRoll"  maxlength="110"  class="dissabledIndicator" type="number" required readonly></ion-input>
           </ion-item>
           <div *ngIf="formDir.submitted && (electionForm.get('voterRoll')?.invalid && electionForm.get('voterRoll')?.touched && electionForm.get('voterRoll')?.value === '')" class="error-message">Voter Roll is required.</div>
 
           <ion-item>
             <ion-label position="stacked">Voter Turnout</ion-label>
-            <ion-input formControlName="voterTurnout" type="number" required></ion-input>
+            <ion-input formControlName="voterTurnout" [counter]="true" maxlength="110"  type="number" required></ion-input>
           </ion-item>
          
           <!-- <ion-item>

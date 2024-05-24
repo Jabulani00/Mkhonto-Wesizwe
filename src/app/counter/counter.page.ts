@@ -3,7 +3,7 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FirestoreService } from '../services/firestore.service';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-import { ToastController , AlertController} from '@ionic/angular';
+import { ToastController , AlertController, LoadingController} from '@ionic/angular';
 import { NavController } from '@ionic/angular';
 
 @Component({
@@ -19,8 +19,10 @@ export class CounterPage implements OnInit {
   data: any;
   navController: NavController;
   voterRoll: any;
+  email: any;
 
   constructor(
+    private loadingController: LoadingController,
     private firestore: AngularFirestore,
     private fb: FormBuilder,
     private firestoreService: FirestoreService,
@@ -48,6 +50,7 @@ export class CounterPage implements OnInit {
 
   createForm() {
     this.electionForm = this.fb.group({
+      
       municipality: ['', Validators.required],
       ward: ['', Validators.required],
       vdNumber: ['', Validators.required],
@@ -55,15 +58,17 @@ export class CounterPage implements OnInit {
       cellNumber: ['', Validators.required],
       voterRoll: ['', Validators.required],
       voterTurnout: ['', Validators.required],
-      spoiltBallots: ['', Validators.required],
-      totalVotes: ['', Validators.required],
       mkVotes: [0, Validators.required],
       ancVotes: [0, Validators.required],
       effVotes: [0, Validators.required],
       ifpVotes: [0, Validators.required],
       daVotes: [0, Validators.required],
-      timestamp: [new Date()],
       actsaVotes: [0, Validators.required],
+      timestamp: [new Date()],
+      spoiltBallots:[0, Validators.required],
+      totalVotes:[0, Validators.required],
+      email: [''] ,
+      count:0
     });
   }
   
@@ -77,12 +82,13 @@ export class CounterPage implements OnInit {
       .then((querySnapshot: any) => {
         querySnapshot.forEach((doc: any) => {
           const data = doc.data();
+          this.email=data.email;
+          this.electionForm.patchValue({ email: data.email });
           this.electionForm.patchValue({
             municipality: data.municipality || '',
             ward: data.ward || '',
             cellNumber: data.cellNumber,
             leader:data.leader,
-          
           });
         });
       })
@@ -91,26 +97,122 @@ export class CounterPage implements OnInit {
       });
   }
 
+  // async onSubmit() {
+  //   const user = await this.auth.currentUser;
+  //   const formData = { ...this.electionForm.value, userEmail: user?.email };
+  
+  //   const docId = this.generateDocId(formData);
+  
+  //   this.firestoreService.submitElectionFormData(formData, docId)
+  //     .then(() => {
+  //       alert("Form data submitted successfully to Firestore");
+  //       console.log('Form data submitted successfully to Firestore');
+  //       const vdNumberValue = this.electionForm.get('vdNumber')?.value;
+  //       this.electionForm.reset();
+  //       this.electionForm.patchValue({ vdNumber: vdNumberValue });
+  //       this.initializeForm();
+  //     })
+  //     .catch((error) => {
+  //       alert("Error submitting form try again");
+  //       console.error('Error submitting form:', error);
+  //     });
+  // }
+  
+
+
   async onSubmit() {
-    const user = await this.auth.currentUser;
-    const formData = { ...this.electionForm.value, userEmail: user?.email };
+
+  const vdNumber = this.electionForm.get('vdNumber')?.value;
+
+if (!vdNumber ){
+  alert("select your voting station");
+  return;
+}
+
+if (!vdNumber ){
+  alert("fill in the Turnout value");
+  return;
+}
+
+const loader = await this.loadingController.create({
+  // message: 'Logging in...',
+  cssClass: 'custom-loader-class',
+  spinner:"dots"
+});
+await loader.present();
+
+    try {
+      const user = await this.auth.currentUser;
+      if (!user) {
+        loader.dismiss();
+        console.error('No authenticated user found');
+        alert('No authenticated user found');
+        this.presentSuccessAlert("danger","No authenticated user found. login ");
+        return;
+      }
   
-    const docId = this.generateDocId(formData);
+      const formData = { ...this.electionForm.value, userEmail: user.email };
+      const vdNumber = this.electionForm.get('vdNumber')?.value;
+      const newVoterTurnout = Number(this.electionForm.get('voterTurnout')?.value);
   
-    this.firestoreService.submitElectionFormData(formData, docId)
-      .then(() => {
-        alert("Form data submitted successfully to Firestore");
-        console.log('Form data submitted successfully to Firestore');
-        const vdNumberValue = this.electionForm.get('vdNumber')?.value;
-        this.electionForm.reset();
-        this.electionForm.patchValue({ vdNumber: vdNumberValue });
-        this.initializeForm();
-      })
-      .catch((error) => {
-        alert("Error submitting form try again");
-        console.error('Error submitting form:', error);
-      });
+      // Check if there's a document with email and vdNumber
+      const querySnapshot = await this.firestore.collection('electionData').ref
+        .where('email', '==', user.email)
+        .where('vdNumber', '==', vdNumber)
+        .get();
+  
+      if (!querySnapshot.empty) {
+        // If document exists, update voterTurnout field
+        querySnapshot.forEach(async (doc: any) => {
+          const currentVoterTurnout = doc.data().voterTurnout || 0;
+          console.log("TurnOut:",currentVoterTurnout);
+          const updatedVoterTurnout = currentVoterTurnout + newVoterTurnout;
+  
+          try {
+            await doc.ref.update({ voterTurnout: updatedVoterTurnout });
+            console.log('Document updated with voterTurnout');
+           // alert('Document updated with voterTurnout');
+            loader.dismiss();
+            this.presentSuccessAlert("Success","Document updated with voterTurnout");
+           // this.resetFormWithVdNumber();
+          } catch (error) {
+            console.error('Error updating document:', error);
+            loader.dismiss();
+          this.presentSuccessAlert("danger","Error updating document");
+          }
+        });
+       } else {
+      //  If document doesn't exist, create a new one
+        formData.voterTurnout = newVoterTurnout; // Ensure voterTurnout is set in formData
+        const docId = this.generateDocId(formData);
+        try {
+          await this.firestore.collection('electionData').doc(docId).set(formData);
+          console.log('New document created with voterTurnout');
+         // alert('New document created with voterTurnout');
+          loader.dismiss();
+          this.presentSuccessAlert("Success","New document created with voterTurnout");
+         // this.resetFormWithVdNumber();
+        } catch (error) {
+          loader.dismiss();
+          console.error('Error submitting form:', error);
+          this.presentSuccessAlert("danger","Error submitting form try again");
+         
+        }
+      }
+    } catch (error) {
+      loader.dismiss();
+      console.error('Error getting documents:', error);
+      this.presentSuccessAlert("dander","Error getting documents");
+      //alert('Error getting documents');
+    }
   }
+  
+  resetFormWithVdNumber() {
+    const vdNumberValue = this.electionForm.get('vdNumber')?.value;
+    this.electionForm.patchValue({ vdNumber: vdNumberValue });
+    this.initializeForm();
+  }
+  
   
 
   generateDocId(formData: any): string {
@@ -226,5 +328,15 @@ export class CounterPage implements OnInit {
     });
   
     await toast.present();
+  }
+
+  async presentSuccessAlert(color:any,message:any) {
+    const alert = await this.alertController.create({
+      header: color,
+      message: message,
+      buttons: ['OK']
+    });
+  
+    await alert.present();
   }
 }
