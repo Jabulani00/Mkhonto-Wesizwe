@@ -24,3 +24,25 @@
  border-radius: 7px;
 
 }
+
+.readonly-input {
+  background-color: rgba(129, 113, 113, 0.3); /* Semi-transparent white */
+  color: #000000;
+  border: 1px solid #ffffff;
+  font-weight: bold;
+  border-radius: 4px;
+  padding: 10px;
+  backdrop-filter: blur(10px); /* Apply blur to the background */
+  -webkit-backdrop-filter: blur(10px); /* Safari support */
+}
+
+.readonly-input[readonly] {
+  cursor: not-allowed;
+}
+
+
+.readonly-input:focus {
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+

@@ -8,7 +8,7 @@
 
 <ion-content [fullscreen]="true">
 
-  <ion-card class="form-card" >
+  <ion-card class="form-card">
     <ion-card-content>
 
       <form [formGroup]="electionForm" (ngSubmit)="onSubmit()" #formDir="ngForm">
@@ -19,32 +19,22 @@
             <ion-input formControlName="municipality"  maxlength="110" class="dissabledIndicator" type="text" required readonly></ion-input>
           </ion-item>
           <div *ngIf="formDir.submitted && electionForm.get('municipality')?.invalid" class="error-message">Municipality is required.</div>
-          
 
-
-          
           <ion-item>
             <ion-label position="stacked">VD Number</ion-label>
             <ion-select formControlName="vdNumber" interface="action-sheet" placeholder="Select VD Number">
-              <!-- Iterate over the votingStations array and bind it to ion-select-option -->
               <ion-select-option *ngFor="let station of votingStations" [value]="station.name">{{ station.name }}</ion-select-option>
             </ion-select>
           </ion-item>
           <div *ngIf="formDir.submitted && (electionForm.get('vdNumber')?.invalid && electionForm.get('vdNumber')?.touched && electionForm.get('vdNumber')?.value === '')" class="error-message">VD Number is required.</div>
-          
 
-        
-
-
-          <!-- <ion-item class="input-item">
+          <ion-item class="input-item">
             <ion-label position="stacked">Ward</ion-label>
-            <ion-select formControlName="ward" interface="action-sheet" required>
-              <ion-select-option *ngFor="let ward of selectedMunicipalityWards" [value]="ward.ward">{{ ward.ward }}</ion-select-option>
-            </ion-select>
+            <ion-input formControlName="ward" class="readonly-input" type="text" required readonly></ion-input>
           </ion-item>
           <div *ngIf="formDir.submitted && (electionForm.get('ward')?.invalid && electionForm.get('ward')?.touched && electionForm.get('ward')?.value === '')" class="error-message">Ward is required.</div>
 
-         -->
+ 
          <ion-item class="input-item">
           <ion-label position="stacked">Ward</ion-label>
           <ion-input formControlName="ward" maxlength="110"  class="dissabledIndicator" type="text" required readonly></ion-input>
@@ -55,18 +45,23 @@
           <ion-item>
             <ion-label position="stacked">Leader</ion-label>
             <ion-input formControlName="leader" maxlength="110"  class="dissabledIndicator" type="text" required readonly></ion-input>
+          <ion-item>
+            <ion-label position="stacked">Leader</ion-label>
+            <ion-input formControlName="leader" class="readonly-input" type="text" required readonly></ion-input>
           </ion-item>
           <div *ngIf="formDir.submitted && (electionForm.get('leader')?.invalid && electionForm.get('leader')?.touched && electionForm.get('leader')?.value === '')" class="error-message">Leader is required.</div>
 
           <ion-item>
             <ion-label position="stacked">Cell Number</ion-label>
             <ion-input class="dissabledIndicator" maxlength="110"  formControlName="cellNumber" type="text" required readonly></ion-input>
+            <ion-input class="readonly-input" formControlName="cellNumber" type="text" required readonly></ion-input>
           </ion-item>
           <div *ngIf="formDir.submitted && (electionForm.get('cellNumber')?.invalid && electionForm.get('cellNumber')?.touched && electionForm.get('cellNumber')?.value === '')" class="error-message">Cell Number is required.</div>
 
           <ion-item>
             <ion-label position="stacked">Voter Roll</ion-label>
             <ion-input formControlName="voterRoll"  maxlength="110"  class="dissabledIndicator" type="number" required readonly></ion-input>
+            <ion-input formControlName="voterRoll" class="readonly-input" type="number" required readonly></ion-input>
           </ion-item>
           <div *ngIf="formDir.submitted && (electionForm.get('voterRoll')?.invalid && electionForm.get('voterRoll')?.touched && electionForm.get('voterRoll')?.value === '')" class="error-message">Voter Roll is required.</div>
 
@@ -74,63 +69,6 @@
             <ion-label position="stacked">Voter Turnout</ion-label>
             <ion-input formControlName="voterTurnout" [counter]="true" maxlength="110"  type="number" required></ion-input>
           </ion-item>
-         
-          <!-- <ion-item>
-            <ion-label position="stacked">Spoilt Ballots</ion-label>
-            <ion-input formControlName="spoiltBallots" type="number" required></ion-input>
-          </ion-item>
-         
-          <ion-item>
-            <ion-label position="stacked">Total Votes</ion-label>
-            <ion-input formControlName="totalVotes" type="number" required></ion-input>
-          </ion-item>
-         
-          <ion-item>
-            <ion-label position="stacked">MK Votes</ion-label>
-            <ion-input formControlName="mkVotes" type="number" required></ion-input>
-          </ion-item> -->
-         
-
-  <!-- <div class="parties">       
-
- <ion-item class="input-item">
-  <ion-label position="stacked">ANC Votes</ion-label>
-  <ion-input formControlName="ancVotes" type="number" required></ion-input>
-</ion-item>
-
-
-<ion-item class="input-item">
-  <ion-label position="stacked">EFF Votes</ion-label>
-  <ion-input formControlName="effVotes" type="number" required></ion-input>
-</ion-item>
-
-
-
-
-<ion-item class="input-item">
-  <ion-label position="stacked">IFP Votes</ion-label>
-  <ion-input formControlName="ifpVotes" type="number" required></ion-input>
-</ion-item>
-
-
-
-<ion-item class="input-item">
-  <ion-label position="stacked">DA Votes</ion-label>
-  <ion-input formControlName="daVotes" type="number" required></ion-input>
-</ion-item>
-
-
-
-<ion-item class="input-item">
-  <ion-label position="stacked">ACTIONSA Votes</ion-label>
-  <ion-input formControlName="actsaVotes" type="number" required></ion-input>
-</ion-item>
-
-
-</div> -->
-
-
-
 
         </ion-list>
 
@@ -147,4 +85,4 @@
       <ion-icon name="receipt-outline"></ion-icon>
     </ion-fab-button>
   </ion-fab>
-</ion-content >A
+</ion-content>
