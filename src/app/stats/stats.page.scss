@@ -60,10 +60,15 @@ h2 {
 ion-segment, ion-label {
   margin: 16px 0;
   color: #388E3C;
+  font-weight: bold;
 }
 .chart-container {
   padding: 16px;
   background: #f1f8e9;
   border-radius: 8px;
   margin-top: 16px;
+}
+
+ion-fab-button{
+  --background: #388E3C;
 }
