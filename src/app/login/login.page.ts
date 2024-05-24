@@ -78,6 +78,8 @@ export class LoginPage implements OnInit {
         loader.dismiss();
         const user = userCredential.user;
 
+        //if( user ){
+
         switch (userData['role']) {
           case 'RegionAdmin':
             this.router.navigate(['/region']);
@@ -116,6 +118,7 @@ export class LoginPage implements OnInit {
       } else {
         this.presentToast('An unexpected error occurred', 'danger');
       }
+      
     }
   }
 }
