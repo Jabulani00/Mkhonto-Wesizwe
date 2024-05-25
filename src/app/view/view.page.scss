@@ -1,27 +1,152 @@
+/* Global Typography */
+body {
+  font-family: 'Roboto', sans-serif;
+  font-size: 16px;
+  background-color: #f4f4f9;
+}
+
+/* Thumbnail */
 .thumbnail-container {
   width: 100%;
-  padding-top: 100%; /* Creates a square aspect ratio */
+  padding-top: 100%;
 }
 
 .thumbnail-image {
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Ensure the image fills the square */
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
 }
 
-  .modal-content {
-    height: 90vh; /* Increase the height of the modal content */
-  }
-  
-  .image-container {
-    max-width: 100%; /* Adjust maximum width of the image container */
-    max-height: 90vh; /* Adjust maximum height of the image container */
-  }
-  
-  .modal-image {
-    width: auto;
-    height: 100%; /* Make the image take up full height of its container */
-    display: block;
-    margin: 0 auto; /* Center the image horizontally */
-  }
-  
+/* Modal */
+.modal-content {
+  height: 90vh;
+}
+
+.image-container {
+  max-width: 100%;
+  max-height: 90vh;
+}
+
+.modal-image {
+  width: auto;
+  height: 100%;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Filter by Municipality */
+ion-item.filter-item {
+  --padding-start: 15px;
+  --padding-end: 15px;
+  --inner-padding-start: 0;
+  --background: #fff;
+  --box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  --border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+ion-select.filter-select {
+  --background: #f0f0f0;
+  --border-radius: 10px;
+  --border-width: 2px;
+  --border-color: #ccc;
+  --color: #333;
+  --padding-start: 10px;
+  --padding-end: 10px;
+  --placeholder-color: #999;
+}
+
+ion-select.filter-select::part(icon) {
+  color: #555;
+}
+
+/* Search by Ward */
+ion-item.search-item {
+  --padding-start: 15px;
+  --padding-end: 15px;
+  --inner-padding-start: 0;
+  --background: #fff;
+  --box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  --border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+ion-searchbar.search-bar {
+  --background: #f0f0f0;
+  --border-radius: 10px;
+  --border-width: 2px;
+  --border-color: #ccc;
+  --color: #333;
+}
+
+/* Search List and Results */
+ion-list.search-list {
+  --padding-start: 0;
+  --padding-end: 0;
+  --background: #e0f7fa; /* Light cyan background for the search list */
+  --box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  --border-radius: 10px;
+  margin-top: 10px;
+}
+
+ion-item.search-result {
+  --padding-start: 15px;
+  --padding-end: 15px;
+  --inner-padding-start: 0;
+  --inner-padding-end: 0;
+  --inner-padding-bottom: 10px;
+  --background: #93e0a7; /* Slightly darker cyan background for each search result */
+}
+
+/* Page Title */
+ion-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Toolbar Icon */
+ion-icon {
+  font-size: 24px;
+  color: #555;
+}
+
+/* Image Items */
+ion-item.image-item {
+  --padding-start: 15px;
+  --padding-end: 15px;
+  --background: #fff;
+  --box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  --border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+ion-thumbnail {
+  width: 100px;
+  height: 100px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+/* Modal */
+ion-modal.modal-content {
+  --background: rgba(0, 0, 0, 0.9);
+}
+
+.modal-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+ion-content {
+  --background: #f4f4f9;
+}
+
+/* Custom Icon Styles */
+ion-icon.custom-icon {
+  margin-right: 10px;
+  color: #555;
+}
