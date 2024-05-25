@@ -10,9 +10,10 @@
 <ion-content>
   <!-- Filter by Municipality -->
   <ion-list>
-    <ion-item>
+    <ion-item class="filter-item">
+      <ion-icon name="location-outline" class="custom-icon"></ion-icon>
       <ion-label>Filter by Municipality</ion-label>
-      <ion-select aria-label="Fruit" interface="popover" [(ngModel)]="selectedMunicipality" (ionChange)="filterByMunicipality()" placeholder="Filter by Municipality">
+      <ion-select aria-label="Fruit" interface="popover" [(ngModel)]="selectedMunicipality" (ionChange)="filterByMunicipality()" placeholder="Select Municipality" class="filter-select">
         <ion-select-option value="">All</ion-select-option>
         <ion-select-option *ngFor="let municipality of municipalities" [value]="municipality">{{ municipality }}</ion-select-option>
       </ion-select>
@@ -20,12 +21,13 @@
   </ion-list>
 
   <!-- Search by Ward -->
-  <ion-item>
-    <ion-label>Search by Ward</ion-label>
-    <ion-searchbar [(ngModel)]="wardSearchQuery" (ionInput)="searchWard($event)" debounce="500"></ion-searchbar>
+  <ion-item class="search-item">
+    <ion-icon name="search-outline" class="custom-icon"></ion-icon>
+    <ion-label>SearchWard</ion-label>
+    <ion-searchbar [(ngModel)]="wardSearchQuery" (ionInput)="searchWard($event)" debounce="500" class="search-bar"></ion-searchbar>
   </ion-item>
-  <ion-list *ngIf="wardSearchQuery && filteredWards.length > 0">
-    <ion-item *ngFor="let ward of filteredWards" (click)="selectWard(ward)">
+  <ion-list *ngIf="wardSearchQuery && filteredWards.length > 0" class="search-list">
+    <ion-item *ngFor="let ward of filteredWards" (click)="selectWard(ward)" class="search-result">
       {{ ward }}
     </ion-item>
   </ion-list>
