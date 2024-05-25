@@ -73,6 +73,7 @@ ion-searchbar.search-bar {
 ion-list.search-list {
   --padding-start: 0;
   --padding-end: 0;
+  --background: #84c430;
 }
 
 ion-item.search-result {
@@ -81,6 +82,7 @@ ion-item.search-result {
   --inner-padding-start: 0;
   --inner-padding-end: 0;
   --inner-padding-bottom: 10px;
+  --background: #84c430;
 }
 
 /* Page Title */
@@ -117,4 +119,7 @@ ion-modal.modal-content {
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
+}
+ion-content{
+  --background: #84c430;
 }
