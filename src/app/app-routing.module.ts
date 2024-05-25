@@ -87,7 +87,11 @@ const routes: Routes = [
   {
     path: 'view',
     loadChildren: () => import('./view/view.module').then( m => m.ViewPageModule)
+  },  {
+    path: 'spoilt-votes',
+    loadChildren: () => import('./spoilt-votes/spoilt-votes.module').then( m => m.SpoiltVotesPageModule)
   },
+
 
 
 

@@ -1,8 +1,8 @@
 <ion-header [translucent]="true">
   <ion-toolbar color="success">
     <ion-title>UPDATE Election Form</ion-title>
-    <ion-icon routerLink="/counter" slot="start" style="zoom: 1.5; margin-right: 5px;" name="arrow-back-outline"></ion-icon>
-    <ion-icon slot="end" style="zoom: 1.5; margin-right: 5px;"  routerLink="/election-results" name="document-attach-outline"></ion-icon>
+    <ion-icon routerLink="/counter" slot="start" style="zoom: 1.5; margin-left: 6px;" name="arrow-back-outline"></ion-icon>
+   
   </ion-toolbar>
 </ion-header>
 
@@ -28,15 +28,26 @@
           </ion-item>
           <div *ngIf="formDir.submitted && (electionForm.get('voterRoll')?.invalid && electionForm.get('voterRoll')?.touched && electionForm.get('voterRoll')?.value === '')" class="error-message">Voter Roll is required.</div>
 
-          <ion-item>
+          <!-- <ion-item>
             <ion-label position="stacked">Voter Turnout</ion-label>
             <ion-input formControlName="voterTurnout" type="number" required></ion-input>
           </ion-item>
-         
+          -->
+          
+          <ion-item>
+            <ion-label position="stacked">Total Votes</ion-label>
+            <ion-input formControlName="totalVotes" type="number" required></ion-input>
+          </ion-item> 
+          <div *ngIf="formDir.submitted && (electionForm.get('totalVotes')?.invalid && electionForm.get('totalVotes')?.touched && electionForm.get('totalVotes')?.value === '')" class="error-message">Total Votes Roll is required.</div>
+
+
           <ion-item>
             <ion-label position="stacked">Spoilt Ballots</ion-label>
             <ion-input formControlName="spoiltBallots" type="number" required></ion-input>
           </ion-item> 
+          <div *ngIf="formDir.submitted && (electionForm.get('spoiltBallots')?.invalid && electionForm.get('spoiltBallots')?.touched && electionForm.get('spoiltBallots')?.value === '')" class="error-message">Spoilt Ballots is required.</div>
+
+
 
   <div class="parties"> 
 <!-- MK Votes -->
