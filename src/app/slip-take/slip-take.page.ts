@@ -97,7 +97,14 @@ export class SlipTakePage implements OnInit {
       await alert.present();
       return;
     }
+     
+    const confirmation = await this.presentConfirmationForSubmit();
+  
+    if (!confirmation) {
+       return
+    }
 
+    
     try {
       const blob = this.dataURLtoBlob(this.capturedImageUrl);
       const filePath = `images/${new Date().getTime()}.jpg`;
@@ -242,5 +249,30 @@ export class SlipTakePage implements OnInit {
     }
   }
 
-
+  async presentConfirmationForSubmit() {
+    return new Promise<boolean>(async (resolve) => {
+      const alert = await this.alertController.create({
+        header: 'Confirmation',
+        message: 'Are you sure you want to submit the form?',
+        buttons: [
+          {
+            text: 'Cancel',
+            role: 'cancel',
+            cssClass: 'my-custom-alert',
+            handler: () => {
+              console.log('Confirmation canceled');
+              resolve(false);
+            }
+          }, {
+            text: 'Confirm',
+            handler: () => {
+              resolve(true);
+            }
+          }
+        ]
+      });
+      await alert.present();
+    });
+  }
+  
 }

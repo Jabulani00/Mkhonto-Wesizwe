@@ -14,16 +14,16 @@
       <form [formGroup]="electionForm" (ngSubmit)="onSubmit()" #formDir="ngForm">
         <ion-list>
 
-          <ion-item class="input-item">
+          <ion-item class="input-item" lines="none" >
             <ion-label position="stacked" >Municipality</ion-label>
-            <ion-input formControlName="municipality"  maxlength="110" class="dissabledIndicator" type="text" required readonly></ion-input>
+            <ion-input  formControlName="municipality"  maxlength="110" class="dissabledIndicator" type="text" required readonly></ion-input>
           </ion-item>
           <div *ngIf="formDir.submitted && electionForm.get('municipality')?.invalid" class="error-message">Municipality is required.</div>
           
 
 
           
-          <ion-item>
+          <ion-item lines="none">
             <ion-label position="stacked">VD Number</ion-label>
             <ion-select formControlName="vdNumber" interface="action-sheet" placeholder="Select VD Number">
               <!-- Iterate over the votingStations array and bind it to ion-select-option -->
@@ -45,26 +45,26 @@
           <div *ngIf="formDir.submitted && (electionForm.get('ward')?.invalid && electionForm.get('ward')?.touched && electionForm.get('ward')?.value === '')" class="error-message">Ward is required.</div>
 
          -->
-         <ion-item class="input-item">
+         <ion-item class="input-item" lines="none">
           <ion-label position="stacked">Ward</ion-label>
           <ion-input formControlName="ward" maxlength="110"  class="dissabledIndicator" type="text" required readonly></ion-input>
         </ion-item>
         <div *ngIf="formDir.submitted && (electionForm.get('ward')?.invalid && electionForm.get('ward')?.touched && electionForm.get('ward')?.value === '')" class="error-message">Ward is required.</div>
         
 
-          <ion-item>
+          <ion-item lines="none">
             <ion-label position="stacked">Leader</ion-label>
             <ion-input formControlName="leader" maxlength="110"  class="dissabledIndicator" type="text" required readonly></ion-input>
           </ion-item>
           <div *ngIf="formDir.submitted && (electionForm.get('leader')?.invalid && electionForm.get('leader')?.touched && electionForm.get('leader')?.value === '')" class="error-message">Leader is required.</div>
 
-          <ion-item>
+          <ion-item lines="none">
             <ion-label position="stacked">Cell Number</ion-label>
             <ion-input class="dissabledIndicator" maxlength="110"  formControlName="cellNumber" type="text" required readonly></ion-input>
           </ion-item>
           <div *ngIf="formDir.submitted && (electionForm.get('cellNumber')?.invalid && electionForm.get('cellNumber')?.touched && electionForm.get('cellNumber')?.value === '')" class="error-message">Cell Number is required.</div>
 
-          <ion-item>
+          <ion-item lines="none">
             <ion-label position="stacked">Voter Roll</ion-label>
             <ion-input formControlName="voterRoll"  maxlength="110"  class="dissabledIndicator" type="number" required readonly></ion-input>
           </ion-item>
@@ -135,7 +135,7 @@
         </ion-list>
 
         <div class="ion-text-center">
-          <ion-button type="submit" expand="block" color="success">Submit</ion-button>
+          <ion-button type="submit" expand="block" color="success">Update Voter Turnout</ion-button>
         </div>
 
       </form>

@@ -20,11 +20,21 @@
 }
 .dissabledIndicator{
  // background-color:lightgray;
- background-color: rgba(211, 211, 211, 0.2);
+
+ background-color: rgba(179, 177, 177, 0.2);
  border-radius: 7px;
 
 }
-
+.select{
+  margin-right: 16px;
+}
+.dissabledIndicator ion-input{
+  // background-color:lightgray;
+  margin-left: 10px;
+  background-color: rgba(211, 211, 211, 0.2);
+  border-radius: 7px;
+ 
+ }
 .readonly-input {
   background-color: rgba(129, 113, 113, 0.3); /* Semi-transparent white */
   color: #000000;

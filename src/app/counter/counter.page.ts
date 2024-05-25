@@ -134,6 +134,14 @@ if (!vdNumber ){
   return;
 }
 
+
+const confirmation = await this.presentConfirmationForSubmit();
+  
+if (!confirmation) {
+   return
+}
+
+
 const loader = await this.loadingController.create({
   // message: 'Logging in...',
   cssClass: 'custom-loader-class',
@@ -339,4 +347,31 @@ await loader.present();
   
     await alert.present();
   }
+
+  async presentConfirmationForSubmit() {
+    return new Promise<boolean>(async (resolve) => {
+      const alert = await this.alertController.create({
+        header: 'Confirmation',
+        message: 'Are you sure you want to submit the form?',
+        buttons: [
+          {
+            text: 'Cancel',
+            role: 'cancel',
+            cssClass: 'my-custom-alert',
+            handler: () => {
+              console.log('Confirmation canceled');
+              resolve(false);
+            }
+          }, {
+            text: 'Confirm',
+            handler: () => {
+              resolve(true);
+            }
+          }
+        ]
+      });
+      await alert.present();
+    });
+  }
+  
 }

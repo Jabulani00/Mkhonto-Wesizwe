@@ -18,6 +18,7 @@ export class ElectionResultsPage implements OnInit {
   data: any;
   votingStations: any;
   ward: any;
+  count: number = 0;
 
   constructor(
     private alertController: AlertController,
@@ -34,6 +35,7 @@ export class ElectionResultsPage implements OnInit {
   ngOnInit() {
     this.electionForm.get('vdNumber')?.valueChanges.subscribe((vdNumber) => {
       this.updateVoterRoll(vdNumber);
+      this.loadCount(vdNumber);
     });
   }
 
@@ -41,20 +43,94 @@ export class ElectionResultsPage implements OnInit {
     this.electionForm = this.fb.group({
       vdNumber: ['', Validators.required],
       voterRoll:['', Validators.required],
-      voterTurnout: ['', Validators.required,Validators.maxLength(180)],
+      //voterTurnout: ['', Validators.required,Validators.maxLength(180)],
       spoiltBallots: ['', Validators.required,Validators.maxLength(180)],
       totalVotes: ['', Validators.required,Validators.maxLength(180)],
       mkVotes: ['', Validators.required,Validators.maxLength(180)],
       ancVotes: ['', Validators.required,Validators.maxLength(180)],
       effVotes: ['', Validators.required,Validators.maxLength(180)],
       ifpVotes: ['', Validators.required,Validators.maxLength(180)],
-      daVotes: ['', Validators.required,Validators.maxLength(180)],
+      daVotes: [ '', Validators.required,Validators.maxLength(180)],
       actsaVotes: ['', Validators.required,Validators.maxLength(180)],
     });
   }
 
+
+
+  async loadCount(vdNumber: string) {
+    const user = await this.auth.currentUser;
+
+    if (user) {
+      const userEmail = user.email;
+
+      this.firestore
+        .collection('electionData', (ref) =>
+          ref.where('userEmail', '==', userEmail).where('vdNumber', '==', vdNumber)
+        )
+        .get()
+        .toPromise()
+        .then((querySnapshot: any) => {
+          if (!querySnapshot.empty) {
+            const doc = querySnapshot.docs[0];
+            this.count = doc.data().count;
+            this.docId = doc.id;
+          } else {
+            this.count = 0;
+            this.docId = null;
+          }
+        })
+        .catch((error) => {
+          console.error("Error fetching documents: ", error);
+        });
+    }
+  }
+
   async onSubmit() {
     const formData = this.electionForm.value;
+    if (this.electionForm.get('vdNumber')?.invalid) {
+      alert("Please select a voting station.");
+      return;
+    }
+    if (this.electionForm.get('totalVotes')?.invalid) {
+      alert("Please fill in the total Votes value (maximum length: 180 characters).");
+      return;
+    }
+    if (this.electionForm.get('spoiltBallots')?.invalid) {
+      alert("Please fill in the Spoilt Ballots value (maximum length: 180 characters).");
+      return;
+    }
+    if (this.electionForm.get('mkVotes')?.invalid) {
+      alert("Please fill in the  mk Votes value (maximum length: 180 characters).");
+      return;
+    }
+    if (this.electionForm.get('ancVotes')?.invalid) {
+      alert("Please fill in the  anc Votes value (maximum length: 180 characters).");
+      return;
+    }
+    if (this.electionForm.get('effVotes')?.invalid) {
+      alert("Please fill in the  eff Votes value (maximum length: 180 characters).");
+      return;
+    }
+    if (this.electionForm.get('ifpVotes')?.invalid) {
+      alert("Please fill in the ifp Votes value (maximum length: 180 characters).");
+      return;
+    }
+
+    if (this.electionForm.get('daVotes')?.invalid) {
+      alert("Please fill in the da Votes value (maximum length: 180 characters).");
+      return;
+    }
+
+    if (this.electionForm.get('actsaVotes')?.invalid) {
+      alert("Please fill in the actsa Votes value (maximum length: 180 characters).");
+      return;
+    }
+
+    const confirmation = await this.presentConfirmationForSubmit();
+  
+    if (!confirmation) {
+       return
+    }
 
 
     const loader = await this.loadingController.create({
@@ -71,28 +147,37 @@ export class ElectionResultsPage implements OnInit {
 
       this.firestore
         .collection('electionData', (ref) =>
-          ref.where('userEmail', '==', userEmail).where('vdNumber', '==', vdNumber)
+          ref.where('email', '==', userEmail).where('vdNumber', '==', vdNumber)
         )
         .get()
         .toPromise()
         .then((querySnapshot: any) => {
-          querySnapshot.forEach((doc: any) => {
-            const updatedDoc = {
-              ancVotes: doc.data().ancVotes + this.electionForm.get('ancVotes')?.value,
-              daVotes: doc.data().daVotes + this.electionForm.get('daVotes')?.value,
-              effVotes: doc.data().effVotes + this.electionForm.get('effVotes')?.value,
-              ifpVotes: doc.data().ifpVotes + this.electionForm.get('ifpVotes')?.value,
-              mkVotes: doc.data().mkVotes + this.electionForm.get('mkVotes')?.value,
-              actsaVotes: doc.data().actsaVotes + this.electionForm.get('actsaVotes')?.value,
-              spoiltBallots: doc.data().spoiltBallots + this.electionForm.get('spoiltBallots')?.value,
-              //voterTurnout: doc.data().voterTurnout + this.electionForm.get('voterTurnout')?.value,
-              totalVotes: doc.data().totalVotes + this.electionForm.get('totalVotes')?.value,
-            };
-            this.docId = doc.id;
-            this.updateDocument(doc.id, updatedDoc);
+          if (querySnapshot.empty) {
+            // If no document is found, display a message indicating that the voter turnout needs to be updated
             loader.dismiss();
-            this.presentSuccessAlert('Successfully added');
-          });
+            this.presentSuccessAlert("You cannot update ward votes for this voting station because you haven't updated the voter turnout. Please update the voter turnout first.");
+          } else {
+            // Proceed with updating the document
+            querySnapshot.forEach((doc: any) => {
+              const updatedDoc = {
+                ancVotes: this.electionForm.get('ancVotes')?.value,
+                daVotes: this.electionForm.get('daVotes')?.value,
+                effVotes: this.electionForm.get('effVotes')?.value,
+                ifpVotes: this.electionForm.get('ifpVotes')?.value,
+                mkVotes: this.electionForm.get('mkVotes')?.value,
+                actsaVotes: this.electionForm.get('actsaVotes')?.value,
+                spoiltBallots: this.electionForm.get('spoiltBallots')?.value,
+                // voterTurnout:  this.electionForm.get('voterTurnout')?.value,
+                count: doc.data().count + 1,
+                totalVotes: doc.data().totalVotes + this.electionForm.get('totalVotes')?.value,
+              };
+              this.docId = doc.id;
+              this.updateDocument(doc.id, updatedDoc);
+              loader.dismiss();
+              this.presentSuccessAlert('Document updated successfully');
+              this.count = updatedDoc.count;
+            });
+          }
         })
         .catch((error) => {
           loader.dismiss();
@@ -106,10 +191,11 @@ export class ElectionResultsPage implements OnInit {
     this.firestore.collection('electionData').doc(docId).update(updatedDoc)
       .then(() => {
         console.log('Document updated successfully:', docId);
-        alert('Document updated successfully:' + docId);
+       // alert('Document updated successfully:' + docId);
         this.electionForm.reset();
       })
       .catch((error) => {
+        this.presentSuccessAlert('Error updating document');
         console.error('Error updating document:', error);
       });
   }
@@ -185,4 +271,31 @@ export class ElectionResultsPage implements OnInit {
   
     await alert.present();
   }
+
+  async presentConfirmationForSubmit() {
+    return new Promise<boolean>(async (resolve) => {
+      const alert = await this.alertController.create({
+        header: 'Confirmation',
+        message: 'Are you sure you want to submit the form?',
+        buttons: [
+          {
+            text: 'Cancel',
+            role: 'cancel',
+            cssClass: 'my-custom-alert',
+            handler: () => {
+              console.log('Confirmation canceled');
+              resolve(false);
+            }
+          }, {
+            text: 'Confirm',
+            handler: () => {
+              resolve(true);
+            }
+          }
+        ]
+      });
+      await alert.present();
+    });
+  }
+  
 }

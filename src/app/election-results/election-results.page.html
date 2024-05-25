@@ -1,6 +1,6 @@
 <ion-header [translucent]="true">
   <ion-toolbar color="success">
-    <ion-title>UPDATE Election Form</ion-title>
+    <ion-title>FINAL Election Form Submission</ion-title>
     <ion-icon routerLink="/counter" slot="start" style="zoom: 1.5; margin-left: 6px;" name="arrow-back-outline"></ion-icon>
    
   </ion-toolbar>
@@ -14,6 +14,14 @@
       <form [formGroup]="electionForm" (ngSubmit)="onSubmit()" #formDir="ngForm">
         <ion-list>
 
+        
+          <div class="dissabledIndicator">  
+            <ion-label position="stacked">Submission Count</ion-label><br>
+            <strong>{{ count }}</strong>
+          </div>
+   
+     
+
           <ion-item class="input-item">
             <ion-label position="stacked">VD Number</ion-label>
             <ion-select formControlName="vdNumber" interface="action-sheet" placeholder="Select VD Number">
@@ -24,7 +32,7 @@
 
           <ion-item>
             <ion-label position="stacked">Voter Roll</ion-label>
-            <ion-input formControlName="voterRoll" type="number" required></ion-input>
+            <ion-input formControlName="voterRoll" type="number" readonly="" required></ion-input>
           </ion-item>
           <div *ngIf="formDir.submitted && (electionForm.get('voterRoll')?.invalid && electionForm.get('voterRoll')?.touched && electionForm.get('voterRoll')?.value === '')" class="error-message">Voter Roll is required.</div>
 
