@@ -18,6 +18,8 @@ export class VdPage implements OnInit {
   selectedWard: Ward | null = null;
   votingStationName: string = '';
   votingStationRoll: number | null = null;
+  private selectedMunicipalityId: string | null = null;
+  private selectedWardId: string | null = null;
 
   constructor(private firestoreService: FirestoreService) {}
 
@@ -33,6 +35,7 @@ export class VdPage implements OnInit {
             municipality: item.municipality,
             wards: item.wards || []
           }));
+          this.restoreSelection();
         } else {
           console.error('Invalid data format received:', data);
         }
@@ -42,15 +45,17 @@ export class VdPage implements OnInit {
       }
     });
   }
-  
 
   selectMunicipality(municipality: Municipality) {
     this.selectedMunicipality = municipality;
+    this.selectedMunicipalityId = municipality.municipality;
     this.selectedWard = null;
+    this.selectedWardId = null;
   }
 
   selectWard(ward: Ward) {
     this.selectedWard = ward;
+    this.selectedWardId = ward.ward;
   }
 
   addVotingStation() {
@@ -70,7 +75,23 @@ export class VdPage implements OnInit {
   updateWardInFirestore(ward: Ward) {
     if (this.selectedMunicipality) {
       const municipalityId = this.selectedMunicipality.municipality;
-      this.firestoreService.updateWard(municipalityId, ward);
+      this.firestoreService.updateWard(municipalityId, ward).then(() => {
+        this.loadMunicipalities();
+      });
+    }
+  }
+
+  private restoreSelection() {
+    if (this.selectedMunicipalityId) {
+      this.selectedMunicipality = this.municipalities.find(
+        municipality => municipality.municipality === this.selectedMunicipalityId
+      ) || null;
+
+      if (this.selectedMunicipality && this.selectedWardId) {
+        this.selectedWard = this.selectedMunicipality.wards.find(
+          ward => ward.ward === this.selectedWardId
+        ) || null;
+      }
     }
   }
 }
