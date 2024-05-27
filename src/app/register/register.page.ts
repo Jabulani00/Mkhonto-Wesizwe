@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router } from '@angular/router';
-import { LoadingController } from '@ionic/angular';
+import { LoadingController, AlertController } from '@ionic/angular';
 import { ProfilePage } from '../profile/profile.page';
 import { FirestoreService } from '../services/firestore.service';
 
@@ -13,9 +13,9 @@ interface UserData {
   role: string;
   municipality?: string;
   ward?: string;
-  leader:string;
-  cellNumber:string;
-  counterSubmitsCount:number;
+  leader: string;
+  cellNumber: string;
+  counterSubmitsCount: number;
 }
 
 @Component({
@@ -33,8 +33,8 @@ export class RegisterPage implements OnInit {
   selectedMunicipality: any;
   municipalities: any[] = [];
   selectedMunicipalityWards: any[] = [];
-  cellNumber:any;
-  leader:any;
+  cellNumber: any;
+  leader: any;
 
   ward: string = '';
 
@@ -48,7 +48,8 @@ export class RegisterPage implements OnInit {
     private db: AngularFirestore,
     private Auth: AngularFireAuth,
     private router: Router,
-    private loadingController: LoadingController
+    private loadingController: LoadingController,
+    private alertController: AlertController
   ) {
     this.loadMunicipalities();
   }
@@ -90,7 +91,7 @@ export class RegisterPage implements OnInit {
       municipality.municipality.toLowerCase().includes(searchText)
     );
   }
-  
+
   filterWards(event: any) {
     const searchText = event.detail.value.toLowerCase();
     this.filteredWards = this.selectedMunicipalityWards.filter((ward: { ward: string }) =>
@@ -98,29 +99,53 @@ export class RegisterPage implements OnInit {
     );
   }
 
+  async showAlert(message: string) {
+    const alert = await this.alertController.create({
+      header: 'Error',
+      message: message,
+      buttons: ['OK']
+    });
+    await alert.present();
+  }
+
   async Register() {
-    if (this.name === '') {
-      alert("Enter your full name");
+    if (!this.name) {
+      this.showAlert('Enter your full name');
       return;
     }
 
-    if (this.email === '') {
-      alert("Enter email Address");
+    if (!this.email) {
+      this.showAlert('Enter email address');
       return;
     }
 
-    if (this.password === '') {
-      alert("Enter password");
+    if (!this.password) {
+      this.showAlert('Enter password');
       return;
     }
 
     if (this.password !== this.confirm_password) {
-      console.error('Passwords do not match');
+      this.showAlert('Passwords do not match');
+      return;
+    }
+
+    if (!this.selectedRole) {
+      this.showAlert('Select a role');
+      return;
+    }
+
+    if (this.selectedRole === 'GroundForce' && (!this.selectedMunicipality || !this.selectedWard)) {
+      this.showAlert('Select both municipality and ward for GroundForce role');
+      return;
+    }
+
+    if (this.selectedRole === 'RegionAdmin' && !this.selectedMunicipality) {
+      this.showAlert('Select a municipality for RegionAdmin role');
       return;
     }
 
     const loader = await this.loadingController.create({
-      message: '|Registering you...',
+      message: 'Registering you...',
       cssClass: 'custom-loader-class'
     });
 
@@ -132,12 +157,11 @@ export class RegisterPage implements OnInit {
           const userData: UserData = {
             name: this.name,
             email: this.email,
-            status: "pending",
+            status: 'pending',
             role: this.selectedRole,
-            leader:this.leader,
-            cellNumber:this.cellNumber,
-            counterSubmitsCount:0,
-
+            leader: this.leader,
+            cellNumber: this.cellNumber,
+            counterSubmitsCount: 0,
           };
 
           if (this.selectedRole === 'GroundForce') {
@@ -156,13 +180,18 @@ export class RegisterPage implements OnInit {
             .catch((error: any) => {
               loader.dismiss();
               console.error('Error adding user data:', error);
+              this.showAlert('Error adding user data. Please try again.');
             });
         } else {
+          loader.dismiss();
           console.error('User credential is missing');
+          this.showAlert('User credential is missing. Please try again.');
         }
       })
       .catch((error: any) => {
+        loader.dismiss();
         console.error('Error creating user:', error);
+        this.showAlert('Error creating user: ' + error.message);
       });
   }
 }

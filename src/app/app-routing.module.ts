@@ -86,10 +86,14 @@ const routes: Routes = [
   },
   {
     path: 'view',
-    loadChildren: () => import('./view/view.module').then( m => m.ViewPageModule)
-  },  {
+    loadChildren: () => import('./view/view.module').then( m => m.ViewPageModule),
+    canActivate: [AuthGuard] 
+  },
+  {
     path: 'spoilt-votes',
-    loadChildren: () => import('./spoilt-votes/spoilt-votes.module').then( m => m.SpoiltVotesPageModule)
+    loadChildren: () => import('./spoilt-votes/spoilt-votes.module').then( m => m.SpoiltVotesPageModule),
+    canActivate: [AuthGuard] 
+
   },
 
 

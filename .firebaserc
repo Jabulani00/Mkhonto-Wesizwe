@@ -1,5 +1,9 @@
 {
   "projects": {
-    "default": "mkhonto-ca2c0"
-  }
+    "default": "mkhonto-ca2c0",
+    "umkhonto": "umkhonto-wesizwe"
+  },
+  "targets": {},
+  "etags": {},
+  "dataconnectEmulatorConfig": {}
 }
