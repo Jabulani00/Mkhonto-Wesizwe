@@ -3,7 +3,6 @@ import { AngularFirestore } from '@angular/fire/compat/firestore';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { Router } from '@angular/router';
 import { LoadingController, AlertController } from '@ionic/angular';
-import { ProfilePage } from '../profile/profile.page';
 import { FirestoreService } from '../services/firestore.service';
 
 interface UserData {
@@ -171,7 +170,10 @@ export class RegisterPage implements OnInit {
             userData.municipality = this.selectedMunicipality;
           }
 
-          this.db.collection('Users').add(userData)
+          // Create a custom ID by concatenating name and email
+          const customId = `${this.name.replace(/\s+/g, '_').toLowerCase()}_${this.email.replace(/[^\w.-]+/g, '_').toLowerCase()}`;
+
+          this.db.collection('Users').doc(customId).set(userData)
             .then(() => {
               loader.dismiss();
               console.log('User data added successfully');
