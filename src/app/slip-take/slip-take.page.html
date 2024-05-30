@@ -9,6 +9,63 @@
 </ion-header>
 
 <ion-content>
+
+  <div class="search-dropdown-container">
+    <ion-item >
+      <ion-label position="stacked">Municipality</ion-label>
+      <div class="search-dropdown">
+        <ion-searchbar
+          [(ngModel)]="municipalitySearchText"
+          (ionChange)="filterMunicipalities($event)"
+          showCancelButton="never"
+          debounce="500"
+          placeholder="Search Municipality"
+        ></ion-searchbar>
+        <ion-select
+          [(ngModel)]="selectedMunicipality"
+          (ionChange)="onMunicipalityChange($event)"
+          interface="popover"
+          placeholder="Select Municipality"
+        >
+          <ion-select-option
+            *ngFor="let municipality of filteredMunicipalities"
+            [value]="municipality.municipality"
+          >
+            {{ municipality.municipality }}
+          </ion-select-option>
+        </ion-select>
+      </div>
+    </ion-item>
+  </div>
+
+
+  <ion-item >
+    <ion-label position="stacked">Ward</ion-label>
+    <div class="search-dropdown">
+      <ion-searchbar
+        [(ngModel)]="wardSearchText"
+        (ionChange)="filterWards($event)"
+        showCancelButton="never"
+        debounce="500"
+        placeholder="Search Ward"
+      ></ion-searchbar>
+      <ion-select
+        [(ngModel)]="selectedWard"
+        interface="popover"
+        placeholder="Select Ward"
+      >
+        <ion-select-option
+          *ngFor="let ward of filteredWards"
+          [value]="ward.ward"
+        >
+          {{ ward.ward }}
+        </ion-select-option>
+      </ion-select>
+    </div>
+  </ion-item>
+
+
+
   <form [formGroup]="uploadForm" (ngSubmit)="onSubmit()" #formDir="ngForm"animation="fade-in">
     <ion-item class="input-item">
       <ion-label position="stacked">VD Number</ion-label>

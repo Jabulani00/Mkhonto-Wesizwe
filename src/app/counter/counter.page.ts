@@ -175,7 +175,17 @@ await loader.present();
           const currentVoterTurnout = doc.data().voterTurnout || 0;
           console.log("TurnOut:",currentVoterTurnout);
           const updatedVoterTurnout = currentVoterTurnout + newVoterTurnout;
-  
+          const count =  doc.data().count ;
+
+
+          if (count > 0) {
+            console.log("Voters already recorded you can't update the turnout any more.");
+            loader.dismiss();
+            this.presentSuccessAlert("danger", "Voter turnout already recorded.");
+            return;
+          }
+
+
           try {
             await doc.ref.update({ voterTurnout: updatedVoterTurnout });
             console.log('Document updated with voterTurnout');

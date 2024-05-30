@@ -6,6 +6,7 @@ import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { LoadingController, AlertController } from '@ionic/angular';
 import { finalize } from 'rxjs/operators';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
+import { FirestoreService } from '../services/firestore.service';
 
 @Component({
   selector: 'app-slip-take',
@@ -27,23 +28,36 @@ export class SlipTakePage implements OnInit {
   leader: any;
   municipality: any;
 
+  municipalitySearchText: string = '';
+  wardSearchText: string = '';
+  filteredMunicipalities: any[] = [];
+  filteredWards: any[] = [];
+  selectedMunicipality:any;
+  selectedWard:any;
+
+  mun:any;
+war:any;
 
   constructor(
-    private firestore: AngularFirestore,
+
+    private firestore: AngularFirestore,private firestoreService: FirestoreService,
     private fb: FormBuilder,
     private auth: AngularFireAuth,
     private afStorage: AngularFireStorage,
     private loadingController: LoadingController,
-    private alertController: AlertController
+    private alertController: AlertController,
   ) {
     this.createForm();
   this.initializeForm();
+  this.loadMunicipalities()
   
   }
 
   
 
-  ngOnInit() {}
+  ngOnInit() {
+
+  }
 
   createForm() {
     this.uploadForm = this.fb.group({
@@ -98,6 +112,8 @@ export class SlipTakePage implements OnInit {
       return;
     }
      
+
+
     const confirmation = await this.presentConfirmationForSubmit();
   
     if (!confirmation) {
@@ -184,6 +200,37 @@ export class SlipTakePage implements OnInit {
 
 
   async getVotingStationsForMunicipalityAndWard(municipalityName: string, wardName: string) {
+
+  if(!this.selectedMunicipality  && !this.selectedWard ){
+
+    const chaniIndex = this.data.findIndex((entry: any) => entry.municipality === this.selectedMunicipality);
+
+    if (chaniIndex !== -1) {
+      const chaniMunicipality = this.data[chaniIndex];
+      const wardIndex = chaniMunicipality.wards.findIndex((ward: any) => ward.ward === this.selectedWard);
+
+      if (wardIndex !== -1) {
+        const ward = await chaniMunicipality.wards[wardIndex];
+        this.votingStations = await ward.votingStations;
+    
+
+         // Find and log the voterRoll for a voting Station
+        
+
+        console.log(`Voting stations for ward ${this.selectedWard} in ${this.selectedMunicipality} municipality:`);
+      } else {
+        console.log(`Ward ${this.selectedWard} not found in ${this.selectedMunicipality} municipality.`);
+        this.votingStations = [];
+      }
+    } else {
+      console.log(`Municipality ${this.selectedMunicipality} not found.`);
+      this.votingStations = [];
+    }
+    return
+  }
+
+
+
     const chaniIndex = this.data.findIndex((entry: any) => entry.municipality === municipalityName);
 
     if (chaniIndex !== -1) {
@@ -248,6 +295,47 @@ export class SlipTakePage implements OnInit {
       console.error('User is not logged in.');
     }
   }
+
+
+filterMunicipalities(event: any) {
+    const searchText = event.detail.value.toLowerCase();
+    this.filteredMunicipalities = this.municipalities.filter(municipality =>
+      municipality.municipality.toLowerCase().includes(searchText)
+    );
+  }
+
+  filterWards(event: any) {
+    const searchText = event.detail.value.toLowerCase();
+    this.filteredWards = this.selectedMunicipalityWards.filter((ward: { ward: string }) =>
+       ward.ward.toLowerCase().includes(searchText)
+      //  ward.ward.toLowerCase().includes(searchText);
+    );
+  }
+
+
+  loadMunicipalities() {
+    this.firestoreService.getMunicipalities().subscribe((municipalities: any[]) => {
+      this.municipalities = municipalities;
+      this.filteredMunicipalities = [...municipalities];
+    });
+  }
+
+  onMunicipalityChange(event: any) {
+    const selectedMunicipality = event.detail.value;
+    const selectedMunicipalityObject = this.municipalities.find(municipality => municipality.municipality === selectedMunicipality);
+   
+    this.uploadForm.patchValue({ vdNumber: selectedMunicipality });
+
+
+    if (selectedMunicipalityObject) {
+      this.selectedMunicipalityWards = selectedMunicipalityObject.wards || [];
+      this.filteredWards = [...this.selectedMunicipalityWards];
+    } else {
+      this.selectedMunicipalityWards = [];
+      this.filteredWards = [];
+    }
+  }
+
 
   async presentConfirmationForSubmit() {
     return new Promise<boolean>(async (resolve) => {

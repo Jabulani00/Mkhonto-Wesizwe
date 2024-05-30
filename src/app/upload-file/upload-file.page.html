@@ -1,0 +1,29 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      
+      <ion-icon name="arrow-back-outline" (click)="goBack()"></ion-icon>
+    </ion-buttons>
+    <ion-title>Upload spreadsheet</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+
+<ion-content [fullscreen]="true" class="ion-padding">
+
+
+  <!-- File Upload Section -->
+  <div class="file-upload">
+    <label for="fileInput" class="file-label">
+      <ion-icon name="cloud-upload-outline" class="icon"></ion-icon>
+      <span *ngIf="selectedFileName">{{ selectedFileName }}</span>
+      <span *ngIf="!selectedFileName">Choose File</span>
+    </label>
+    <input id="fileInput" type="file" (change)="onFileChange($event)" class="file-input" />
+    <ion-button (click)="readAndUploadFileContent()" expand="block" fill="solid" color="primary">
+      Upload
+    </ion-button>
+  </div>
+
+</ion-content>

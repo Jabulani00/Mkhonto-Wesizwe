@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>Region Admin</ion-title>
-    <ion-icon slot="end" name="power-outline" style="zoom: 1.5; margin-right: 5px;" (click)="presentConfirmationAlert()" style="color: white;"></ion-icon>
+    <ion-icon slot="end" name="power-outline" style="zoom: 1.5; margin-right: 5px;" class="card-icon" (click)="presentConfirmationAlert()" style="color: white;"></ion-icon>
   </ion-toolbar>
 </ion-header>
 
@@ -16,6 +16,17 @@
           </ion-card-header>
           <ion-card-content class="card-content">
             Add new voting stations to your region.
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+      <ion-col size="12" size-md="6">
+        <ion-card routerLink="/upload-file" routerDirection="root" class="dashboard-card">
+          <ion-card-header class="card-header">
+            <ion-icon name="cloud-upload-outline" class="card-icon"></ion-icon>
+            <ion-card-title>Upload Voting Results</ion-card-title>
+          </ion-card-header>
+          <ion-card-content class="card-content">
+            Upload voting result compiled spreadsheet.
           </ion-card-content>
         </ion-card>
       </ion-col>

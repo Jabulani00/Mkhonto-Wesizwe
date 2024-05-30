@@ -94,7 +94,15 @@ const routes: Routes = [
     loadChildren: () => import('./spoilt-votes/spoilt-votes.module').then( m => m.SpoiltVotesPageModule),
     canActivate: [AuthGuard] 
 
+  },  {
+    path: 'upload-file',
+    loadChildren: () => import('./upload-file/upload-file.module').then( m => m.UploadFilePageModule)
   },
+  {
+    path: 'get-doc',
+    loadChildren: () => import('./get-doc/get-doc.module').then( m => m.GetDocPageModule)
+  },
+
 
 
 

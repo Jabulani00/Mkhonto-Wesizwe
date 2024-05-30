@@ -51,7 +51,7 @@ export class LoginPage implements OnInit {
       cssClass: 'custom-loader-class',
     });
     await loader.present();
-
+    const userCredential = await this.auth.signInWithEmailAndPassword(this.email, this.password);
     try {
       if (this.email === this.defaultAdminEmail && this.password === this.defaultAdminPassword) {
         loader.dismiss();
@@ -74,7 +74,7 @@ export class LoginPage implements OnInit {
       const userData = userQuerySnapshot.docs[0].data();
 
       if (userData['status'] === 'active') {
-        const userCredential = await this.auth.signInWithEmailAndPassword(this.email, this.password);
+       // const userCredential = await this.auth.signInWithEmailAndPassword(this.email, this.password);
         loader.dismiss();
         const user = userCredential.user;
 
@@ -96,6 +96,7 @@ export class LoginPage implements OnInit {
         }
       } else {
         loader.dismiss();
+        this.auth.signOut();
         this.presentToast(
           userData['status'] === 'denied'
             ? 'You are not allowed in the system'
@@ -111,6 +112,7 @@ export class LoginPage implements OnInit {
       if (error instanceof Error) {
         const errorMessage = error.message;
         if (errorMessage.includes('wrong-password')) {
+            this.auth.signOut();
           this.presentToast('Incorrect password', 'danger');
         } else {
           this.presentToast(errorMessage, 'danger');

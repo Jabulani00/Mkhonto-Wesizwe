@@ -6,10 +6,26 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" class="ion-padding">
- 
+  <ion-item>
+    <ion-label position="floating">Filter by Name</ion-label>
+    <ion-input [(ngModel)]="filterName" (ngModelChange)="applyFilters()"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label position="floating">Filter by Email</ion-label>
+    <ion-input [(ngModel)]="filterEmail" (ngModelChange)="applyFilters()"></ion-input>
+  </ion-item>
+  <ion-item>
+    <ion-label>Status</ion-label>
+    <ion-select [(ngModel)]="filterStatus" (ionChange)="applyFilters()">
+      <ion-select-option value="">All</ion-select-option>
+      <ion-select-option value="pending">Pending</ion-select-option>
+      <ion-select-option value="active">Active</ion-select-option>
+      <ion-select-option value="denied">Denied Access</ion-select-option>
+    </ion-select>
+  </ion-item>
 
   <ion-list>
-    <ion-item *ngFor="let user of users | async" class="user-item animate__animated animate__fadeInUp">
+    <ion-item *ngFor="let user of filteredUsers" class="user-item animate__animated animate__fadeInUp">
       <ion-avatar slot="start">
         <ion-icon name="person-circle-outline"></ion-icon>
       </ion-avatar>

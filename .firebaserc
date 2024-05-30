@@ -1,7 +1,8 @@
 {
   "projects": {
-    "default": "mkhonto-ca2c0",
-    "umkhonto": "umkhonto-wesizwe"
+    "default": "umkhonto-wesizwe",
+    "umkhonto": "umkhonto-wesizwe",
+    "umkhonto-wesizwe": "umkhonto-wesizwe"
   },
   "targets": {},
   "etags": {},
